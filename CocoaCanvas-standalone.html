@@ -120,7 +120,24 @@ input[type=range]::-moz-range-track{background:transparent}input[type=range]::-m
 .frow{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:9px 12px;text-align:left;white-space:nowrap;flex:none}.frow.on{border-color:var(--pri)}.frow .fn{font-size:19px;overflow:hidden;text-overflow:ellipsis}.frow .fs{color:var(--mute);font-size:15px;overflow:hidden;text-overflow:ellipsis}
 .frow .fm{font:11px var(--sans);color:var(--mute);margin-left:auto}
 #insp>*{flex-shrink:0}
-#gModal{z-index:75}#fModal,#xModal{z-index:60}
+#gModal{z-index:75}
+#cp{position:fixed;z-index:66;width:284px;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:12px;box-shadow:0 18px 50px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:10px;touch-action:none}
+#cp[hidden]{display:none}
+.cpW{position:relative;width:240px;height:240px;margin:2px auto 0;touch-action:none}
+.cpRing{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 90deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00);-webkit-mask:radial-gradient(circle,transparent 93px,#000 94px);mask:radial-gradient(circle,transparent 93px,#000 94px)}
+.cpSq{position:absolute;left:58px;top:58px;width:124px;height:124px;border-radius:6px;background:linear-gradient(to top,#000,transparent),linear-gradient(to right,#fff,var(--hue,#f00))}
+.cpH,.cpP{position:absolute;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.4),0 2px 6px rgba(0,0,0,.5);pointer-events:none}
+.cpH{width:24px;height:24px;margin:-12px 0 0 -12px;background:transparent}
+.cpAl{position:relative;height:16px;border-radius:8px;background:linear-gradient(90deg,transparent,var(--cpc,#000)),var(--chk);touch-action:none;cursor:ew-resize}
+.cpAl i{position:absolute;top:-3px;width:22px;height:22px;margin-left:-11px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.4);background:var(--cpc,#000);pointer-events:none}
+.cpR{display:flex;gap:6px;align-items:center}.cpR input{min-width:0}.cpR #cpHex{flex:1;font-family:var(--mono)}.cpR #cpA{width:58px}
+.cpSw{width:28px;height:28px;border-radius:7px;flex:none;border:1px solid rgba(255,255,255,.15);background:var(--chk)}.cpSw i{display:block;width:100%;height:100%;border-radius:6px}
+.cpEye{display:grid;place-items:center;width:32px;height:30px;padding:0;flex:none}.cpEye svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cpLab{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.cpS{display:flex;flex-direction:column;gap:8px}.cpS[hidden],.cpW[hidden]{display:none}
+#cp .seg button{font-size:12px;padding:6px 0}
+#cpDoc button{width:24px;height:24px}
+@media (max-width:720px){#cp{left:0!important;right:0;bottom:0;top:auto!important;width:auto;border-radius:18px 18px 0 0;padding:14px 16px calc(16px + env(safe-area-inset-bottom))}.cpW{width:260px;height:260px}.cpRing{-webkit-mask:radial-gradient(circle,transparent 101px,#000 102px);mask:radial-gradient(circle,transparent 101px,#000 102px)}.cpSq{left:62px;top:62px;width:136px;height:136px}#cpDoc button{width:30px;height:30px}}#fModal,#xModal{z-index:60}
 body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 .wh{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:6px;align-items:center}
 .lar{display:grid;place-items:center;width:28px;height:28px;padding:0}.lar svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
@@ -233,7 +250,7 @@ body{grid-template-columns:minmax(0,1fr)}#top{min-width:0}
   <div class="mn"><button class="mt" data-ru="Правка">Edit</button><div class="dd"><button data-c="undo" data-ru="Отменить">Undo</button><button data-c="redo" data-ru="Повторить">Redo</button><hr><button data-c="cut" data-ru="Вырезать">Cut</button><button data-c="copy" data-ru="Копировать">Copy</button><button data-c="paste" data-ru="Вставить">Paste</button><button data-c="dup" data-ru="Дублировать">Duplicate</button><button data-c="del" data-ru="Удалить">Delete</button><hr><button data-c="all" data-ru="Выделить всё">Select all</button><button data-c="samefill" data-ru="Выделить с той же заливкой">Select same fill</button><button data-c="samestroke" data-ru="Выделить с той же обводкой">Select same stroke</button><button data-c="samefont" data-ru="Выделить с тем же шрифтом">Select same font</button></div></div>
   <div class="mn"><button class="mt" data-ru="Объект">Object</button><div class="dd"><button data-c="group" data-ru="Сгруппировать">Group</button><button data-c="ungroup" data-ru="Разгруппировать">Ungroup</button><hr><button data-c="front" data-ru="На передний план">Bring to front</button><button data-c="fwd" data-ru="Выше">Bring forward</button><button data-c="bwd" data-ru="Ниже">Send backward</button><button data-c="back" data-ru="На задний план">Send to back</button><hr><button data-c="fliph" data-ru="Отразить по горизонтали">Flip horizontal</button><button data-c="flipv" data-ru="Отразить по вертикали">Flip vertical</button><button data-c="points" data-ru="Редактировать точки">Edit points</button><hr><button data-c="mask" data-ru="Использовать как маску">Use as mask</button><button data-c="unmask" data-ru="Убрать маску">Remove mask</button><hr><button data-c="union" data-ru="Объединение">Union</button><button data-c="subtract" data-ru="Вычитание">Subtract</button><button data-c="intersect" data-ru="Пересечение">Intersect</button><button data-c="exclude" data-ru="Исключение">Exclude</button><button data-c="flatten" data-ru="Преобразовать в кривые">Flatten</button><hr><button data-c="distort" data-ru="Искажение (двигать углы)">Distort</button><button data-c="undistort" data-ru="Сбросить искажение">Reset distortion</button><button data-c="textpath" data-ru="Текст по контуру">Text on path</button><button data-c="detach" data-ru="Открепить текст от контура">Detach text from path</button></div></div>
   <div class="mn"><button class="mt" data-ru="Вид">View</button><div class="dd"><button data-c="zin" data-ru="Приблизить">Zoom in</button><button data-c="zout" data-ru="Отдалить">Zoom out</button><button data-c="zfit" data-ru="Показать всё">Zoom to fit</button><button data-c="zsel" data-ru="Показать выделенное">Zoom to selection</button><button data-c="z100">100%</button></div></div>
-  <div class="mn"><button class="mt" data-ru="Справка">Help</button><div class="dd"><button data-c="start" data-ru="Стартовый экран">Start screen</button><button data-c="keys" data-ru="Горячие клавиши">Keyboard shortcuts</button><hr><button data-lang="en">English</button><button data-lang="ru">Русский</button></div></div>
+  <div class="mn"><button class="mt" data-ru="Справка">Help</button><div class="dd"><button data-c="start" data-ru="Стартовый экран">Start screen</button><button data-c="keys" data-ru="Горячие клавиши">Keyboard shortcuts</button><hr><button data-pm="b" data-ru="Палитра: встроенная">Colour picker: built-in</button><button data-pm="s" data-ru="Палитра: системная">Colour picker: system</button><hr><button data-lang="en">English</button><button data-lang="ru">Русский</button></div></div>
  </nav>
  <input id="pname" type="text" aria-label="Project name">
  <button class="ic tch" data-c="undo" data-tt="Undo|Отменить"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 010 10h-3"/></svg></button><button class="ic tch" data-c="redo" data-tt="Redo|Повторить"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H9a5 5 0 000 10h3"/></svg></button>
@@ -592,7 +609,7 @@ function splitSeg(n,gi,p){const r=ptAt(n,gi),q=w2l(n,p),P=r.s.pts,i=r.j,a=P[i],b
  if(cv){a.ox=a1.x-a.x;a.oy=a1.y-a.y;b.ix=c1.x-b.x;b.iy=c1.y-b.y}P.splice(i+1,0,np);return gi+1}
 function exitPath(){if(!editPath)return;editPath=null;actPt=-1;render()}
 
-function editText(n,isNew){trange=null;editing=n;TED.hidden=false;TED.value=n.text;render();posTed();TED.focus();if(!isNew)TED.select()}
+function editText(n,isNew){trange=null;editing=n;TED.hidden=false;TED.value=n.text;render();posTed();TED.focus();if(!isNew)TED.select();if(matchMedia('(pointer:coarse)').matches){setTimeout(revealSel,350);setTimeout(revealSel,800)}}
 function posTed(){const n=editing;if(!n)return;layoutT(n);const z=view.z,[x,y]=w2s(n.x,n.y),s=TED.style;
  const Lt=n._L;s.left=x+'px';s.top=y+'px';s.font=`${n.it?'italic ':''}${n.fw||400} ${n.fs*z}px/${n.fs*(n.lh||1.2)*z}px ${ffCss(n.ff)}`;s.letterSpacing=(n.ls||0)*z+'px';s.paddingLeft=(Lt?.lines[0]?.ind||0)*z+'px';s.textAlign=n.ta||'left';
  s.width=(n.w*z+(n.fixW?0:2))+'px';s.height=Math.max((Lt?Lt.lines.length*Lt.lh:n.h)*z,n.fs*z)+'px';s.transform=n.rot?`rotate(${n.rot}deg)`:'';s.opacity=n.op??1;TED.classList.toggle('fw',!!n.fixW)}
@@ -774,7 +791,7 @@ function textToggle(k){const p=TXK[k],get=(n,x)=>p==='fw'?((x?.fw??n.fw??400)>=6
  else{const T=n?[n]:TX();if(!T.length)return;const on=!T.every(t=>get(t));T.forEach(t=>{if(p==='fw')t.fw=on?700:400;else if(on)t[p]=true;else delete t[p];if(t.runs)setRunK(t,0,String(t.text).length,x=>delete x[p]);if(p==='fw'||p==='it')delete t.tS})}
  if(editing){render();posTed()}else commit()}
 function startPick(k){if(window.EyeDropper){new EyeDropper().open().then(r=>setV(k,r.sRGBHex)).catch(()=>{});return}pickK=k;V.classList.add('t-pick');toast(L('Tap a layer to copy its color','Нажмите на слой, чтобы взять его цвет'))}
-function pickAt(e){e.preventDefault();const k=pickK;pickK=null;V.classList.remove('t-pick');const el=e.target.closest('#scene [data-id]'),n=el&&IDX.get(el.dataset.id)?.n;if(!n)return;if(n.type==='image')return toast(L('Can’t pick from images in this browser. Chrome on a computer can.','В этом браузере нельзя взять цвет с изображения. В Chrome на компьютере можно.'));const f=n.fill||n.stroke,c=isG(f)?gSort(f)[0].c:f;if(c)setV(k,c)}
+function pickAt(e){e.preventDefault();const k=pickK;pickK=null;V.classList.remove('t-pick');const el=e.target.closest('#scene [data-id]'),n=el&&IDX.get(el.dataset.id)?.n;if(!n)return;if(n.type==='image')return toast(L('Can’t pick from images in this browser. Chrome on a computer can.','В этом браузере нельзя взять цвет с изображения. В Chrome на компьютере можно.'));const f=n.fill||n.stroke,c=isG(f)?gSort(f)[0].c:f;if(c){if(k==='__cp')cpHex(c,1);else setV(k,c)}}
 function setRow(el,live){const v=el.type==='checkbox'?el.checked:el.value,d=el.dataset;
  if(d.xf!=null){const i=+d.xf;FL().forEach(n=>{const p=n.fills?.[i];if(!p)return;delete n.cS;if(d.xk==='o')p.o=clamp(+v,0,100)/100;else{const c=hex(v);if(c)p.f=c}})}
  else if(d.xs!=null){const i=+d.xs;STK().forEach(n=>{const p=n.strokes?.[i];if(!p)return;if(d.xk==='w')p.w=Math.max(0,+v||0);else{const c=hex(v);if(c)p.c=c}})}
@@ -1499,7 +1516,7 @@ const coarse=()=>matchMedia('(pointer:coarse)').matches,phone=()=>matchMedia('(m
 function drawers(k){BC.remove('lopen','mmenu');if(k)BC.add(k)}
 $('bMenu').addEventListener('click',e=>{e.stopPropagation();const on=BC.contains('mmenu');closeMenus();drawers(on?null:'mmenu')});
 $('fabL').addEventListener('click',()=>drawers(BC.contains('lopen')?null:'lopen'));
-$('fabD').addEventListener('click',()=>{BC.toggle('iopen');BC.remove('ifull')});
+$('fabD').addEventListener('click',()=>{BC.toggle('iopen');BC.remove('ifull');if(BC.contains('iopen'))setTimeout(revealSel,230)});
 $('scrim').addEventListener('click',()=>drawers(null));
 $('bHelp').addEventListener('click',()=>{BC.toggle('qopen');if(BC.contains('qopen'))setTimeout(()=>$('qIn').focus(),60)});
 $('bMore').addEventListener('click',()=>BC.toggle('tmore'));
@@ -1512,7 +1529,7 @@ Object.assign(CMD,{laycol:()=>BC.toggle('lcol'),inspcol:()=>BC.toggle('icol'),do
 const PT=new Map();let ctxT=0,G=null,penSeen=false,lpT=0,lp0=null,tapT=0,tapP=null,synthT=0;
 function abortDrag(){clearTimeout(lpT);const d=drag;if(!d)return;drag=null;V.classList.remove('dn');
  if(d.m==='penh'&&pen){pen.pts.pop();if(!pen.pts.length)pen=null}else if(!/pan|marq|pencil/.test(d.m)&&(d.moved||(d.m==='new'&&d.n)))restoreDoc(last);render()}
-V.addEventListener('pointerdown',e=>{if(e.pointerType==='pen')penSeen=true;if(e.pointerType!=='touch')return;
+V.addEventListener('pointerdown',e=>{if(e.pointerType==='pen')penSeen=true;if(e.pointerType!=='touch')return;if(e.isPrimary){PT.clear();G=null}
  PT.set(e.pointerId,{x:e.clientX,y:e.clientY});
  if(PT.size>=2){e.stopImmediatePropagation();lp0=null;abortDrag();if(editing)TED.blur();if(PT.size===2){const[a,b]=[...PT.values()],r=V.getBoundingClientRect();G={d:Math.hypot(a.x-b.x,a.y-b.y)||1,c:{x:(a.x+b.x)/2-r.left,y:(a.y+b.y)/2-r.top},v:{...view}}}return}
  if(penSeen&&tool!=='move'&&tool!=='hand'&&e.target!==TED){e.stopImmediatePropagation();closeMenus();cap(e);drag={m:'pan',sx:e.clientX,sy:e.clientY,vx:view.x,vy:view.y};return}
@@ -1525,7 +1542,9 @@ const ptEnd=e=>{if(e.pointerType!=='touch')return;clearTimeout(lpT);PT.delete(e.
  if(G){e.stopImmediatePropagation();if(PT.size<2)G=null;tapT=0;return}
  if(e.type==='pointerup'&&lp0&&BC.contains('iopen')&&phone()&&!document.elementFromPoint(e.clientX,e.clientY)?.closest?.('#scene [data-id],#ui [data-h]'))BC.remove('iopen','ifull');
  if(e.type==='pointerup'&&lp0){const now=Date.now();if(tapP&&now-tapT<320&&Math.hypot(e.clientX-tapP.x,e.clientY-tapP.y)<24){tapT=0;synthT=now;const x=e.clientX,y=e.clientY;setTimeout(()=>V.dispatchEvent(new MouseEvent('dblclick',{clientX:x,clientY:y,bubbles:true})))}else{tapT=now;tapP={x:e.clientX,y:e.clientY}}}lp0=null};
-V.addEventListener('pointerup',ptEnd,{capture:true});V.addEventListener('pointercancel',ptEnd,{capture:true});
+V.addEventListener('pointerup',ptEnd,{capture:true});
+['pointerup','pointercancel'].forEach(t=>window.addEventListener(t,e=>{if(e.pointerType==='touch'&&PT.delete(e.pointerId)&&PT.size<2)G=null},true));
+V.addEventListener('lostpointercapture',e=>{if(e.pointerType==='touch'&&!PT.has(e.pointerId))return});V.addEventListener('pointercancel',ptEnd,{capture:true});
 V.addEventListener('dblclick',e=>{if(e.isTrusted&&Date.now()-synthT<700)e.stopImmediatePropagation()},{capture:true});
 
 function ctxItems(){const ts=topSel(),n=ts.length,one=n===1?ts[0]:null,I=[],a=(c,en,ru)=>I.push([c,L(en,ru)]),hr=()=>I.push(null);
@@ -1649,6 +1668,68 @@ function gradMove(d,p,e){const n=d.n,f=n.fill,P=gF(n,p),b=gBox(n),w=b.w||1,h=b.h
  else if(d.k==='gc'){f.c=[Math.round(P[0]*1e3)/1e3,Math.round(P[1]*1e3)/1e3]}
  else if(d.k==='gr'||d.k==='gq'){const{c,r}=gRad(f),R=[...r];if(d.k==='gr')R[0]=Math.max(.01,Math.hypot((P[0]-c[0])*w,(P[1]-c[1])*h)/w);else R[1]=Math.max(.01,Math.hypot((P[0]-c[0])*w,(P[1]-c[1])*h)/h);if(e.shiftKey){if(d.k==='gr')R[1]=R[0]*w/h;else R[0]=R[1]*h/w}f.r=R.map(v=>Math.round(v*1e3)/1e3);if(!f.c)f.c=[.5,.5]}
  render()}
+/* ---------- built-in colour picker ---------- */
+const CP=document.createElement('div');CP.id='cp';CP.hidden=true;CP.setAttribute('role','dialog');document.body.appendChild(CP);
+let cpEl=null,cpAl=null,cpS={h:0,s:0,v:0,a:1},cpTab='w',cpDirty=false;
+const pickMode=()=>{try{return localStorage.getItem('cv-picker')||'b'}catch(e){return'b'}};
+const setPickMode=m=>{try{localStorage.setItem('cv-picker',m)}catch(e){}document.querySelectorAll('[data-pm]').forEach(b=>b.classList.toggle('cur',b.dataset.pm===m))};
+function hsv2hex({h,s,v}){const f=n=>{const k=(n+h/60)%6;return Math.round(255*(v-v*s*Math.max(0,Math.min(k,4-k,1))))};return'#'+[f(5),f(3),f(1)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function hex2hsv(x){const v=parseInt(x.slice(1),16),r=(v>>16)/255,g=(v>>8&255)/255,b=(v&255)/255,M=Math.max(r,g,b),m=Math.min(r,g,b),d=M-m;let h=0;if(d){h=M===r?((g-b)/d)%6:M===g?(b-r)/d+2:(r-g)/d+4;h*=60;if(h<0)h+=360}return{h,s:M?d/M:0,v:M}}
+function cpAlphaFor(el){const row=el.closest('.cr');if(!row)return null;return row.querySelector('input[data-k=fop],input[data-k=sop],input[data-k=go],input[data-xk=o],input[data-fk=a]')}
+function cpBuild(){const T=[['w',L('Wheel','Круг')],['s',L('Sliders','Ползунки')],['sys',L('System','Системная')]],eye='<svg viewBox="0 0 24 24"><path d="M15 4.5l4.5 4.5M13.5 6l4.5 4.5M17 3l4 4-3 3-4-4zM14 8l-8.5 8.5L4 20l3.5-1.5L16 10"/></svg>';
+ CP.innerHTML=`<div class="seg">${T.map(([k,l])=>`<button data-cpt="${k}">${l}</button>`).join('')}</div>
+ <div class="cpW" id="cpW"><div class="cpRing"></div><div class="cpSq" id="cpSq"></div><i class="cpH" id="cpH"></i><i class="cpP" id="cpP"></i></div>
+ <div class="cpS" id="cpSl" hidden>${[['h','H',360],['s','S',100],['v','B',100]].map(([k,l,mx])=>`<div class="rv"><input type="range" min="0" max="${mx}" data-cps="${k}"><span>${l}</span><output data-cpo="${k}"></output></div>`).join('')}</div>
+ <div class="cpAl" id="cpAlB"><i id="cpAlK"></i></div>
+ <div class="cpR"><span class="cpSw"><i id="cpSw"></i></span><input type="text" id="cpHex" autocomplete="off" spellcheck="false"><input type="text" id="cpA" inputmode="decimal" autocomplete="off"><button class="cpEye" id="cpEye" title="${L('Pick color','Пипетка')}">${eye}</button></div>
+ <div class="cpLab">${L('In this file','В этом файле')}</div><div class="sws" id="cpDoc"></div>`}
+function cpSync(){const hex=hsv2hex(cpS),hue=hsv2hex({h:cpS.h,s:1,v:1});CP.style.setProperty('--hue',hue);CP.style.setProperty('--cpc',hex);
+ const W=$('cpW'),R=W.offsetWidth/2,rr=R-12,t=cpS.h*Math.PI/180,sq=$('cpSq');$('cpH').style.left=R+Math.cos(t)*rr+'px';$('cpH').style.top=R+Math.sin(t)*rr+'px';$('cpH').style.background=hue;
+ $('cpP').style.left=sq.offsetLeft+cpS.s*sq.offsetWidth+'px';$('cpP').style.top=sq.offsetTop+(1-cpS.v)*sq.offsetHeight+'px';$('cpP').style.background=hex;
+ $('cpAlK').style.left=cpS.a*100+'%';$('cpSw').style.background=rgba(hex,cpS.a);if(document.activeElement!==$('cpHex'))$('cpHex').value=hex.slice(1).toUpperCase();if(document.activeElement!==$('cpA'))$('cpA').value=Math.round(cpS.a*100)+'%';
+ $('cpAlB').hidden=!cpAl;$('cpA').hidden=!cpAl;
+ CP.querySelectorAll('[data-cps]').forEach(r=>{const k=r.dataset.cps,v=k==='h'?Math.round(cpS.h):Math.round(cpS[k]*100);if(document.activeElement!==r)r.value=v;r.style.setProperty('--p',(v/(k==='h'?360:100)*100)+'%');CP.querySelector(`[data-cpo="${k}"]`).textContent=v+(k==='h'?'°':'%')});
+ CP.querySelectorAll('[data-cpt]').forEach(b=>b.classList.toggle('on',b.dataset.cpt===cpTab));$('cpW').hidden=cpTab!=='w';$('cpSl').hidden=cpTab!=='s';
+ const C=docColors(),h=C.map(c=>`<button data-sw="${c}" style="background:${c}" title="${c.toUpperCase()}"></button>`).join('');if($('cpDoc').dataset.h!==h){$('cpDoc').dataset.h=h;$('cpDoc').innerHTML=h}}
+function cpPush(){if(!cpEl)return;cpDirty=true;const hex=hsv2hex(cpS);if(cpEl.isConnected){cpEl.value=hex;cpEl.dispatchEvent(new Event('input',{bubbles:true}))}
+ if(cpAl&&cpAl.isConnected){const v=Math.round(cpS.a*100);if(+cpAl.value!==v){cpAl.value=v;if(cpAl.dataset.k)setV(cpAl.dataset.k,v,1);else setRow(cpAl,1)}}cpSync()}
+function cpHex(c,push){const x=hex(c);if(!x)return;const k=hex2hsv(x);cpS.s=k.s;cpS.v=k.v;if(k.s>0&&k.v>0)cpS.h=k.h;if(push)cpPush();else cpSync()}
+function cpOpen(el){cpEl=el;cpAl=cpAlphaFor(el);cpDirty=false;if(!CP.firstChild)cpBuild();cpS={h:0,s:0,v:0,a:cpAl?clamp(numv(cpAl.value,100)/100,0,1):1};cpHex(el.value||'#000000');CP.hidden=false;
+ if(!matchMedia('(max-width:720px)').matches){const r=el.getBoundingClientRect(),w=CP.offsetWidth,h=CP.offsetHeight;let x=r.left-w-12;if(x<8)x=Math.min(innerWidth-w-8,r.right+12);CP.style.left=x+'px';CP.style.top=clamp(r.top-60,8,innerHeight-h-8)+'px'}else{CP.style.left='';CP.style.top=''}cpSync()}
+function cpClose(){if(CP.hidden)return;CP.hidden=true;const el=cpEl;cpEl=null;if(cpDirty){if(el?.isConnected)el.dispatchEvent(new Event('change',{bubbles:true}));else commit()}}
+document.addEventListener('click',e=>{const el=e.target.closest?.('input[type=color]');if(!el||pickMode()==='s')return;e.preventDefault();if(cpEl===el&&!CP.hidden)return cpClose();cpClose();cpOpen(el)},true);
+document.addEventListener('pointerdown',e=>{if(CP.hidden||CP.contains(e.target)||e.target===cpEl)return;if(pickK==='__cp')return;cpClose()},true);
+document.addEventListener('keydown',e=>{if(!CP.hidden&&e.key==='Escape'){e.stopPropagation();cpClose()}},true);
+let cpDrag=null;
+CP.addEventListener('pointerdown',e=>{const W=e.target.closest('#cpW'),A=e.target.closest('#cpAlB');if(!W&&!A)return;e.preventDefault();const box=(W||A).getBoundingClientRect();
+ if(A)cpDrag={k:'a',box};else{const R=box.width/2,dx=e.clientX-box.left-R,dy=e.clientY-box.top-R,d=Math.hypot(dx,dy),sq=$('cpSq').getBoundingClientRect();
+  if(e.clientX>=sq.left-6&&e.clientX<=sq.right+6&&e.clientY>=sq.top-6&&e.clientY<=sq.bottom+6)cpDrag={k:'sv',box:sq};else if(d>R-40)cpDrag={k:'h',box};else return}
+ try{CP.setPointerCapture(e.pointerId)}catch(_){}cpMove(e)});
+CP.addEventListener('pointermove',e=>{if(cpDrag)cpMove(e)});
+CP.addEventListener('pointerup',()=>{cpDrag=null});CP.addEventListener('pointercancel',()=>{cpDrag=null});
+function cpMove(e){const d=cpDrag,b=d.box;if(d.k==='a')cpS.a=Math.round(clamp((e.clientX-b.left)/b.width,0,1)*100)/100;
+ else if(d.k==='sv'){cpS.s=clamp((e.clientX-b.left)/b.width,0,1);cpS.v=clamp(1-(e.clientY-b.top)/b.height,0,1)}
+ else{let h=Math.atan2(e.clientY-b.top-b.height/2,e.clientX-b.left-b.width/2)*180/Math.PI;if(h<0)h+=360;cpS.h=e.shiftKey?Math.round(h/15)*15%360:h}cpPush()}
+CP.addEventListener('input',e=>{const r=e.target.closest('[data-cps]');if(!r)return;const k=r.dataset.cps;cpS[k]=k==='h'?+r.value:+r.value/100;cpPush()});
+CP.addEventListener('change',e=>{if(e.target.id==='cpHex'){const x=hex(e.target.value);if(x)cpHex(x,1);else cpSync()}if(e.target.id==='cpA'){const v=parseFloat(e.target.value);if(!isNaN(v))cpS.a=clamp(v/100,0,1);cpPush()}});
+CP.addEventListener('keydown',e=>{if(e.target.matches('input')){e.stopPropagation();if(e.key==='Enter')e.target.blur()}});
+CP.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.sw)return cpHex(b.dataset.sw,1);
+ if(b.id==='cpEye'){if(window.EyeDropper){new EyeDropper().open().then(r=>cpHex(r.sRGBHex,1)).catch(()=>{});return}pickK='__cp';V.classList.add('t-pick');return toast(L('Tap a layer to copy its color','Нажмите на слой, чтобы взять его цвет'))}
+ if(b.dataset.cpt==='sys'){const el=cpEl;setPickMode('s');cpClose();toast(L('Using the system colour picker. Switch back in the Help menu.','Включена системная палитра. Вернуть встроенную можно в меню «Справка».'));if(el){try{el.showPicker?el.showPicker():el.click()}catch(_){el.click()}}return}
+ if(b.dataset.cpt){cpTab=b.dataset.cpt;cpSync()}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-pm]');if(!b)return;setPickMode(b.dataset.pm);closeMenus();toast(b.dataset.pm==='s'?L('Using the system colour picker','Включена системная палитра'):L('Using the built-in colour picker','Включена встроенная палитра'))});
+setPickMode(pickMode());
+
+/* ---------- keep the selection visible above panels and the keyboard ---------- */
+function revealSel(){const b=editing?{x:editing.x,y:editing.y,w:editing.w,h:editing.h}:selBox();if(!b)return;const r=V.getBoundingClientRect(),vv=window.visualViewport;let bottom=Math.min(r.bottom,vv?vv.offsetTop+vv.height:innerHeight);
+ const sh=$('inspW');if(BC.contains('iopen')&&getComputedStyle(sh).position==='fixed')bottom=Math.min(bottom,sh.getBoundingClientRect().top);const top=r.top+12,left=r.left+12,right=r.right-12;bottom-=12;if(bottom-top<60)return;
+ const z0=view.z,fit=Math.min(1,(bottom-top)/(b.h*z0||1),(right-left)/(b.w*z0||1)),z=fit<1?Math.max(.05,z0*fit*.92):z0,sx=b.x*z+view.x+r.left,sy=b.y*z+view.y+r.top;
+ let dx=0,dy=0;const bw=b.w*z,bh=b.h*z;const nx=view.x*(z/z0);
+ const cx=(left+right)/2-(b.x+b.w/2)*z-r.left,cy=(top+bottom)/2-(b.y+b.h/2)*z-r.top;
+ const sx0=b.x*z0+view.x+r.left,sy0=b.y*z0+view.y+r.top,inside=z===z0&&sx0>=left&&sy0>=top&&sx0+b.w*z0<=right&&sy0+b.h*z0<=bottom;if(inside)return;
+ const from={...view},to={x:cx,y:cy,z},t0=performance.now();const step=t=>{const k=Math.min(1,(t-t0)/220),e=1-Math.pow(1-k,3);view.x=from.x+(to.x-from.x)*e;view.y=from.y+(to.y-from.y)*e;view.z=from.z+(to.z-from.z)*e;viewUpd();if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)}
+if(window.visualViewport)visualViewport.addEventListener('resize',()=>{if(editing&&matchMedia('(pointer:coarse)').matches)setTimeout(revealSel,60)});
 setTool('move');setLang(LANG);
 kvGet('cur').then(v=>{if(v?.d){try{Object.assign(ASSETS,v.a||{});last=v.d;restoreDoc(last);setTimeout(zfit);return}catch(e){}}last=snap();reindex();render()}).catch(()=>{last=snap();render()});
 </script>
