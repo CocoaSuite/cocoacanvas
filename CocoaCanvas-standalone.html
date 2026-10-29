@@ -82,7 +82,7 @@ aside{background:var(--panel);overflow:auto;min-height:0}
 .f{display:grid;grid-template-columns:96px minmax(0,1fr);gap:8px;align-items:center}
 .f>span:first-child{color:var(--mute)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.nf{position:relative;display:block}.nf span{position:absolute;left:7px;top:50%;transform:translateY(-50%);color:var(--mute);font-size:11px;pointer-events:none}.nf input{padding-left:20px}
+.nf{position:relative;display:block}.nf span{position:absolute;left:3px;top:50%;transform:translateY(-50%);color:var(--mute);font-size:11px;padding:4px;cursor:ew-resize;touch-action:none;user-select:none;-webkit-user-select:none}.nf span:hover{color:var(--fg)}.nf input{padding-left:20px}
 .cr{display:flex;gap:6px;align-items:center}.cr .hex{font-family:var(--mono);font-size:12px}.cr .nf{flex:0 0 64px}
 .al{display:grid;grid-template-columns:repeat(8,1fr);gap:3px}.al button,.seg button{padding:4px 0;display:grid;place-items:center;background:none;border-color:transparent}.al button:hover,.seg button:hover{background:var(--panel2)}
 .al svg,.seg svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -121,6 +121,12 @@ input[type=range]::-moz-range-track{background:transparent}input[type=range]::-m
 .frow .fm{font:11px var(--sans);color:var(--mute);margin-left:auto}
 #insp>*{flex-shrink:0}
 #gModal{z-index:75}
+.wh{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:6px;align-items:center}
+.lar{display:grid;place-items:center;width:28px;height:28px;padding:0}.lar svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.seg.ct button{font-size:12px;padding:5px 0}
+.sws{display:flex;flex-wrap:wrap;gap:5px}.sws:empty{display:none}.sws button{width:20px;height:20px;min-height:0!important;padding:0;border-radius:5px;border:1px solid rgba(255,255,255,.18)}.sws button:hover{transform:scale(1.12)}
+@media (pointer:coarse){.sws button{width:28px;height:28px}.lar{width:36px;height:36px}}
+.cdot{cursor:default}
 #start[hidden]{display:none}
 #start{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.6);display:grid;place-items:center;padding:16px}
 .stB{width:min(800px,100%);max-height:calc(100vh - 32px);display:grid;grid-template-columns:300px minmax(0,1fr);background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6)}
@@ -223,7 +229,7 @@ body{grid-template-columns:minmax(0,1fr)}#top{min-width:0}
 </svg><svg class="bm" viewBox="3 3 46 58" xmlns="http://www.w3.org/2000/svg"><path d="M48 10C43.5 5.9 38.5 4 32 4C16.5 4 4 16.5 4 32C4 47.5 16.5 60 32 60C38.5 60 43.5 58.1 48 54L40 44C37.8 46 35.3 47 32 47C23.7 47 17 40.3 17 32C17 23.7 23.7 17 32 17C35.3 17 37.8 18 40 20L48 10Z" fill="#D15A2C"/><path d="M48 28L36 41L27.4736 43.5576L35.5947 34.5352L34.4053 33.4648L26.4678 42.2832L29 33L40 20L48 28ZM37 29.9004C35.8402 29.9004 34.9004 30.8402 34.9004 32C34.9004 33.1598 35.8402 34.0996 37 34.0996C38.1598 34.0996 39.0996 33.1598 39.0996 32C39.0996 30.8402 38.1597 29.9004 37 29.9004Z" fill="#D15A2C"/></svg></div>
  <nav class="menus" id="menus">
   <div class="mn"><button class="mt" data-ru="Файл">File</button><div class="dd"><button data-c="new" data-ru="Новый проект">New project</button><button data-c="open" data-ru="Открыть…">Open…</button><button data-c="save" data-ru="Сохранить">Save</button><button data-c="saveas" data-ru="Сохранить как…">Save as…</button><hr><button data-c="img" data-ru="Вставить изображение…">Place image…</button><button data-c="import" data-ru="Импорт SVG или PSD…">Import SVG or PSD…</button><button data-c="export" data-ru="Экспорт…">Export…</button><hr><button data-c="vsave" data-ru="Сохранить версию…">Save version…</button><button data-c="vhist" data-ru="История версий…">Version history…</button><button data-c="install" data-ru="Создать ярлык…">Create shortcut…</button><hr><button data-c="tomotion" data-ru="Отправить в Cocoa Motion (PSD)">Send to Cocoa Motion (PSD)</button><button data-c="tocut" data-ru="Отправить в CocoaCut (PNG)">Send to CocoaCut (PNG)</button></div></div>
-  <div class="mn"><button class="mt" data-ru="Правка">Edit</button><div class="dd"><button data-c="undo" data-ru="Отменить">Undo</button><button data-c="redo" data-ru="Повторить">Redo</button><hr><button data-c="cut" data-ru="Вырезать">Cut</button><button data-c="copy" data-ru="Копировать">Copy</button><button data-c="paste" data-ru="Вставить">Paste</button><button data-c="dup" data-ru="Дублировать">Duplicate</button><button data-c="del" data-ru="Удалить">Delete</button><hr><button data-c="all" data-ru="Выделить всё">Select all</button></div></div>
+  <div class="mn"><button class="mt" data-ru="Правка">Edit</button><div class="dd"><button data-c="undo" data-ru="Отменить">Undo</button><button data-c="redo" data-ru="Повторить">Redo</button><hr><button data-c="cut" data-ru="Вырезать">Cut</button><button data-c="copy" data-ru="Копировать">Copy</button><button data-c="paste" data-ru="Вставить">Paste</button><button data-c="dup" data-ru="Дублировать">Duplicate</button><button data-c="del" data-ru="Удалить">Delete</button><hr><button data-c="all" data-ru="Выделить всё">Select all</button><button data-c="samefill" data-ru="Выделить с той же заливкой">Select same fill</button><button data-c="samestroke" data-ru="Выделить с той же обводкой">Select same stroke</button><button data-c="samefont" data-ru="Выделить с тем же шрифтом">Select same font</button></div></div>
   <div class="mn"><button class="mt" data-ru="Объект">Object</button><div class="dd"><button data-c="group" data-ru="Сгруппировать">Group</button><button data-c="ungroup" data-ru="Разгруппировать">Ungroup</button><hr><button data-c="front" data-ru="На передний план">Bring to front</button><button data-c="fwd" data-ru="Выше">Bring forward</button><button data-c="bwd" data-ru="Ниже">Send backward</button><button data-c="back" data-ru="На задний план">Send to back</button><hr><button data-c="fliph" data-ru="Отразить по горизонтали">Flip horizontal</button><button data-c="flipv" data-ru="Отразить по вертикали">Flip vertical</button><button data-c="points" data-ru="Редактировать точки">Edit points</button><hr><button data-c="mask" data-ru="Использовать как маску">Use as mask</button><button data-c="unmask" data-ru="Убрать маску">Remove mask</button><hr><button data-c="union" data-ru="Объединение">Union</button><button data-c="subtract" data-ru="Вычитание">Subtract</button><button data-c="intersect" data-ru="Пересечение">Intersect</button><button data-c="exclude" data-ru="Исключение">Exclude</button><button data-c="flatten" data-ru="Преобразовать в кривые">Flatten</button><hr><button data-c="distort" data-ru="Искажение (двигать углы)">Distort</button><button data-c="undistort" data-ru="Сбросить искажение">Reset distortion</button><button data-c="textpath" data-ru="Текст по контуру">Text on path</button><button data-c="detach" data-ru="Открепить текст от контура">Detach text from path</button></div></div>
   <div class="mn"><button class="mt" data-ru="Вид">View</button><div class="dd"><button data-c="zin" data-ru="Приблизить">Zoom in</button><button data-c="zout" data-ru="Отдалить">Zoom out</button><button data-c="zfit" data-ru="Показать всё">Zoom to fit</button><button data-c="zsel" data-ru="Показать выделенное">Zoom to selection</button><button data-c="z100">100%</button></div></div>
   <div class="mn"><button class="mt" data-ru="Справка">Help</button><div class="dd"><button data-c="start" data-ru="Стартовый экран">Start screen</button><button data-c="keys" data-ru="Горячие клавиши">Keyboard shortcuts</button><hr><button data-lang="en">English</button><button data-lang="ru">Русский</button></div></div>
@@ -397,9 +403,11 @@ function drawUI(){let s='';const z=view.z,hs=matchMedia('(pointer:coarse)').matc
    for(const[a,c,k,cu]of[[0,1,'0,-1','ns'],[1,2,'1,0','ew'],[2,3,'0,1','ns'],[3,0,'-1,0','ew']]){if(txt&&!one.fixW&&cu==='ns')continue;s+=`<line class="he" data-h="${k}" x1="${P[a][0]}" y1="${P[a][1]}" x2="${P[c][0]}" y2="${P[c][1]}" style="cursor:${cu}-resize"/>`}
    if(!ts.every(n=>n.type==='frame')){const cx=P.reduce((a,p)=>a+p[0],0)/4,cy=P.reduce((a,p)=>a+p[1],0)/4;P.forEach(p=>{const dx=p[0]-cx,dy=p[1]-cy,l=Math.hypot(dx,dy)||1;s+=`<circle class="rz" data-h="rot" cx="${p[0]+dx/l*(hs*2+1)}" cy="${p[1]+dy/l*(hs*2+1)}" r="${hs*2+2}"/>`})}
    if(!txt||one.fixW)['-1,-1','1,-1','1,1','-1,1'].forEach((k,i)=>s+=`<rect class="hd" data-h="${k}" x="${P[i][0]-hs}" y="${P[i][1]-hs}" width="${hs*2}" height="${hs*2}" style="cursor:${i%2?'nesw':'nwse'}-resize"/>`);
+   if(one&&/rect|frame|image|poly|star/.test(one.type)&&one.w*z>=40&&one.h*z>=40){const pg=/poly|star/.test(one.type),R=rcOf(one),m=14/z,mx=Math.min(one.w,one.h)/2,D=pg?[[one.w/2,Math.min(mx,Math.max(one.r||0,m)),0]]:[[0,0,1,1],[one.w,0,-1,1],[one.w,one.h,-1,-1],[0,one.h,1,-1]].map(([x,y,sx,sy],i)=>{const t=Math.min(mx,Math.max(R[i]||0,m));return[x+sx*t,y+sy*t,i]});
+    for(const[x,y,i]of D){const[X,Y]=w2s(...l2w(one,x,y));s+=`<circle class="hd cdot" data-h="cr${i}" cx="${X}" cy="${Y}" r="${hs+.5}"/>`;if(drag?.m==='cr'&&drag.moved&&(pg||i===drag.i)){const lb=pg||!drag.single?L('Radius ','Радиус ')+drag.r:['↖','↗','↘','↙'][i]+' '+drag.r,lw=lb.length*6.4+12;s+=`<g class="badge"><rect x="${X+10}" y="${Y-9}" width="${lw}" height="18" rx="3"/><text x="${X+10+lw/2}" y="${Y+4}" text-anchor="middle">${lb}</text></g>`}}}
    const xs=P.map(p=>p[0]),ys=P.map(p=>p[1]),bt=`${r2(b.w)} × ${r2(b.h)}`,bw=bt.length*6.4+12,bx=(Math.min(...xs)+Math.max(...xs))/2;
    s+=`<g class="badge"><rect x="${bx-bw/2}" y="${Math.max(...ys)+8}" width="${bw}" height="18" rx="3"/><text x="${bx}" y="${Math.max(...ys)+21}" text-anchor="middle">${bt}</text></g>`}}
- if(drag?.g)for(const g of drag.g){const[a,b]=g.x!=null?[w2s(g.x,g.a),w2s(g.x,g.b)]:[w2s(g.a,g.y),w2s(g.b,g.y)];s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="var(--guide)"/>`}
+ if(drag?.g)for(const g of drag.g){if(g.seg){for(const[u,v]of g.s){const[a,b]=g.seg==='x'?[w2s(u,g.c),w2s(v,g.c)]:[w2s(g.c,u),w2s(g.c,v)],o=g.seg==='x'?[0,-4,0,4]:[-4,0,4,0];s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="var(--guide)"/>`+[a,b].map(P=>`<line x1="${P[0]+o[0]}" y1="${P[1]+o[1]}" x2="${P[0]+o[2]}" y2="${P[1]+o[3]}" stroke="var(--guide)"/>`).join('');const lb=String(Math.round(g.gap)),lw=lb.length*6.5+8,mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;s+=`<g class="badge"><rect x="${mx-lw/2}" y="${my-8}" width="${lw}" height="16" rx="3" style="fill:var(--guide)"/><text x="${mx}" y="${my+4}" text-anchor="middle">${lb}</text></g>`}continue}const[a,b]=g.x!=null?[w2s(g.x,g.a),w2s(g.x,g.b)]:[w2s(g.a,g.y),w2s(g.b,g.y)];s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="var(--guide)"/>`}
  if(drag?.m==='marq'&&drag.r){const[a,b]=w2s(drag.r.x,drag.r.y);s+=`<rect x="${a}" y="${b}" width="${drag.r.w*z}" height="${drag.r.h*z}" fill="rgba(75,156,255,.08)" stroke="var(--sel)"/>`}
  if(pen&&pen.pts.length){const P=pen.pts,f=(x,y)=>w2s(x,y).join(' ');let d='M'+f(P[0].x,P[0].y);for(let i=1;i<P.length;i++){const a=P[i-1],c=P[i];d+=` C${f(a.x+a.ox,a.y+a.oy)} ${f(c.x+c.ix,c.y+c.iy)} ${f(c.x,c.y)}`}
   const l=P[P.length-1];if(drag?.m!=='penh')d+=` C${f(l.x+l.ox,l.y+l.oy)} ${f(mouse.x,mouse.y)} ${f(mouse.x,mouse.y)}`;s+=`<path d="${d}" fill="none" stroke="var(--sel)" stroke-width="1.5"/>`;
@@ -453,10 +461,18 @@ function snapT(){const ts=topSel(),p=ts[0]?par(ts[0]):null,bs=(p?p.children:doc.
 function snapBox(b,T){const th=6/view.z;let bx=null,by=null;
  for(const t of T){for(const tv of[t.x,t.x+t.w/2,t.x+t.w])for(const v of[b.x,b.x+b.w/2,b.x+b.w]){const d=tv-v;if(Math.abs(d)<th&&(!bx||Math.abs(d)<Math.abs(bx.d)))bx={d,v:tv,t}}
   for(const tv of[t.y,t.y+t.h/2,t.y+t.h])for(const v of[b.y,b.y+b.h/2,b.y+b.h]){const d=tv-v;if(Math.abs(d)<th&&(!by||Math.abs(d)<Math.abs(by.d)))by={d,v:tv,t}}}
- const g=[],dx=bx?bx.d:0,dy=by?by.d:0;
+ const sx=spaceSnap(b,T,'x'),sy=spaceSnap(b,T,'y');if(sx){if(!bx||Math.abs(sx.d)<=Math.abs(bx.d))bx=null;else sx.no=1}if(sy){if(!by||Math.abs(sy.d)<=Math.abs(by.d))by=null;else sy.no=1}
+ const g=[],dx=bx?bx.d:sx&&!sx.no?sx.d:0,dy=by?by.d:sy&&!sy.no?sy.d:0;
  if(bx)g.push({x:bx.v,a:Math.min(b.y+dy,bx.t.y),b:Math.max(b.y+dy+b.h,bx.t.y+bx.t.h)});
  if(by)g.push({y:by.v,a:Math.min(b.x+dx,by.t.x),b:Math.max(b.x+dx+b.w,by.t.x+by.t.w)});
+ if(sx&&!sx.no)g.push({seg:'x',s:sx.segs,c:b.y+dy+b.h/2,gap:sx.gap});if(sy&&!sy.no)g.push({seg:'y',s:sy.segs,c:b.x+dx+b.w/2,gap:sy.gap});
  return{dx,dy,g}}
+function spaceSnap(b,T,ax){const th=6/view.z,[p,s,q,r]=ax==='x'?['x','w','y','h']:['y','h','x','w'],row=T.filter(t=>t[q]<b[q]+b[r]&&t[q]+t[r]>b[q]);let best=null;const tr=(pos,segs,gap)=>{const d=pos-b[p];if(Math.abs(d)<th&&(!best||Math.abs(d)<Math.abs(best.d)))best={d,segs,gap}};
+ for(const A of row)for(const B of row){if(A===B)continue;const gap=B[p]-(A[p]+A[s]);if(gap<=.5)continue;
+  tr(B[p]+B[s]+gap,[[A[p]+A[s],B[p]],[B[p]+B[s],B[p]+B[s]+gap]],gap);
+  tr(A[p]-gap-b[s],[[A[p]-gap,A[p]],[A[p]+A[s],B[p]]],gap);
+  const g2=(gap-b[s])/2;if(g2>.5)tr(A[p]+A[s]+g2,[[A[p]+A[s],A[p]+A[s]+g2],[B[p]-g2,B[p]]],g2)}
+ return best}
 
 function cap(e){try{V.setPointerCapture(e.pointerId)}catch(_){}}
 function startMove(e,p,n){drag={m:'move',p0:p,ax:0,ay:0,b0:selBox(),moved:false,n,alt:e.altKey,sh:e.shiftKey}}
@@ -470,6 +486,7 @@ V.addEventListener('pointerdown',e=>{if(e.target===TED)return;if(pickK)return pi
  const h=e.target.closest('[data-h]');
  if(h&&!pen){const k=h.dataset.h;
   if(k==='fl'){const f=IDX.get(h.dataset.f)?.n;if(f&&!f.lock){if(e.shiftKey)toggleSel(f);else if(!sel.includes(f))setSel([f]);startMove(e,p,f)}return}
+  if(k.startsWith('cr')){const n=topSel()[0];if(n)drag={m:'cr',i:+k.slice(2),n,t0:Date.now(),touch:e.pointerType==='touch',alt:e.altKey,moved:false};return}
   if(k==='rot')return startRot(p);
   if(/^[aios]\d/.test(k)){const n=IDX.get(editPath).n;let i=+k.slice(1),t=k[0];if(t==='s'){i=splitSeg(n,i,p);t='a'}else if(t==='a'&&e.altKey){const P=ptAt(n,i).p;P.ox=P.oy=P.ix=P.iy=0;t='o'}actPt=i;drag={m:'pt',k:t,i,n,pull:t==='o'&&e.altKey,moved:k[0]==='s'};return render()}
   if(/^q\d$/.test(k)){const n=IDX.get(distort).n;drag={m:'dq',i:+k[1],n,o:clone(n.dq)};return}
@@ -501,6 +518,9 @@ V.addEventListener('pointermove',e=>{const p=toW(e);mouse=p;const d=drag;
   const cand=d.ctx?d.ctx.children:scope&&IDX.get(scope)?IDX.get(scope).n.children:doc.nodes;const hs=cand.filter(n=>{if(n.hid||n.lock)return false;const b=aabb(n);return b&&touch(b,r)});
   sel=[...new Set([...d.base,...hs])];return render()}
  case'new':return doNew(p,e);
+ case'cr':{const n=d.n,q=w2l(n,p),pg=/poly|star/.test(n.type),mx=Math.min(n.w,n.h)/2;if(!d.moved){d.moved=true;d.single=!pg&&(d.alt||e.altKey||(d.touch&&Date.now()-d.t0>450))}let r;
+  if(pg)r=q.y;else{const C=[[0,0,1,1],[n.w,0,-1,1],[n.w,n.h,-1,-1],[0,n.h,1,-1]][d.i];r=((q.x-C[0])*C[2]+(q.y-C[1])*C[3])/2}r=clamp(r,0,mx);r=e.shiftKey?Math.round(r/4)*4:Math.round(r);
+  if(d.single){const R=[...rcOf(n)];R[d.i]=r;if(R.every(x=>x===R[0])){n.r=r;delete n.rc}else{n.rc=R;n.r=R[0]}}else{n.r=r;delete n.rc}d.r=r;return render()}
  case'pencil':{const P=d.pts,l=P[P.length-1];if(Math.hypot(p.x-l.x,p.y-l.y)*view.z>=2){P.push(p);drawUI()}return}
  case'penh':{const a=pen.pts[d.i];a.ox=p.x-a.x;a.oy=p.y-a.y;a.ix=-a.ox;a.iy=-a.oy;return drawUI()}
  case'dq':{const q=w2l(d.n,p),o=d.o,i=d.i,dq=clone(o);if(e.shiftKey){const dx=q.x-o[i][0],dy=q.y-o[i][1];if(Math.abs(dx)>=Math.abs(dy)){const j=[1,0,3,2][i];dq[i][0]+=dx;dq[j][0]-=dx}else{const j=[3,2,1,0][i];dq[i][1]+=dy;dq[j][1]-=dy}}else dq[i]=[q.x,q.y];d.n.dq=dq;d.moved=true;return render()}
@@ -511,6 +531,7 @@ function endDrag(e){const d=drag;if(!d)return;drag=null;V.classList.remove('dn')
  else if((d.m==='rs'||d.m==='rot')&&d.moved)commit();
  else if(d.m==='new')endNew(d);
  else if(d.m==='pencil')endPencil(d);
+ else if(d.m==='cr'&&d.moved)commit();
  else if(d.m==='dq'&&d.moved){WC.clear();commit()}
  else if(d.m==='pt'&&d.moved){normPath(d.n);commit()}
  render()}
@@ -522,7 +543,7 @@ function reparent(){for(const n of topSel()){const p=par(n);if(p&&(p.type!=='fra
 function startRs(k){const[hx,hy]=k.split(',').map(Number),ts=topSel();if(ts.length===1&&ts[0].type==='text'&&hy&&!ts[0].fixH){ts[0].fixW=true;ts[0].fixH=true;ts[0].hh=ts[0].h}drag={m:'rs',hx,hy,ts,one:ts.length===1&&!isGrp(ts[0])&&!ts[0].dq?ts[0]:null,o:ts.map(clone),fb:selBox(),moved:false}}
 function startRot(p){const ts=topSel(),one=ts.length===1&&!isGrp(ts[0])?ts[0]:null,b=one||selBox(),c={x:b.x+b.w/2,y:b.y+b.h/2};drag={m:'rot',ts,one,c,a0:Math.atan2(p.y-c.y,p.x-c.x),o:ts.map(clone),moved:false}}
 function restore(d){d.ts.forEach((n,i)=>{for(const k in n)delete n[k];Object.assign(n,clone(d.o[i]))});reindex()}
-function doRs(p,e){const d=drag;d.moved=true;restore(d);const{hx,hy}=d,sh=e.shiftKey;
+function doRs(p,e){const d=drag;d.moved=true;restore(d);const{hx,hy}=d,sh=e.shiftKey!==!!(d.one?d.o[0].lar:d.ts.every(n=>n.lar));
  if(d.one){const n=d.one,o=d.o[0],c={x:o.x+o.w/2,y:o.y+o.h/2},t=(o.rot||0)*Math.PI/180,cs=Math.cos(t),sn=Math.sin(t),qx=p.x-c.x,qy=p.y-c.y,lx=qx*cs+qy*sn,ly=-qx*sn+qy*cs,ax=-hx*o.w/2,ay=-hy*o.h/2;
   let w=o.w,h=o.h;if(hx)w=Math.max(1,(lx-ax)*hx);if(hy)h=Math.max(1,(ly-ay)*hy);
   if(sh&&o.w&&o.h){const k=hx&&hy?Math.max(w/o.w,h/o.h):hx?w/o.w:h/o.h;w=o.w*k;h=o.h*k}
@@ -618,12 +639,12 @@ const AL=[['l','<path d="M4 4v16"/><rect x="7" y="7" width="12" height="4"/><rec
 const BL=[['normal','Normal','Обычный'],['darken','Darken','Замена тёмным'],['multiply','Multiply','Умножение'],['color-burn','Color burn','Затемнение основы'],['lighten','Lighten','Замена светлым'],['screen','Screen','Экран'],['color-dodge','Color dodge','Осветление основы'],['overlay','Overlay','Перекрытие'],['soft-light','Soft light','Мягкий свет'],['hard-light','Hard light','Жёсткий свет'],['difference','Difference','Разница'],['exclusion','Exclusion','Исключение'],['hue','Hue','Цветовой тон'],['saturation','Saturation','Насыщенность'],['color','Color','Цветность'],['luminosity','Luminosity','Яркость']];
 const TA=[['left','<path d="M4 6h16M4 10h10M4 14h16M4 18h10"/>'],['center','<path d="M4 6h16M7 10h10M4 14h16M7 18h10"/>'],['right','<path d="M4 6h16M10 10h10M4 14h16M10 18h10"/>']];
 const FL=()=>leaves(topSel()).filter(n=>n.type!=='image'),STK=()=>leaves(topSel()),TX=()=>leaves(topSel()).filter(n=>n.type==='text');
-const nf=(k,l)=>`<label class="nf"><span>${l}</span><input type="number" step="any" data-k="${k}"></label>`;
+const nf=(k,l)=>`<label class="nf"><span>${l}</span><input type="text" inputmode="decimal" autocomplete="off" class="num" data-k="${k}"></label>`;
 let inspKey='',gsel=0,gdrag=null;
 const BICO={union:'<path d="M4 4h10v6h6v10H10v-6H4z"/>',subtract:'<path d="M4 4h10v6h-4v4H4z"/><path d="M10 10h10v10H10z" stroke-dasharray="2 2"/>',intersect:'<rect x="4" y="4" width="10" height="10" stroke-dasharray="2 2"/><rect x="10" y="10" width="10" height="10" stroke-dasharray="2 2"/><path d="M10 10h4v4h-4z" fill="currentColor"/>',exclude:'<path d="M4 4h10v6h-4v4H4zM14 10h6v10H10v-6h4z"/>'},MASKI='<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 010 16z" fill="currentColor"/>',FLATI='<path d="M12 4l8 4-8 4-8-4zM4 12l8 4 8-4M4 16l8 4 8-4"/>';
 let rcUI=false,trange=null,pickK=null;
 const TXK={b:'fw',i:'it',u:'ud',s:'sk'};
-const fxf=(i,k,l,t='')=>`<label class="nf"${t?` title="${t}"`:''}><span>${l}</span><input type="number" step="any" data-fx="${i}" data-fk="${k}"></label>`;
+const fxf=(i,k,l,t='')=>`<label class="nf"${t?` title="${t}"`:''}><span>${l}</span><input type="text" inputmode="decimal" autocomplete="off" class="num" data-fx="${i}" data-fk="${k}"></label>`;
 const rvr=(k,l,mn=0,mx=100)=>`<div class="rv"><input type="range" min="${mn}" max="${mx}" data-k="${k}"><span>${l}</span><output data-o="${k}"></output></div>`;
 const PICK='<svg viewBox="0 0 24 24"><path d="M15 4.5l4.5 4.5M13.5 6l4.5 4.5M17 3l4 4-3 3-4-4zM14 8l-8.5 8.5L4 20l3.5-1.5L16 10"/></svg>';
 const SY=()=>doc.styles||(doc.styles={c:[],t:[],e:[]});
@@ -646,15 +667,16 @@ function inspHTML(ts){
  if(ts.length>1||one&&(/bool|rect|ellipse|poly|star/.test(one.type)||one.mask))h+=`<div class="seg bo">${['union','subtract','intersect','exclude'].map(o=>`<button data-bo="${o}" title="${BN()[o]}"${one?.type==='bool'&&one.op===o?' class="on"':''}><svg viewBox="0 0 24 24">${BICO[o]}</svg></button>`).join('')}<button data-c="${one?.mask?'unmask':'mask'}" title="${one?.mask?L('Remove mask','Убрать маску'):L('Use as mask','Использовать как маску')}"${one?.mask?' class="on"':''}><svg viewBox="0 0 24 24">${MASKI}</svg></button><button data-c="flatten" title="${L('Flatten','Преобразовать в кривые')}"><svg viewBox="0 0 24 24">${FLATI}</svg></button></div>`;
  h+=`<div class="sec">${fr?L('Frame','Фрейм'):L('Layout','Положение')}</div>`;
  if(fr)h+=`<select data-k="pre"><option value="">${L('Custom size','Свой размер')}</option>${PRE.map((p,i)=>`<option value="${i}">${p[0]} · ${p[1]}×${p[2]}</option>`).join('')}</select>`;
- h+=`<div class="g2">${nf('x','X')}${nf('y','Y')}${nf('w','W')}${nf('h','H')}${rotOk?nf('rot','°'):''}${radOk?`<div class="cr rr">${nf('r','R')}${rcOk?`<button class="gx${rcUI||one?.rc?' on':''}" data-rcx title="${L('Independent corners','Отдельные углы')}">⊞</button>`:''}</div>`:''}</div>`;
+ h+=`<div class="g2">${nf('x','X')}${nf('y','Y')}<div class="wh">${nf('w','W')}<button class="gx lar" data-lar title="${L('Lock aspect ratio','Сохранять пропорции')}"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></svg></button>${nf('h','H')}</div>${rotOk?nf('rot','°'):''}${radOk?`<div class="cr rr">${nf('r','R')}${rcOk?`<button class="gx${rcUI||one?.rc?' on':''}" data-rcx title="${L('Independent corners','Отдельные углы')}">⊞</button>`:''}</div>`:''}</div>`;
  h+=`<div class="seg mir"><button data-c="fliph" title="${L('Mirror horizontally','Отразить по горизонтали')}">↔ ${L('Mirror','Отразить')}</button><button data-c="flipv" title="${L('Mirror vertically','Отразить по вертикали')}">↕ ${L('Mirror','Отразить')}</button></div>`;
+ if(radOk)h+=`<div class="seg ct" title="${L('Corner style','Вид углов')}">${[['round','Round','Скругление'],['bevel','Bevel','Срез'],['smooth','Smooth','Плавный']].map(([v,a,b])=>`<button data-ct="${v}">${L(a,b)}</button>`).join('')}</div>`;
  if(rcOk&&(rcUI||one?.rc))h+=`<div class="g4">${[0,1,2,3].map(i=>nf('r'+i,['↖','↗','↘','↙'][i])).join('')}</div>`;
- const ps=ts.filter(n=>n.type==='poly'||n.type==='star');if(ps.length)h+=`<div class="g2"><label class="nf" title="${L('Points','Вершины')}"><span>✱</span><input type="number" step="1" min="3" max="60" data-k="pc"></label>${ps.some(n=>n.type==='star')?`<label class="nf" title="${L('Inner radius','Внутренний радиус')}"><span>%</span><input type="number" step="any" data-k="ir"></label>`:''}</div>`;
+ const ps=ts.filter(n=>n.type==='poly'||n.type==='star');if(ps.length)h+=`<div class="g2"><label class="nf" title="${L('Points','Вершины')}"><span>✱</span><input type="text" inputmode="decimal" autocomplete="off" class="num" data-k="pc"></label>${ps.some(n=>n.type==='star')?`<label class="nf" title="${L('Inner radius','Внутренний радиус')}"><span>%</span><input type="text" inputmode="decimal" autocomplete="off" class="num" data-k="ir"></label>`:''}</div>`;
  if(fr)h+=`<label class="chk"><input type="checkbox" data-k="clip"> ${L('Clip content','Обрезать содержимое')}</label>`;
  h+=`<div class="sec">${L('Layer','Слой')}</div><div class="rv"><input type="range" min="0" max="100" data-k="op"><span>${L('Opacity','Непрозрачность')}</span><output data-o="op"></output></div><select data-k="bl">${BL.map(b=>`<option value="${b[0]}">${L(b[1],b[2])}</option>`).join('')}</select>`;
  const tp=ts.length===2&&tx.length===1&&ts.some(n=>/path|rect|ellipse|poly|star/.test(n.type));
  if(tx.length)h+=`<div class="sec">${L('Text','Текст')}</div><div class="hint" id="trHint" hidden></div>${tp?`<button data-c="textpath">${L('Put text on path','Текст по контуру')}</button>`:''}${t0.tp?`<div class="g2">${nf('to','↦')}<button data-c="detach">${L('Detach from path','Открепить от контура')}</button></div>`:''}<button type="button" class="fpick" data-v="${esc(t0.ff||'Sans')}" style='font-family:${esc(ffCss(t0.ff))}'><span>${esc(t0.ff||'Sans')}</span><span class="fca">▾</span></button>
-  <div class="g2"><select data-k="fw">${[[100,'Thin','Тонкий'],[300,'Light','Светлый'],[400,'Regular','Обычный'],[500,'Medium','Средний'],[600,'Semibold','Полужирный'],[700,'Bold','Жирный'],[900,'Black','Чёрный']].map(([v,a,b])=>`<option value="${v}">${L(a,b)}</option>`).join('')}</select>${nf('fs','Aa')}<label class="nf" title="${L('Line height','Межстрочный интервал')}"><span>↕</span><input type="number" step="any" data-k="lh"></label><label class="nf" title="${L('Letter spacing','Межбуквенный интервал')}"><span>⇔</span><input type="number" step="any" data-k="ls"></label>
+  <div class="g2"><select data-k="fw">${[[100,'Thin','Тонкий'],[300,'Light','Светлый'],[400,'Regular','Обычный'],[500,'Medium','Средний'],[600,'Semibold','Полужирный'],[700,'Bold','Жирный'],[900,'Black','Чёрный']].map(([v,a,b])=>`<option value="${v}">${L(a,b)}</option>`).join('')}</select>${nf('fs','Aa')}<label class="nf" title="${L('Line height','Межстрочный интервал')}"><span>↕</span><input type="text" inputmode="decimal" autocomplete="off" class="num" data-k="lh"></label><label class="nf" title="${L('Letter spacing','Межбуквенный интервал')}"><span>⇔</span><input type="text" inputmode="decimal" autocomplete="off" class="num" data-k="ls"></label>
   <div class="seg">${TA.map(([k,s])=>`<button data-ta="${k}"><svg viewBox="0 0 24 24">${s}</svg></button>`).join('')}</div><div class="seg">${[['b','<b>B</b>',L('Bold','Жирный')],['i','<i>I</i>',L('Italic','Курсив')],['u','<u>U</u>',L('Underline','Подчёркнутый')],['s','<s>S</s>',L('Strikethrough','Зачёркнутый')]].map(([k,s,t])=>`<button data-tx="${k}" title="${t}">${s}</button>`).join('')}</div>
   <select data-k="tm"><option value="auto">${L('Auto width','Авто ширина')}</option><option value="height">${L('Auto height','Авто высота')}</option><option value="fixed">${L('Fixed size','Фикс. размер')}</option></select><div class="seg">${[['','<path d="M5 7h14M5 12h14M5 17h14"/>',L('No list','Без списка')],['ul','<circle cx="5" cy="7" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="17" r="1"/><path d="M9 7h11M9 12h11M9 17h11"/>',L('Bullets','Маркеры')],['ol','<path d="M4 5h1v4M4 9h2M9 7h11M9 12h11M9 17h11M4 14h2l-2 3h2"/>',L('Numbers','Нумерация')]].map(([k,s,t])=>`<button data-tl="${k}" title="${t}"><svg viewBox="0 0 24 24">${s}</svg></button>`).join('')}</div></div>${styleSel('t',t0.tS)}`;
  if(one?.type==='image'){h+=`<div class="sec">${L('Image','Изображение')}</div><select data-k="fit">${[['stretch','Stretch','Растянуть'],['fill','Fill','Заполнить'],['fit','Fit','Вписать'],['crop','Crop','Обрезать'],['tile','Tile','Плитка']].map(([v,a,b])=>`<option value="${v}">${L(a,b)}</option>`).join('')}</select>`;
@@ -663,13 +685,13 @@ function inspHTML(ts){
   h+=`<button data-c="imgreset">${L('Original size','Исходный размер')}</button>`}
  if(one&&/image|path|rect|ellipse|poly|star|text/.test(one.type)&&!one.tp)h+=`<div class="sec">${L('Distort','Искажение')}</div><div class="g2"><button data-c="distort"${distort===one.id?' class="on"':''}>${L('Move corners','Двигать углы')}</button>${one.dq?`<button data-c="undistort">${L('Reset','Сбросить')}</button>`:''}</div>`;
  if(f0){const ft=ftype(f0.fill);h+=`<div class="sec">${L('Fill','Заливка')}<span class="sb"><button data-pick="fill" title="${L('Pick color','Пипетка')}">${PICK}</button><button data-add="fill" title="${L('Add fill','Добавить заливку')}">+</button></span></div>`;
-  if(f0.fill)h+=`<div class="cr"><select data-k="ft"><option value="solid">${L('Solid','Сплошная')}</option><option value="linear">${L('Linear gradient','Линейный градиент')}</option><option value="radial">${L('Radial gradient','Радиальный градиент')}</option></select><button class="gx" data-rm="fill" title="${L('Remove fill','Убрать заливку')}">−</button></div>`+(ft==='solid'?`<div class="cr"><input type="color" data-k="fill"><input type="text" class="hex" data-k="fillx">${nf('fop','%')}</div>`:`<div class="gb" id="gb"></div><div class="cr"><input type="color" data-k="gc"><input type="text" class="hex" data-k="gcx">${nf('go','%')}<button class="gx" data-gdel title="${L('Remove stop','Удалить точку')}">−</button></div>${ft==='linear'?`<div class="g2">${nf('ga','°')}<button data-grev>${L('Reverse','Развернуть')}</button></div>`:''}`);
-  (f0.fills||[]).forEach((p,i)=>h+=`<div class="cr"><input type="color" data-xf="${i}" data-xk="c"><input type="text" class="hex" data-xf="${i}" data-xk="x"><label class="nf"><span>%</span><input type="number" step="any" data-xf="${i}" data-xk="o"></label><button class="gx" data-xrm="${i}" title="${L('Remove fill','Убрать заливку')}">−</button></div>`);
+  if(f0.fill)h+=`<div class="cr"><select data-k="ft"><option value="solid">${L('Solid','Сплошная')}</option><option value="linear">${L('Linear gradient','Линейный градиент')}</option><option value="radial">${L('Radial gradient','Радиальный градиент')}</option></select><button class="gx" data-rm="fill" title="${L('Remove fill','Убрать заливку')}">−</button></div>`+(ft==='solid'?`<div class="cr"><input type="color" data-k="fill"><input type="text" class="hex" data-k="fillx">${nf('fop','%')}</div><div class="sws" data-swk="fill"></div>`:`<div class="gb" id="gb"></div><div class="cr"><input type="color" data-k="gc"><input type="text" class="hex" data-k="gcx">${nf('go','%')}<button class="gx" data-gdel title="${L('Remove stop','Удалить точку')}">−</button></div>${ft==='linear'?`<div class="g2">${nf('ga','°')}<button data-grev>${L('Reverse','Развернуть')}</button></div>`:''}`);
+  (f0.fills||[]).forEach((p,i)=>h+=`<div class="cr"><input type="color" data-xf="${i}" data-xk="c"><input type="text" class="hex" data-xf="${i}" data-xk="x"><label class="nf"><span>%</span><input type="text" inputmode="decimal" autocomplete="off" class="num" data-xf="${i}" data-xk="o"></label><button class="gx" data-xrm="${i}" title="${L('Remove fill','Убрать заливку')}">−</button></div>`);
   if(f0.fill||(doc.styles?.c||[]).length)h+=styleSel('c',f0.cS)}
  if(s0){const on=s0.stroke&&s0.sw>0,open=s0.type==='path'&&!s0.closed&&!s0.more,ext=s0.strokes||[];h+=`<div class="sec">${L('Stroke','Обводка')}<span class="sb"><button data-pick="stroke" title="${L('Pick color','Пипетка')}">${PICK}</button><button data-add="stroke" title="${L('Add stroke','Добавить обводку')}">+</button></span></div>`;
-  if(on)h+=`<div class="cr"><input type="color" data-k="stroke"><input type="text" class="hex" data-k="strokex">${nf('sw','≡')}<button class="gx" data-rm="stroke" title="${L('Remove stroke','Убрать обводку')}">−</button></div>`;
-  ext.forEach((k,i)=>h+=`<div class="cr"><input type="color" data-xs="${i}" data-xk="c"><input type="text" class="hex" data-xs="${i}" data-xk="x"><label class="nf"><span>≡</span><input type="number" step="any" data-xs="${i}" data-xk="w"></label><button class="gx" data-srm="${i}" title="${L('Remove stroke','Убрать обводку')}">−</button></div>`);
-  if(on||ext.length)h+=`${open?'':`<div class="seg sa" title="${L('Stroke position','Положение обводки')}">${[['i','Inside','Внутри'],['c','Center','По центру'],['o','Outside','Снаружи']].map(([v,a,b])=>`<button data-sa="${v}">${L(a,b)}</button>`).join('')}</div>`}<div class="g2">${nf('sop','%')}<select data-k="dash"><option value="">${L('Solid','Сплошная')}</option><option value="dash">${L('Dashed','Пунктир')}</option><option value="dot">${L('Dotted','Точки')}</option></select><select data-k="cap"><option value="butt">${L('Flat ends','Плоские концы')}</option><option value="round">${L('Round ends','Круглые концы')}</option><option value="square">${L('Square ends','Квадратные концы')}</option></select>${s0.dash?`<label class="nf" title="${L('Dash','Штрих')}"><span>—</span><input type="number" step="any" data-k="dl"></label><label class="nf" title="${L('Gap','Промежуток')}"><span>␣</span><input type="number" step="any" data-k="dg"></label>`:''}<select data-k="join"><option value="miter">${L('Sharp corners','Острые углы')}</option><option value="round">${L('Round corners','Круглые углы')}</option><option value="bevel">${L('Bevel corners','Срезанные углы')}</option></select>${open?`<select data-k="as">${ARR('↤')}</select><select data-k="ae">${ARR('↦')}</select>`:''}</div>`}
+  if(on)h+=`<div class="cr"><input type="color" data-k="stroke"><input type="text" class="hex" data-k="strokex">${nf('sw','≡')}<button class="gx" data-rm="stroke" title="${L('Remove stroke','Убрать обводку')}">−</button></div><div class="sws" data-swk="stroke"></div>`;
+  ext.forEach((k,i)=>h+=`<div class="cr"><input type="color" data-xs="${i}" data-xk="c"><input type="text" class="hex" data-xs="${i}" data-xk="x"><label class="nf"><span>≡</span><input type="text" inputmode="decimal" autocomplete="off" class="num" data-xs="${i}" data-xk="w"></label><button class="gx" data-srm="${i}" title="${L('Remove stroke','Убрать обводку')}">−</button></div>`);
+  if(on||ext.length)h+=`${open?'':`<div class="seg sa" title="${L('Stroke position','Положение обводки')}">${[['i','Inside','Внутри'],['c','Center','По центру'],['o','Outside','Снаружи']].map(([v,a,b])=>`<button data-sa="${v}">${L(a,b)}</button>`).join('')}</div>`}<div class="g2">${nf('sop','%')}<select data-k="dash"><option value="">${L('Solid','Сплошная')}</option><option value="dash">${L('Dashed','Пунктир')}</option><option value="dot">${L('Dotted','Точки')}</option></select><select data-k="cap"><option value="butt">${L('Flat ends','Плоские концы')}</option><option value="round">${L('Round ends','Круглые концы')}</option><option value="square">${L('Square ends','Квадратные концы')}</option></select>${s0.dash?`<label class="nf" title="${L('Dash','Штрих')}"><span>—</span><input type="text" inputmode="decimal" autocomplete="off" class="num" data-k="dl"></label><label class="nf" title="${L('Gap','Промежуток')}"><span>␣</span><input type="text" inputmode="decimal" autocomplete="off" class="num" data-k="dg"></label>`:''}<select data-k="join"><option value="miter">${L('Sharp corners','Острые углы')}</option><option value="round">${L('Round corners','Круглые углы')}</option><option value="bevel">${L('Bevel corners','Срезанные углы')}</option></select>${open?`<select data-k="as">${ARR('↤')}</select><select data-k="ae">${ARR('↦')}</select>`:''}</div>`}
  const F=ts[0].efx||[];h+=`<div class="sec">${L('Effects','Эффекты')}<span class="sb"><button data-add="fx" title="${L('Add effect','Добавить эффект')}">+</button></span></div>`;
  F.forEach((f,i)=>{h+=`<div class="fxr"><div class="cr"><input type="checkbox" data-fx="${i}" data-fk="on" title="${L('Show','Показать')}"><select data-fx="${i}" data-fk="t">${FXT.map(([v,a,b])=>`<option value="${v}">${L(a,b)}</option>`).join('')}</select><button class="gx" data-fxrm="${i}" title="${L('Remove effect','Убрать эффект')}">−</button></div>${f.t==='ds'||f.t==='is'?`<div class="g4">${fxf(i,'x','X')}${fxf(i,'y','Y')}${fxf(i,'b','B',L('Blur','Размытие'))}${fxf(i,'s','S',L('Spread','Расширение'))}</div><div class="cr"><input type="color" data-fx="${i}" data-fk="c"><input type="text" class="hex" data-fx="${i}" data-fk="cx">${fxf(i,'a','%')}</div>`:`<div class="g2">${fxf(i,'b','B',L('Blur','Размытие'))}</div>`}</div>`});
  if(F.length||(doc.styles?.e||[]).length)h+=styleSel('e',ts[0].eS);
@@ -685,6 +707,9 @@ function inspSync(ts){if(!ts.length)return;const one=ts.length===1&&!isGrp(ts[0]
  document.querySelectorAll('#insp [data-ta]').forEach(b=>b.classList.toggle('on',t0?.ta===b.dataset.ta));
  document.querySelectorAll('#insp [data-tx]').forEach(b=>b.classList.toggle('on',!!t0&&(b.dataset.tx==='b'?(t0.fw||400)>=600:!!t0[TXK[b.dataset.tx]])));
  document.querySelectorAll('#insp [data-tl]').forEach(b=>b.classList.toggle('on',!!t0&&(t0.list||'')===b.dataset.tl));
+ document.querySelectorAll('#insp [data-ct]').forEach(b=>b.classList.toggle('on',(ts[0].ct||'round')===b.dataset.ct));
+ document.querySelectorAll('#insp [data-lar]').forEach(b=>b.classList.toggle('on',ts.every(n=>n.lar)));
+ {const C=docColors(),h=C.map(c=>`<button data-sw="${c}" style="background:${c}" title="${c.toUpperCase()}"></button>`).join('');document.querySelectorAll('#insp .sws').forEach(el=>{if(el.dataset.h!==h){el.dataset.h=h;el.innerHTML=h}})}
  document.querySelectorAll('#insp [data-sa]').forEach(b=>b.classList.toggle('on',(s0?.sa||'c')===b.dataset.sa));
  const F=ts[0].efx||[];document.querySelectorAll('#insp [data-fx]').forEach(el=>{if(el===document.activeElement&&el.type!=='checkbox')return;const f=F[+el.dataset.fx];if(!f)return;const k=el.dataset.fk;if(k==='on')el.checked=!f.off;else el.value=k==='cx'?(f.c||'#000000').slice(1).toUpperCase():k==='a'?Math.round((f.a??.25)*100):k==='c'?f.c||'#000000':f[k]??0});
  document.querySelectorAll('#insp [data-xf]').forEach(el=>{if(el===document.activeElement)return;const p=f0?.fills?.[+el.dataset.xf];if(!p)return;const k=el.dataset.xk,c=isG(p.f)?gSort(p.f)[0].c:p.f;el.value=k==='o'?Math.round((p.o??1)*100):k==='x'?c.slice(1).toUpperCase():c});
@@ -696,7 +721,7 @@ function setV(k,v,live){const ts=topSel();if(!ts.length)return;const one=ts.leng
  const UN={fill:'c',fillx:'c',ft:'c',gc:'c',gcx:'c',go:'c',ga:'c',fop:'c',fw:'t',fs:'t',lh:'t',ls:'t'}[k];if(UN&&!rn)(UN==='c'?FL():TX()).forEach(n=>delete n[UN+'S']);
  switch(k){
  case'x':case'y':{v=+v;if(isNaN(v))return;const d=v-(one||selBox())[k];ts.forEach(n=>moveN(n,k==='x'?d:0,k==='y'?d:0));break}
- case'w':case'h':{v=Math.max(1,+v);if(isNaN(v))return;if(one){if(one.type==='text'&&k==='h'){if(!one.fixW)return;one.fixH=true}setBox(one,one.x,one.y,k==='w'?v:one.w,k==='h'?v:one.h)}else{const fb=selBox(),tb={...fb,[k]:v};ts.forEach(n=>scaleN(n,fb,tb,k==='w'?v/fb.w:v/fb.h))}break}
+ case'w':case'h':{v=Math.max(1,+v);if(isNaN(v))return;if(one){if(one.type==='text'&&k==='h'){if(!one.fixW)return;one.fixH=true}{let W=k==='w'?v:one.w,Hh=k==='h'?v:one.h;if(one.lar&&one.w&&one.h){if(k==='w')Hh=one.h*v/one.w;else W=one.w*v/one.h}setBox(one,one.x,one.y,W,Hh)}}else{const fb=selBox(),tb={...fb,[k]:v};ts.forEach(n=>scaleN(n,fb,tb,k==='w'?v/fb.w:v/fb.h))}break}
  case'pre':{const p=PRE[+v];if(v===''||!p||!one)return;one.w=p[1];one.h=p[2];if(!one.name||/^(Frame|Фрейм) \d+$/.test(one.name)||PRE.some(q=>q[0]===one.name))one.name=p[0];break}
  case'rot':ts.forEach(n=>{if(!isGrp(n)&&n.type!=='frame')n.rot=nrm(+v||0)});break;
  case'r':ts.forEach(n=>{if(/rect|frame|image|poly|star|path/.test(n.type)){n.r=Math.max(0,+v||0);delete n.rc}});break;
@@ -755,7 +780,7 @@ function setRow(el,live){const v=el.type==='checkbox'?el.checked:el.value,d=el.d
  if(live)render();else commit()}
 const IN=$('insp');
 IN.addEventListener('input',e=>{const el=e.target;if(el.dataset.k&&(el.type==='color'||el.type==='range'))setV(el.dataset.k,el.value,1);else if(el.type==='color')setRow(el,1)});
-IN.addEventListener('change',e=>{const el=e.target;if(el.dataset.k)setV(el.dataset.k,el.type==='checkbox'?el.checked:el.value,0);else setRow(el,0)});
+IN.addEventListener('change',e=>{const el=e.target;if(el.matches?.('input.num')&&!numFix(el))return;if(el.dataset.k)setV(el.dataset.k,el.type==='checkbox'?el.checked:el.value,0);else setRow(el,0)});
 IN.addEventListener('keydown',e=>{if(e.target.closest('input,select')){e.stopPropagation();if(e.key==='Enter')e.target.blur()}});
 IN.addEventListener('mousedown',e=>{if(editing&&e.target.closest('[data-tx]'))e.preventDefault()});
 IN.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
@@ -775,6 +800,9 @@ IN.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
  if(d.srm!=null){STK().forEach(n=>n.strokes?.splice(+d.srm,1));return commit()}
  if(d.fxrm!=null){topSel().forEach(n=>{n.efx?.splice(+d.fxrm,1);delete n.eS});return commit()}
  if(d.exrm!=null){topSel().forEach(n=>n.ex?.splice(+d.exrm,1));return commit()}
+ if(d.ct){topSel().forEach(n=>{if(d.ct==='round')delete n.ct;else n.ct=d.ct});return commit()}
+ if(d.lar!=null){const on=!topSel().every(n=>n.lar);topSel().forEach(n=>{if(on)n.lar=true;else delete n.lar});return commit()}
+ if(d.sw){const k=b.closest('.sws')?.dataset.swk;if(k)setV(k,d.sw);return}
  if(d.sa){STK().forEach(n=>{if(d.sa==='c')delete n.sa;else n.sa=d.sa});return commit()}
  if(d.pick)return startPick(d.pick);
  if(d.tx)return textToggle(d.tx);
@@ -881,7 +909,7 @@ document.addEventListener('keydown',e=>{if(inField())return;const k=e.key,K=k.to
  if(k==='?')return openKeys();
  if(e.shiftKey&&K==='p')return setTool('pencil');
  if(e.shiftKey&&K==='h')return flip(1);if(e.shiftKey&&K==='v')return flip(0);
- const st=e.shiftKey?10:1,A={ArrowLeft:[-st,0],ArrowRight:[st,0],ArrowUp:[0,-st],ArrowDown:[0,st]}[k];if(A&&sel.length){e.preventDefault();return nudge(...A)}
+ const st=e.shiftKey?8:1,A={ArrowLeft:[-st,0],ArrowRight:[st,0],ArrowUp:[0,-st],ArrowDown:[0,st]}[k];if(A&&sel.length){e.preventDefault();return nudge(...A)}
  if(k==='Delete'||k==='Backspace'){e.preventDefault();return del()}
  if(k==='Escape'){if(distort)return endDistort();if(pen)return endPen();if(editPath)return exitPath();if(scope){const s=IDX.get(scope)?.n;scope=null;return setSel(s?[s]:[])}if(tool!=='move')return setTool('move');return setSel([])}
  if(k==='Enter'){if(distort)return endDistort();if(pen)return endPen();if(editPath)return exitPath();const n=sel[0];if(!n)return;if(e.shiftKey){const p=par(n);if(p){if(scope===p.id)scope=null;setSel([p])}return}
@@ -906,9 +934,9 @@ function bbS(S){return union(S.filter(s=>s.pts&&s.pts.length).map(s=>bbP(s.pts,s
 function ptAt(n,gi){let k=gi;for(const s of subs(n)){if(k<s.pts.length)return{s,j:k,p:s.pts[k]};k-=s.pts.length}return null}
 function shapePts(n){const w=n.w,h=n.h;let P;
  if(n.type==='ellipse'){const rx=w/2,ry=h/2,kx=rx*.5523,ky=ry*.5523;P=[[rx,0,-kx,0,kx,0],[w,ry,0,-ky,0,ky],[rx,h,kx,0,-kx,0],[0,ry,0,ky,0,-ky]]}
- else if(n.type==='poly'||n.type==='star'){const k=clamp(Math.round(n.pc||5),3,60),st=n.type==='star',N=st?k*2:k,ir=clamp(n.ir??.38,.01,1);P=[];for(let i=0;i<N;i++){const t=-Math.PI/2+i*2*Math.PI/N,r=st&&i%2?ir:1;P.push([w/2+Math.cos(t)*w/2*r,h/2+Math.sin(t)*h/2*r])}if(n.r>0)return roundPts(P.map(([x,y])=>({x,y,ix:0,iy:0,ox:0,oy:0})),true,n.r)}
+ else if(n.type==='poly'||n.type==='star'){const k=clamp(Math.round(n.pc||5),3,60),st=n.type==='star',N=st?k*2:k,ir=clamp(n.ir??.38,.01,1);P=[];for(let i=0;i<N;i++){const t=-Math.PI/2+i*2*Math.PI/N,r=st&&i%2?ir:1;P.push([w/2+Math.cos(t)*w/2*r,h/2+Math.sin(t)*h/2*r])}if(n.r>0)return roundPts(P.map(([x,y])=>({x,y,ix:0,iy:0,ox:0,oy:0})),true,n.r,n.ct)}
  else if(n.type==='text')P=[[0,0],[w,0],[w,h],[0,h]];
- else return rectPts(w,h,rcOf(n).map(v=>Math.max(0,Math.min(v||0,w/2,h/2))));
+ else return rectPts(w,h,rcOf(n).map(v=>Math.max(0,Math.min(v||0,w/2,h/2))),n.ct);
  return P.map(([x,y,ix=0,iy=0,ox=0,oy=0])=>({x,y,ix,iy,ox,oy}))}
 
 const gX=(a,b)=>a.x*b.y-a.y*b.x,gS=(a,b)=>({x:a.x-b.x,y:a.y-b.y}),gL=(a,b,t)=>({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t}),gK=p=>Math.round(p.x*1e5)+','+Math.round(p.y*1e5);
@@ -1186,13 +1214,13 @@ function gradDef(f,id){const S=gSort(f).map(s=>`<stop offset="${r2(s.o)}" stop-c
  const t=(f.a||0)*Math.PI/180,c=Math.cos(t)/2,s=Math.sin(t)/2;return`<linearGradient id="${id}" x1="${r2(.5-c)}" y1="${r2(.5-s)}" x2="${r2(.5+c)}" y2="${r2(.5+s)}">${S}</linearGradient>`}
 function gdef(n){return isG(n.fill)?gradDef(n.fill,'gf'+n.id):''}
 const rcOf=n=>n.rc||[n.r||0,n.r||0,n.r||0,n.r||0];
-function rectPts(w,h,R){const P=[],K=.5523,add=(x,y,ix=0,iy=0,ox=0,oy=0)=>P.push({x,y,ix,iy,ox,oy}),[a,b,c,d]=R;
- if(a){add(0,a,0,0,0,-a*K);add(a,0,-a*K,0,0,0)}else add(0,0);
- if(b){add(w-b,0,0,0,b*K,0);add(w,b,0,-b*K,0,0)}else add(w,0);
- if(c){add(w,h-c,0,0,0,c*K);add(w-c,h,c*K,0,0,0)}else add(w,h);
- if(d){add(d,h,0,0,-d*K,0);add(0,h-d,0,d*K,0,0)}else add(0,h);
+function rectPts(w,h,R,ct){const P=[],M=Math.min(w,h)/2,add=(x,y,ix=0,iy=0,ox=0,oy=0)=>P.push({x,y,ix,iy,ox,oy}),D=v=>ct==='smooth'?Math.min(v*1.35,M):v,Kf=v=>ct==='bevel'?0:ct==='smooth'?D(v)*.6:v*.5523,[a,b,c,d]=R.map(v=>v||0);
+ if(a){const t=D(a),k=Kf(a);add(0,t,0,0,0,-k);add(t,0,-k,0,0,0)}else add(0,0);
+ if(b){const t=D(b),k=Kf(b);add(w-t,0,0,0,k,0);add(w,t,0,-k,0,0)}else add(w,0);
+ if(c){const t=D(c),k=Kf(c);add(w,h-t,0,0,0,k);add(w-t,h,k,0,0,0)}else add(w,h);
+ if(d){const t=D(d),k=Kf(d);add(t,h,0,0,-k,0);add(0,h-t,0,k,0,0)}else add(0,h);
  return P}
-function rshape(n,at){const R=rcOf(n).map(v=>Math.max(0,Math.min(v||0,n.w/2,n.h/2)));if(R.every(v=>v===R[0]))return`<rect x="${r2(n.x)}" y="${r2(n.y)}" width="${r2(n.w)}" height="${r2(n.h)}"${R[0]?` rx="${r2(R[0])}"`:''}${at}/>`;return`<path d="${subsD([{pts:rectPts(n.w,n.h,R),closed:true}],n.x,n.y)}"${at}/>`}
+function rshape(n,at){const R=rcOf(n).map(v=>Math.max(0,Math.min(v||0,n.w/2,n.h/2)));if(R.every(v=>v===R[0])&&(!R[0]||!n.ct||n.ct==='round'))return`<rect x="${r2(n.x)}" y="${r2(n.y)}" width="${r2(n.w)}" height="${r2(n.h)}"${R[0]?` rx="${r2(R[0])}"`:''}${at}/>`;return`<path d="${subsD([{pts:rectPts(n.w,n.h,R,n.ct),closed:true}],n.x,n.y)}"${at}/>`}
 const shD=n=>subsD([{pts:shapePts(n),closed:true}],n.x,n.y);
 const fillsOf=n=>[n.fill?{f:n.fill,o:n.fop}:null,...(n.fills||[]).map(p=>p.f?{f:p.f,o:p.o}:null)].filter(Boolean);
 const strokesOf=n=>[n.stroke&&n.sw>0?{c:n.stroke,w:n.sw,o:n.sop}:null,...(n.strokes||[]).filter(s=>s.c&&s.w>0)].filter(Boolean);
@@ -1279,7 +1307,7 @@ async function gAct(a,v){if(a==='ok')return gRes?.($('gName').value.trim());if(a
 /* ---------- shortcuts ---------- */
 const MOD=/Mac|iP/.test(navigator.platform)?'⌘':'Ctrl';
 function openKeys(){const K=[[L('Tools','Инструменты'),[['V',L('Move','Выбор')],['H, Space',L('Hand (pan)','Рука')],['F, A',L('Frame','Фрейм')],['R',L('Rectangle','Прямоугольник')],['O',L('Ellipse','Эллипс')],['L',L('Line','Линия')],['P',L('Pen','Перо')],['Shift P',L('Pencil','Карандаш')],['T',L('Text','Текст')],['/','Cocoa Helper'],['?',L('This list','Этот список')]]],
- [L('Edit','Правка'),[[MOD+' Z',L('Undo','Отменить')],[MOD+' Shift Z, '+MOD+' Y',L('Redo','Повторить')],[MOD+' C / X / V',L('Copy / cut / paste','Копировать / вырезать / вставить')],[MOD+' D',L('Duplicate','Дублировать')],['Delete',L('Delete','Удалить')],[MOD+' A',L('Select all','Выделить всё')],[L('Alt + drag','Alt + перетаскивание'),L('Duplicate while moving','Копия при перемещении')],[L('Arrows','Стрелки'),L('Nudge (Shift: 10 px)','Сдвиг (Shift: 10 px)')]]],
+ [L('Edit','Правка'),[[MOD+' Z',L('Undo','Отменить')],[MOD+' Shift Z, '+MOD+' Y',L('Redo','Повторить')],[MOD+' C / X / V',L('Copy / cut / paste','Копировать / вырезать / вставить')],[MOD+' D',L('Duplicate','Дублировать')],['Delete',L('Delete','Удалить')],[MOD+' A',L('Select all','Выделить всё')],[L('Alt + drag','Alt + перетаскивание'),L('Duplicate while moving','Копия при перемещении')],[L('Arrows','Стрелки'),L('Nudge (Shift: 8 px)','Сдвиг (Shift: 8 px)')]]],
  [L('Object','Объект'),[[MOD+' G',L('Group','Сгруппировать')],[MOD+' Shift G',L('Ungroup','Разгруппировать')],[MOD+' Alt M',L('Use as mask','Маска')],[MOD+' E',L('Flatten','В кривые')],[MOD+' ] / [',L('Forward / backward','Выше / ниже')],[MOD+' Shift ] / [',L('Front / back','Наверх / вниз')],['Shift H / V',L('Flip','Отразить')],['Enter',L('Edit points, text or enter group','Точки, текст или вход в группу')],['Shift Enter',L('Select parent','Выделить родителя')],['Esc',L('Done / deselect','Готово / снять выделение')]]],
  [L('Text','Текст'),[[MOD+' B',L('Bold','Жирный')],[MOD+' I',L('Italic','Курсив')],[MOD+' U',L('Underline','Подчёркнутый')],[L('Select letters, then style them','Выделите буквы и меняйте их стиль'),'']]],
  [L('View','Вид'),[[MOD+' + / −',L('Zoom in / out','Приблизить / отдалить')],[MOD+L(' + wheel',' + колесо'),L('Zoom','Масштаб')],['Shift 1',L('Zoom to fit','Показать всё')],['Shift 2',L('Zoom to selection','Показать выделенное')],['Shift 0, '+MOD+' 0','100%']]],
@@ -1446,15 +1474,15 @@ function endPencil(d){let P=d.pts;if(P.length<2)return render();P=rdp(P,1.2/view
 
 $('laySearch').addEventListener('input',()=>layRender());$('laySearch').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape'){e.target.value='';layRender();e.target.blur()}});
 /* ---------- edge rounding ---------- */
-function roundPts(P,closed,r){if(!(r>0)||P.length<3)return P;const N=P.length,out=[];
+function roundPts(P,closed,r,ct){if(!(r>0)||P.length<3)return P;const N=P.length,out=[];
  for(let i=0;i<N;i++){const V0=P[i],a=P[(i-1+N)%N],b=P[(i+1)%N],end=!closed&&(i===0||i===N-1);
   if(end||V0.ix||V0.iy||V0.ox||V0.oy){out.push({...V0});continue}
   const ax=a.x-V0.x,ay=a.y-V0.y,bx=b.x-V0.x,by=b.y-V0.y,l1=Math.hypot(ax,ay),l2=Math.hypot(bx,by);if(l1<1e-6||l2<1e-6){out.push({...V0});continue}
   const ux=ax/l1,uy=ay/l1,vx=bx/l2,vy=by/l2,th=Math.acos(clamp(ux*vx+uy*vy,-1,1));if(th>Math.PI-1e-3||th<1e-3){out.push({...V0});continue}
-  const d=Math.min(r/Math.tan(th/2),l1/2,l2/2),re=d*Math.tan(th/2),hk=4/3*Math.tan((Math.PI-th)/4)*re;
+  let d=Math.min(r/Math.tan(th/2),l1/2,l2/2);const re=d*Math.tan(th/2);let hk=4/3*Math.tan((Math.PI-th)/4)*re;if(ct==='bevel')hk=0;else if(ct==='smooth'){const d2=Math.min(d*1.35,l1/2,l2/2);hk*=d2/d*1.1;d=d2}
   out.push({x:V0.x+ux*d,y:V0.y+uy*d,ix:0,iy:0,ox:-ux*hk,oy:-uy*hk},{x:V0.x+vx*d,y:V0.y+vy*d,ix:-vx*hk,iy:-vy*hk,ox:0,oy:0})}
  return out}
-const rsubs=n=>n.r>0?subs(n).map(s=>({...s,pts:roundPts(s.pts||[],s.closed,n.r)})):subs(n);
+const rsubs=n=>n.r>0?subs(n).map(s=>({...s,pts:roundPts(s.pts||[],s.closed,n.r,n.ct)})):subs(n);
 
 /* ---------- touch & small screens ---------- */
 const coarse=()=>matchMedia('(pointer:coarse)').matches,phone=()=>matchMedia('(max-width:720px)').matches,BC=document.body.classList;
@@ -1479,7 +1507,7 @@ V.addEventListener('pointerdown',e=>{if(e.pointerType==='pen')penSeen=true;if(e.
  if(PT.size>=2){e.stopImmediatePropagation();lp0=null;abortDrag();if(editing)TED.blur();if(PT.size===2){const[a,b]=[...PT.values()],r=V.getBoundingClientRect();G={d:Math.hypot(a.x-b.x,a.y-b.y)||1,c:{x:(a.x+b.x)/2-r.left,y:(a.y+b.y)/2-r.top},v:{...view}}}return}
  if(penSeen&&tool!=='move'&&tool!=='hand'&&e.target!==TED){e.stopImmediatePropagation();closeMenus();cap(e);drag={m:'pan',sx:e.clientX,sy:e.clientY,vx:view.x,vy:view.y};return}
  lp0={x:e.clientX,y:e.clientY};clearTimeout(lpT);
- if(tool==='move'&&e.target!==TED)lpT=setTimeout(()=>{if(PT.size!==1||!lp0)return;abortDrag();ctxT=Date.now();openCtx(lp0.x,lp0.y,1);lp0=null},500)},{capture:true});
+ if(tool==='move'&&e.target!==TED&&!e.target.closest?.('[data-h]'))lpT=setTimeout(()=>{if(PT.size!==1||!lp0)return;abortDrag();ctxT=Date.now();openCtx(lp0.x,lp0.y,1);lp0=null},500)},{capture:true});
 V.addEventListener('pointermove',e=>{if(e.pointerType!=='touch'||!PT.has(e.pointerId))return;PT.set(e.pointerId,{x:e.clientX,y:e.clientY});
  if(lp0&&Math.hypot(e.clientX-lp0.x,e.clientY-lp0.y)>8){clearTimeout(lpT);lp0=null}
  if(G&&PT.size>=2){e.stopImmediatePropagation();const[a,b]=[...PT.values()],r=V.getBoundingClientRect(),d=Math.hypot(a.x-b.x,a.y-b.y),c={x:(a.x+b.x)/2-r.left,y:(a.y+b.y)/2-r.top},z=clamp(G.v.z*d/G.d,.02,256),wx=(G.c.x-G.v.x)/G.v.z,wy=(G.c.y-G.v.y)/G.v.z;view.z=z;view.x=c.x-wx*z;view.y=c.y-wy*z;viewUpd()}},{capture:true});
@@ -1496,7 +1524,7 @@ function ctxItems(){const ts=topSel(),n=ts.length,one=n===1?ts[0]:null,I=[],a=(c
  a('front','Bring to front','На передний план');a('fwd','Bring forward','Выше');a('bwd','Send backward','Ниже');a('back','Send to back','На задний план');hr();
  if(n>1){a('group','Group','Сгруппировать');a('mask','Use as mask','Использовать как маску');a('union','Union','Объединение');a('subtract','Subtract','Вычитание');a('intersect','Intersect','Пересечение');hr()}
  if(one&&isCont(one))a('ungroup','Ungroup','Разгруппировать');if(one?.mask)a('unmask','Remove mask','Убрать маску');
- a('fliph','Mirror horizontally','Отразить по горизонтали');a('flipv','Mirror vertically','Отразить по вертикали');a('flatten','Flatten','Преобразовать в кривые');hr();a('exlayer','Export','Экспорт');return I}
+ a('samefill','Select same fill','Выделить с той же заливкой');if(one?.type==='text')a('samefont','Select same font','Выделить с тем же шрифтом');hr();a('fliph','Mirror horizontally','Отразить по горизонтали');a('flipv','Mirror vertically','Отразить по вертикали');a('flatten','Flatten','Преобразовать в кривые');hr();a('exlayer','Export','Экспорт');return I}
 function openCtx(x,y,touch,node){if(node!==undefined){if(node&&!sel.includes(node))setSel([node])}else{const ne=document.elementFromPoint(x,y)?.closest?.('#scene [data-id]'),n=ne&&pick(ne.dataset.id,false);if(n&&!sel.includes(n))setSel([n])}
  const c=$('ctx');c.innerHTML=ctxItems().map(i=>i?`<button data-c="${i[0]}">${esc(i[1])}</button>`:'<hr>').join('').replace(/^(<hr>)+|(<hr>)+$/g,'');c.hidden=false;const r=c.getBoundingClientRect();c.style.left=clamp(x,8,innerWidth-r.width-8)+'px';c.style.top=clamp(touch?y-r.height/2:y,8,innerHeight-r.height-8)+'px';if(touch&&navigator.vibrate)try{navigator.vibrate(10)}catch(_){}}
 V.addEventListener('contextmenu',e=>{e.preventDefault();if(Date.now()-ctxT<900)return;abortDrag();lp0=null;openCtx(e.clientX,e.clientY,e.pointerType==='touch')});
@@ -1563,6 +1591,23 @@ ST.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape')stHide
 Object.assign(CMD,{start:startShow,install:doInstall});
 setTimeout(()=>{if(!nostart())startShow()},350);
 
+function calc(str,cur){let t=String(str).trim().replace(/,/g,'.').replace(/×/g,'*').replace(/÷/g,'/');if(!t)return NaN;t=t.replace(/(\d+(?:\.\d+)?)%/g,`(${cur}*$1/100)`);if(!/^[\d\s.+\-*/()]+$/.test(t))return NaN;if(/^[+*/]/.test(t))t=cur+t;try{const v=Function('"use strict";return('+t+')')();return isFinite(v)?v:NaN}catch(e){return NaN}}
+function numFix(el){const v0=numv(el.dataset.v0,0),v=calc(el.value,v0);if(isNaN(v)){el.value=el.dataset.v0??'';return false}el.value=r2(v);el.dataset.v0=el.value;return true}
+IN.addEventListener('focusin',e=>{if(e.target.matches?.('input.num'))e.target.dataset.v0=e.target.value});
+IN.addEventListener('keydown',e=>{const el=e.target;if(!el.matches?.('input.num')||!/^Arrow(Up|Down)$/.test(e.key))return;e.preventDefault();const k=el.dataset.k||el.dataset.fk||el.dataset.xk,st=(k==='lh'?.01:1)*(e.shiftKey?10:1);el.value=r2(numv(el.value,0)+(e.key==='ArrowUp'?st:-st));el.dataset.v0=el.value;el.dispatchEvent(new Event('change',{bubbles:true}))});
+let scrub=null;
+IN.addEventListener('pointerdown',e=>{const sp=e.target.closest('.nf>span');if(!sp)return;const inp=sp.parentNode.querySelector('input');if(!inp)return;e.preventDefault();try{sp.setPointerCapture(e.pointerId)}catch(_){}scrub={inp,x0:e.clientX,v0:numv(inp.value,0),moved:false}});
+window.addEventListener('pointermove',e=>{const c=scrub;if(!c)return;const dx=e.clientX-c.x0;if(!c.moved&&Math.abs(dx)<3)return;c.moved=true;const k=c.inp.dataset.k||c.inp.dataset.fk||c.inp.dataset.xk,st=k==='lh'?.01:1,v=r2(c.v0+Math.round(dx/2)*st*(e.shiftKey?10:1));c.inp.value=v;if(c.inp.dataset.k)setV(c.inp.dataset.k,v,1);else setRow(c.inp,1)});
+window.addEventListener('pointerup',()=>{const c=scrub;scrub=null;if(c?.moved)commit();else if(c)c.inp.focus()});
+let SWC=null,SWL=[];
+function docColors(){if(SWC===last)return SWL;SWC=last;const m=new Map(),add=c=>{if(typeof c==='string'&&/^#[0-9a-f]{6}$/i.test(c)){c=c.toLowerCase();m.set(c,(m.get(c)||0)+1)}};
+ walk(n=>{if(isG(n.fill))n.fill.s.forEach(x=>add(x.c));else add(n.fill);(n.fills||[]).forEach(p=>add(p.f));if(n.sw>0)add(n.stroke);(n.strokes||[]).forEach(x=>add(x.c));(n.runs||[]).forEach(r=>add(r.k.fill));(n.efx||[]).forEach(f=>add(f.c))});
+ return SWL=[...m].sort((a,b)=>b[1]-a[1]).map(x=>x[0]).slice(0,14)}
+function selSame(k){const s0=leaves(topSel())[0];if(!s0)return toast(L('Select a layer first.','Сначала выделите слой.'));
+ const key=n=>k==='fill'?(n.fill?JSON.stringify(n.fill):null):k==='stroke'?(n.stroke&&n.sw>0?n.stroke+'|'+n.sw:null):n.type==='text'?(n.ff||'Sans')+'|'+(n.fw||400):null,v=key(s0);
+ if(v==null)return toast(k==='fill'?L('This layer has no fill.','У слоя нет заливки.'):k==='stroke'?L('This layer has no stroke.','У слоя нет обводки.'):L('Select a text layer.','Выделите текст.'));
+ const out=[];walk(n=>{if(n.hid||n.lock||isGrp(n)||(n.type==='frame'&&s0.type!=='frame'))return;if(key(n)===v)out.push(n)});setSel(out);toast(L(`Selected ${out.length} ${plu(out.length,'layer','layers')}`,`Выделено: ${out.length} ${plu(out.length,'слой','слоя','слоёв')}`))}
+Object.assign(CMD,{samefill:()=>selSame('fill'),samestroke:()=>selSame('stroke'),samefont:()=>selSame('font')});
 setTool('move');setLang(LANG);
 kvGet('cur').then(v=>{if(v?.d){try{Object.assign(ASSETS,v.a||{});last=v.d;restoreDoc(last);setTimeout(zfit);return}catch(e){}}last=snap();reindex();render()}).catch(()=>{last=snap();render()});
 </script>
