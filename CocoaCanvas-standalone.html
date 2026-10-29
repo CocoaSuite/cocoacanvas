@@ -344,6 +344,18 @@ body.plwin #insp{visibility:hidden}
  #plModal,#pbModal{place-items:end stretch;padding:0}#plModal .box,#pbModal .box{width:100%!important;border-radius:22px 22px 0 0;max-height:88vh;overflow:auto;padding-bottom:calc(18px + env(safe-area-inset-bottom))}
  body.plwin #fabD,body.plwin #fabX,body.plwin #dock{display:none}
 }
+#wnModal{z-index:90}.wnBox{width:min(460px,100%)!important;max-height:min(86vh,720px);overflow:hidden!important}
+.wnH{display:flex;gap:12px;align-items:center}.wnH h2{font-size:17px;margin:0 0 2px}.wnL{width:44px;height:44px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);display:grid;place-items:center;flex:none}.wnL svg{width:24px;height:30px}
+.wnB{overflow:auto;display:flex;flex-direction:column;gap:10px;min-height:0;flex:1}
+.wnV{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--panel2)}
+.wnV h3{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:14px}.wnV h3 b{background:#D15A2C;color:#fff;border-radius:6px;font-size:10px;padding:1px 6px;text-transform:uppercase;letter-spacing:.05em}.wnV h3 span{margin-left:auto;color:var(--mute);font-weight:400;font-size:12px}
+.wnV ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}.wnV li{display:flex;gap:10px;line-height:1.4;align-items:flex-start}
+.wnV li i{flex:none;width:24px;height:24px;border-radius:7px;background:var(--panel);display:grid;place-items:center}.wnV li svg{width:15px;height:15px;fill:none;stroke:#D15A2C;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+details.wnV{background:none;padding:0}details.wnV summary{list-style:none;display:flex;justify-content:space-between;gap:10px;padding:11px 14px;cursor:pointer;color:var(--mute)}details.wnV summary::-webkit-details-marker{display:none}details.wnV summary i{font-style:normal;transition:transform .15s}details.wnV[open] summary i{transform:rotate(90deg)}details.wnV ul{padding:0 14px 12px}
+.wnF{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.wnF .chk{color:var(--mute);font-size:12px}
+.wnDot{position:relative}.wnDot::after{content:'';position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:#D15A2C;box-shadow:0 0 0 2px var(--panel);pointer-events:none}
+.mq [data-c="whatsnew"] svg{fill:none;stroke:currentColor}
+@media (max-width:720px){#wnModal{place-items:end stretch;padding:0}#wnModal .box{width:100%!important;border-radius:22px 22px 0 0;max-height:88vh;padding-bottom:calc(18px + env(safe-area-inset-bottom))}#wnOk{flex:1 1 100%;padding:13px}}
 </style>
 </head>
 <body>
@@ -2506,6 +2518,33 @@ Promise.all([kvGet(KEY),kvGet('plstore').then(x=>{try{PST=JSON.parse(x||'{}')||{
  try{localStorage.setItem('cv-pl-boot','1')}catch(e){}const clr=()=>{try{localStorage.removeItem('cv-pl-boot')}catch(e){}};addEventListener('beforeunload',clr);setTimeout(clr,8000);
  for(const p of list)if(p.on)on(p)}).catch(()=>{});
 })();
+/* ---------- what's new (patch notes). Add a new entry at the TOP of this list; the landing page reads it too. ---------- */
+/*CC-NOTES*/const NOTES=[
+{"v":"1.6","date":"2026-10-29","title":["Plugins, auto layout, HTML export","Плагины, автораскладка, экспорт в HTML"],"en":[["plug","Plugins from the puzzle button: Apple and Google design kits, 6,000 icons, placeholders, patterns, noise, QR codes and lorem ipsum"],["layout","Auto layout and constraints, like in Figma"],["export","Export to HTML/CSS, and multi-page PDF with your own page order"],["helper","Cocoa Helper understands typos, synonyms and chained commands"],["text","New text copies the style of the last text you edited; F2 renames"],["fix","Fixes: pinch zoom jump, menu firing under the finger, helper covering buttons"]],
+ "ru":[["plug","Плагины по кнопке с пазлом: наборы Apple и Google, 6000 иконок, заготовки, узоры, шум, QR-коды и lorem ipsum"],["layout","Автораскладка и привязки, как в Figma"],["export","Экспорт в HTML/CSS и многостраничный PDF со своим порядком страниц"],["helper","Cocoa Helper понимает опечатки, синонимы и цепочки команд"],["text","Новый текст берёт стиль последнего изменённого; F2 переименовывает"],["fix","Исправлено: скачок при масштабировании, меню под пальцем, помощник поверх кнопок"]]},
+{"v":"1.5","date":"2026-10-29","title":["Settings, full screen, install as app","Настройки, полный экран, установка"],"en":[["settings","A Settings window for language, start screen, colour picker and storage"],["phone","Full screen mode and install as an app, with offline support"],["undo","Two-finger tap to undo, three-finger tap to redo"],["fix","Smoother panning and more accurate pinch zoom"]],
+ "ru":[["settings","Окно настроек: язык, стартовый экран, палитра, хранилище"],["phone","Полноэкранный режим и установка как приложение, работа офлайн"],["undo","Касание двумя пальцами отменяет, тремя повторяет"],["fix","Плавнее прокрутка и точнее масштабирование"]]},
+{"v":"1.4","date":"2026-10-28","title":["Colour picker, corners, gradients","Палитра, углы, градиенты"],"en":[["color","A built-in colour picker with eyedropper"],["corners","Drag corner handles; round, bevel or smooth corners"],["gradient","Edit gradients right on the canvas"],["layout","Spacing guides, maths in number fields, aspect lock and frame presets"]],
+ "ru":[["color","Встроенная палитра с пипеткой"],["corners","Маркеры углов: скругление, срез или плавные углы"],["gradient","Градиенты меняются прямо на холсте"],["layout","Направляющие отступов, вычисления в полях, сохранение пропорций и готовые размеры фреймов"]]},
+{"v":"1.3","date":"2026-10-27","title":["Made for phones and tablets","Для телефонов и планшетов"],"en":[["phone","A phone layout with floating Layers and Design buttons"],["touch","Tap, double-tap and long-press editing, multi-select and a delete button"],["pen","Apple Pencil and stylus support"]],
+ "ru":[["phone","Телефонная раскладка с плавающими кнопками «Слои» и «Дизайн»"],["touch","Касание, двойное касание и долгое нажатие, выбор нескольких и кнопка удаления"],["pen","Поддержка Apple Pencil и стилуса"]]}
+];/*/CC-NOTES*/
+(()=>{const WNI={plug:'<path d="M9 3.5h3v1.6a1.7 1.7 0 103.4 0V3.5H19a1.5 1.5 0 011.5 1.5v3.5h-1.6a1.7 1.7 0 100 3.4h1.6V19a1.5 1.5 0 01-1.5 1.5h-3.5v-1.6a1.7 1.7 0 10-3.4 0v1.6H5A1.5 1.5 0 013.5 19v-3.5h1.6a1.7 1.7 0 100-3.4H3.5V5A1.5 1.5 0 015 3.5z"/>',layout:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h10M7 17h6"/>',export:'<path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M5 19h14"/>',helper:'<path d="M12 3l1.8 4.7L18.5 9l-4.7 1.8L12 15.5l-1.8-4.7L5.5 9l4.7-1.3z"/><path d="M18 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/>',text:'<path d="M5 7V5h14v2M12 5v14M9 19h6"/>',fix:'<path d="M14.7 6.3a4 4 0 00-5.4 5.4L3.5 17.5l3 3 5.8-5.8a4 4 0 005.4-5.4l-2.5 2.5-2.5-.5-.5-2.5z"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',phone:'<rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M11 18.5h2"/>',undo:'<path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 010 10h-3"/>',color:'<path d="M12 3.5s6 6.4 6 10.7a6 6 0 01-12 0c0-4.3 6-10.7 6-10.7z"/>',corners:'<path d="M5 20v-8a8 8 0 018-8h6"/>',gradient:'<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 15l12-12M9 21l12-12"/>',touch:'<path d="M9 11V5.5a1.5 1.5 0 013 0V11m0-1.5a1.5 1.5 0 013 0V12m0-1a1.5 1.5 0 013 0v4a6 6 0 01-6 6h-1a6 6 0 01-5-2.7L4.5 15a1.5 1.5 0 012.4-1.8L9 15"/>',pen:'<path d="M15 4l5 5L9 20H4v-5z"/><path d="M13 6l5 5"/>'};
+ const cur=NOTES[0].v,get=k=>{try{return localStorage.getItem(k)}catch(e){return null}},put=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+ const fmt=d=>{try{return new Date(d+'T12:00:00').toLocaleDateString(LANG==='ru'?'ru-RU':undefined,{day:'numeric',month:'short',year:'numeric'})}catch(e){return d}};
+ const li=n=>(LANG==='ru'?n.ru:n.en).map(([k,t])=>`<li><i><svg viewBox="0 0 24 24">${WNI[k]||WNI.helper}</svg></i><span>${esc(t)}</span></li>`).join('');
+ const M=document.createElement('div');M.id='wnModal';M.className='modal';M.hidden=true;M.setAttribute('role','dialog');M.setAttribute('aria-modal','true');document.body.appendChild(M);
+ function dots(on){for(const el of[$('bMenu'),document.querySelector('[data-ru="Справка"]')])el?.classList.toggle('wnDot',on)}
+ function show(){const n0=NOTES[0];M.innerHTML=`<div class="box wnBox"><div class="wnH"><span class="wnL">${POD}</span><div><h2>${L('What’s new in CocoaCanvas','Что нового в CocoaCanvas')}</h2><span class="hint">${L('Version','Версия')} ${esc(n0.v)} · ${fmt(n0.date)}</span></div></div>
+  <div class="wnB"><section class="wnV"><h3>${esc(n0.v)}<b>${L('New','Новое')}</b><span>${fmt(n0.date)}</span></h3><ul>${li(n0)}</ul></section>${NOTES.slice(1).map(n=>`<details class="wnV"><summary><span>${esc(n.v)} · ${esc(L(...n.title))}</span><i>›</i></summary><ul>${li(n)}</ul></details>`).join('')}</div>
+  <div class="wnF"><label class="chk"><input type="checkbox" id="wnOff"${get('cv-wn-off')==='1'?' checked':''}> ${L('Don’t show after updates','Не показывать после обновлений')}</label><button class="pri" id="wnOk">${L('Got it','Понятно')}</button></div></div>`;
+  M.hidden=false;put('cv-seen',cur);dots(false);setTimeout(()=>$('wnOk')?.focus(),0)}
+ const hide=()=>{M.hidden=true};M.addEventListener('click',e=>{if(e.target===M||e.target.closest('#wnOk'))hide()});M.addEventListener('change',e=>{if(e.target.id==='wnOff')put('cv-wn-off',e.target.checked?'1':'0')});M.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape')hide()});
+ Object.assign(CMD,{whatsnew:show});
+ const help=document.querySelector('[data-ru="Справка"]')?.nextElementSibling?.querySelector('[data-c="keys"]');if(help)help.insertAdjacentHTML('afterend',`<button data-c="whatsnew" data-ru="Что нового" data-en="What’s new">${L('What’s new','Что нового')}</button>`);
+ const mq=document.querySelector('.mq [data-c="settings"]');if(mq)mq.insertAdjacentHTML('afterend',`<button data-c="whatsnew"><svg viewBox="0 0 24 24">${WNI.helper}</svg><span data-ru="Что нового" data-en="What’s new">${L('What’s new','Что нового')}</span></button>`);
+ const seen=get('cv-seen');if(seen!==cur){dots(true);
+  Promise.all([kvGet('cur').catch(()=>null),kvGet('recent').catch(()=>null)]).then(([c,r])=>{const old=!!seen||(r&&r.length)||(c&&c.d&&c.d.length>40);if(!old){put('cv-seen',cur);dots(false);return}if(get('cv-wn-off')!=='1')setTimeout(show,900)})}})();
 </script>
 </body>
 </html>

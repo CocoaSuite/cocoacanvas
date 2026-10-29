@@ -169,6 +169,25 @@ html[data-l=ru] .edl .say:before{content:"«"}html[data-l=ru] .edl .say:after{co
  .cv{grid-template-columns:1fr}.lys{display:none}
  .art{width:min(260px,78%)}
 }
+
+/* changelog */
+.cl{padding-top:clamp(60px,9vh,110px);padding-bottom:clamp(30px,5vh,60px)}
+.cl header{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:34px}
+.cl header p{margin:0;color:var(--mute);max-width:24rem}
+.cl-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:0 48px;border-top:1px solid var(--line)}
+.cl-v{padding:24px 0 26px;border-bottom:1px solid var(--line)}
+.cl-h{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.cl-h b{font:700 13px var(--mono);background:var(--cocoa);color:var(--night);border-radius:5px;padding:2px 8px}
+.cl-h span{color:var(--mute2)}
+.cl-v h3{margin:0 0 10px;font:700 19px var(--sans);letter-spacing:-.01em}
+.cl-v ul{margin:0;padding-left:18px;color:var(--mute);font-size:15px}
+.cl-v li+li{margin-top:5px}
+.cl-v li::marker{color:var(--mute2)}
+.cl-more{margin-top:18px}
+.cl-more button{all:unset;cursor:pointer;font:500 13px var(--mono);color:var(--mute);border:1px solid var(--line);border-radius:999px;padding:8px 16px}
+.cl-more button:hover{color:var(--cream);border-color:var(--mute2)}
+.cl-list.short .cl-v:nth-child(n+4){display:none}
+@media (max-width:620px){.cl header{display:block}.cl header p{margin-top:10px}}
 </style>
 </head>
 <body>
@@ -247,6 +266,15 @@ html[data-l=ru] .edl .say:before{content:"«"}html[data-l=ru] .edl .say:after{co
  <div class="facts mono"><span lang="en">No sign-up</span><span lang="ru">Без регистрации</span><span lang="en">Phone, tablet, computer</span><span lang="ru">Телефон, планшет, компьютер</span><span lang="en">One file, no install</span><span lang="ru">Один файл, без установки</span><span lang="en">English &amp; Russian</span><span lang="ru">Русский и английский</span></div>
 </section>
 
+<section class="wrap cl" id="changelog">
+ <header>
+  <h2><span lang="en">What’s new</span><span lang="ru">Что нового</span></h2>
+  <p><span lang="en">Every update, newest first. The editor shows the same notes after it updates.</span><span lang="ru">Все обновления, сначала новые. Редактор показывает те же заметки после обновления.</span></p>
+ </header>
+ <div class="cl-list short" id="clList"><!--CL-STATIC--><div class="cl-v"><div class="cl-h"><b>1.6</b><span class="mono">2026-10-29</span></div><h3><span lang="en">Plugins, auto layout, HTML export</span><span lang="ru">Плагины, автораскладка, экспорт в HTML</span></h3><ul lang="en"><li>Plugins from the puzzle button: Apple and Google design kits, 6,000 icons, placeholders, patterns, noise, QR codes and lorem ipsum</li><li>Auto layout and constraints, like in Figma</li><li>Export to HTML/CSS, and multi-page PDF with your own page order</li><li>Cocoa Helper understands typos, synonyms and chained commands</li><li>New text copies the style of the last text you edited; F2 renames</li><li>Fixes: pinch zoom jump, menu firing under the finger, helper covering buttons</li></ul><ul lang="ru"><li>Плагины по кнопке с пазлом: наборы Apple и Google, 6000 иконок, заготовки, узоры, шум, QR-коды и lorem ipsum</li><li>Автораскладка и привязки, как в Figma</li><li>Экспорт в HTML/CSS и многостраничный PDF со своим порядком страниц</li><li>Cocoa Helper понимает опечатки, синонимы и цепочки команд</li><li>Новый текст берёт стиль последнего изменённого; F2 переименовывает</li><li>Исправлено: скачок при масштабировании, меню под пальцем, помощник поверх кнопок</li></ul></div><div class="cl-v"><div class="cl-h"><b>1.5</b><span class="mono">2026-10-29</span></div><h3><span lang="en">Settings, full screen, install as app</span><span lang="ru">Настройки, полный экран, установка</span></h3><ul lang="en"><li>A Settings window for language, start screen, colour picker and storage</li><li>Full screen mode and install as an app, with offline support</li><li>Two-finger tap to undo, three-finger tap to redo</li><li>Smoother panning and more accurate pinch zoom</li></ul><ul lang="ru"><li>Окно настроек: язык, стартовый экран, палитра, хранилище</li><li>Полноэкранный режим и установка как приложение, работа офлайн</li><li>Касание двумя пальцами отменяет, тремя повторяет</li><li>Плавнее прокрутка и точнее масштабирование</li></ul></div><div class="cl-v"><div class="cl-h"><b>1.4</b><span class="mono">2026-10-28</span></div><h3><span lang="en">Colour picker, corners, gradients</span><span lang="ru">Палитра, углы, градиенты</span></h3><ul lang="en"><li>A built-in colour picker with eyedropper</li><li>Drag corner handles; round, bevel or smooth corners</li><li>Edit gradients right on the canvas</li><li>Spacing guides, maths in number fields, aspect lock and frame presets</li></ul><ul lang="ru"><li>Встроенная палитра с пипеткой</li><li>Маркеры углов: скругление, срез или плавные углы</li><li>Градиенты меняются прямо на холсте</li><li>Направляющие отступов, вычисления в полях, сохранение пропорций и готовые размеры фреймов</li></ul></div><div class="cl-v"><div class="cl-h"><b>1.3</b><span class="mono">2026-10-27</span></div><h3><span lang="en">Made for phones and tablets</span><span lang="ru">Для телефонов и планшетов</span></h3><ul lang="en"><li>A phone layout with floating Layers and Design buttons</li><li>Tap, double-tap and long-press editing, multi-select and a delete button</li><li>Apple Pencil and stylus support</li></ul><ul lang="ru"><li>Телефонная раскладка с плавающими кнопками «Слои» и «Дизайн»</li><li>Касание, двойное касание и долгое нажатие, выбор нескольких и кнопка удаления</li><li>Поддержка Apple Pencil и стилуса</li></ul></div><!--/CL-STATIC--></div>
+ <div class="cl-more" id="clMore"><button type="button"><span lang="en">Show all updates</span><span lang="ru">Показать все обновления</span></button></div>
+</section>
+
 <section class="wrap">
  <div class="end">
   <h2><span lang="en">Got something to design?</span><span lang="ru">Есть что нарисовать?</span></h2>
@@ -290,6 +318,19 @@ if(matchMedia('(prefers-reduced-motion: reduce)').matches){const st=steps[0];typ
    await wait(420);st.go();ok.textContent=st[ru?'okRu':'okEn'];ok.classList.add('on');await wait(2300)}
   await wait(900);reset();await wait(500)}
 })();
+})();
+</script>
+<script>
+(()=>{const list=document.getElementById('clList'),more=document.getElementById('clMore'),H=document.documentElement;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=(d,l)=>{try{return new Date(d+'T12:00:00').toLocaleDateString(l==='ru'?'ru-RU':'en-GB',{day:'numeric',month:'short',year:'numeric'})}catch(e){return d}};
+const sync=()=>{more.hidden=list.children.length<=3||!list.classList.contains('short');list.querySelectorAll('[data-d]').forEach(s=>s.textContent=fmt(s.dataset.d,H.dataset.l))};
+more.querySelector('button').onclick=()=>{list.classList.remove('short');sync()};
+new MutationObserver(sync).observe(H,{attributes:true,attributeFilter:['data-l']});
+list.querySelectorAll('.cl-h span').forEach(s=>s.dataset.d=s.textContent);sync();
+fetch('editor.html',{cache:'no-cache'}).then(r=>r.ok?r.text():Promise.reject()).then(t=>{const m=t.match(/\/\*CC-NOTES\*\/const NOTES=([\s\S]*?);\/\*\/CC-NOTES\*\//);if(!m)return;const N=JSON.parse(m[1]);if(!N.length)return;
+ const ul=a=>a.map(x=>'<li>'+esc(x[1])+'</li>').join('');
+ list.innerHTML=N.map(n=>'<div class="cl-v"><div class="cl-h"><b>'+esc(n.v)+'</b><span class="mono" data-d="'+esc(n.date)+'"></span></div><h3><span lang="en">'+esc(n.title[0])+'</span><span lang="ru">'+esc(n.title[1])+'</span></h3><ul lang="en">'+ul(n.en)+'</ul><ul lang="ru">'+ul(n.ru)+'</ul></div>').join('');sync()}).catch(()=>{});
 })();
 </script>
 <script>if('serviceWorker'in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{})</script>
