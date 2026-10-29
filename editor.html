@@ -337,6 +337,7 @@ body{grid-template-columns:minmax(0,1fr)}#top{min-width:0}
 #plAsk{border:1px solid #D15A2C;border-radius:9px;padding:10px;display:flex;flex-direction:column;gap:8px}#plAsk ul{margin:0;padding-left:18px;color:var(--mute);font-size:12px;line-height:1.6}#plAsk label{display:flex;gap:6px;align-items:center;font-size:12px}
 .plRow{flex-wrap:wrap}#pbQ{width:100%;box-sizing:border-box}
 body.plwin #insp{visibility:hidden}
+@media (pointer:coarse){input[type=range]{pointer-events:none}.rv,.pfG{touch-action:pan-y}}
 body.iosfs #top{padding-top:max(40px,env(safe-area-inset-top))!important}body.iosfs #fabL,body.iosfs #fabD{margin-top:40px}@media (min-width:721px){#top{padding-top:env(safe-area-inset-top);padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right))}#tbar{padding-bottom:max(6px,env(safe-area-inset-bottom))}}
 .plD{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;cursor:pointer}.plD.p1{-webkit-line-clamp:1}.plI.ex .plD{display:block}
 #plModal .box,#pbModal .box{max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto}#plModal .box>*,#pbModal .box>*{flex:none}#plModal #plList,#pbModal #pbList{flex:1 1 auto;min-height:90px;max-height:none}#plAsk{max-height:55%;max-height:55dvh;overflow:auto;overscroll-behavior:contain}#plAsk>.row{position:sticky;bottom:-10px;margin:0 -10px -10px;padding:8px 10px 10px;background:var(--panel)}
@@ -725,7 +726,7 @@ V.addEventListener('pointermove',e=>{const p=toW(e);mouse=p;const d=drag;
   if(d.b0&&!e.ctrlKey&&!e.metaKey){const s=snapBox({...d.b0,x:d.b0.x+dx,y:d.b0.y+dy},d.T);dx+=s.dx;dy+=s.dy;d.g=s.g}else d.g=null;
   for(const n of topSel())moveN(n,dx-d.ax,dy-d.ay);d.ax=dx;d.ay=dy;if(d.alp)d.alIns=alInsLine(d.alp,p,topSel());return render()}
  case'rs':return doRs(p,e);
- case'rot':{d.moved=true;restore(d);let a=(Math.atan2(p.y-d.c.y,p.x-d.c.x)-d.a0)*180/Math.PI;if(e.shiftKey){const b=d.one?d.o[0].rot||0:0;a=Math.round((b+a)/15)*15-b}d.ts.forEach(n=>rotN(n,d.c,a));return render()}
+ case'rot':{d.moved=true;restore(d);let a=(Math.atan2(p.y-d.c.y,p.x-d.c.x)-d.a0)*180/Math.PI;const b=d.one?d.o[0].rot||0:0;if(e.shiftKey)a=Math.round((b+a)/15)*15-b;else if(e.pointerType!=='mouse'){const th=rSnap(),t=b+a,q=Math.round(t/15)*15;if(th&&Math.abs(t-q)<th){a=q-b;if(d.sn!==q){d.sn=q;try{navigator.vibrate?.(6)}catch(_){}}}else d.sn=null}d.ts.forEach(n=>rotN(n,d.c,a));return render()}
  case'marq':{const r={x:Math.min(d.p0.x,p.x),y:Math.min(d.p0.y,p.y),w:Math.abs(p.x-d.p0.x),h:Math.abs(p.y-d.p0.y)};d.r=r;
   const cand=d.ctx?d.ctx.children:scope&&IDX.get(scope)?IDX.get(scope).n.children:doc.nodes;const hs=cand.filter(n=>{if(n.hid||n.lock)return false;const b=aabb(n);return b&&touch(b,r)});
   sel=[...new Set([...d.base,...hs])];return render()}
@@ -2204,12 +2205,15 @@ const fsCls=()=>document.body.classList.toggle('iosfs',isIOS&&fsOn());document.a
 document.querySelectorAll('.fsOnly').forEach(b=>b.hidden=!fsOK());if(isIOS)document.addEventListener('focusin',e=>{if(fsOn()&&e.target.matches?.('input:not([type=checkbox]):not([type=range]):not([type=color]),textarea,[contenteditable]'))try{(document.exitFullscreen||document.webkitExitFullscreen).call(document)}catch(_){}});
 
 /* ---------- settings ---------- */
+const rSnap=()=>{let v=null;try{v=localStorage.getItem('cv-rsnap')}catch(e){}return v==null?4:+v||0};
 function openSettings(){closeMenus();const inst=standalone(),sw=(id,on)=>`<label class="sw2"><input type="checkbox" id="${id}"${on?' checked':''}><i></i></label>`,seg=(k,opts,cur)=>`<div class="seg">${opts.map(([v,l])=>`<button data-set="${k}" data-v="${v}"${v===cur?' class="on"':''}>${l}</button>`).join('')}</div>`;
  openG(`<h2>${L('Settings','Настройки')}</h2><div class="setg">
   <div class="setH">${L('General','Общие')}</div>
   <div class="setr"><span>${L('Language','Язык')}</span>${seg('lang',[['en','English'],['ru','Русский']],LANG)}</div>
   <div class="setr"><span>${L('Show start screen','Показывать стартовый экран')}<small>${L('Recent projects and tips when the app opens','Недавние проекты и советы при запуске')}</small></span>${sw('setStart',!nostart())}</div>
   <div class="setr"><span>${L('Colour picker','Палитра')}</span>${seg('picker',[['b',L('Built-in','Встроенная')],['s',L('System','Системная')]],pickMode())}</div>
+  <div class="setH">${L('Canvas','Холст')}</div>
+  <div class="setr"><span>${L('Rotation snapping','Привязка поворота')}<small>${L('Snaps to every 15° when rotating with a finger or pen. With a mouse, hold Shift.','Притягивает к каждым 15° при повороте пальцем или пером. Мышью удерживайте Shift.')}</small></span>${seg('rsnap',[['0',L('Off','Выкл')],['2',L('Light','Слабая')],['4',L('Medium','Средняя')],['8',L('Strong','Сильная')]],String(rSnap()))}</div>
   <div class="setH">${L('Screen','Экран')}</div>
   ${fsOK()?`<div class="setr"><span>${L('Full screen','Во весь экран')}<small>${L('Hides the browser’s bars','Скрывает панели браузера')}</small></span>${sw('setFS',fsOn())}</div>`:''}
   <div class="setr"><span>${instLabel()}<small>${inst?L('Already running as an app','Уже открыт как приложение'):L('Opens without browser bars, from its own icon','Открывается без панелей браузера, со своей иконки')}</small></span><button data-set="install"${inst?' disabled':''}>${inst?L('Installed','Установлен'):L('Add','Добавить')}</button></div>
@@ -2221,7 +2225,7 @@ function openSettings(){closeMenus();const inst=standalone(),sw=(id,on)=>`<label
  const B=$('gBox');
  B.onchange=e=>{const t=e.target;if(t.id==='setStart')try{localStorage.setItem('cv-nostart',t.checked?'0':'1')}catch(_){}if(t.id==='setFS')toggleFS()};
  B.onclick=e=>{const b=e.target.closest('[data-set]');if(!b)return;const k=b.dataset.set,v=b.dataset.v;
-  if(k==='lang'){setLang(v);return openSettings()}if(k==='picker'){setPickMode(v);B.querySelectorAll('[data-set=picker]').forEach(x=>x.classList.toggle('on',x.dataset.v===v));return}
+  if(k==='lang'){setLang(v);return openSettings()}if(k==='rsnap'){try{localStorage.setItem('cv-rsnap',v)}catch(_){}B.querySelectorAll('[data-set=rsnap]').forEach(x=>x.classList.toggle('on',x.dataset.v===v));return}if(k==='picker'){setPickMode(v);B.querySelectorAll('[data-set=picker]').forEach(x=>x.classList.toggle('on',x.dataset.v===v));return}
   if(k==='install')return doInstall();if(k==='storage')return openStorage();if(k==='vhist')return openVersions();if(k==='keys')return openKeys()}}
 Object.assign(CMD,{settings:openSettings,fullscreen:toggleFS});
 /* ---------- auto layout & constraints ---------- */
@@ -2570,12 +2574,26 @@ Promise.all([kvGet(KEY),kvGet('plstore').then(x=>{try{PST=JSON.parse(x||'{}')||{
  try{localStorage.setItem('cv-pl-boot',String(n+1))}catch(e){}const clr=()=>{try{localStorage.removeItem('cv-pl-boot')}catch(e){}};for(const ev of['pagehide','beforeunload'])addEventListener(ev,clr);document.addEventListener('visibilitychange',()=>{if(document.hidden)clr()});setTimeout(clr,3000);
  plBoot=1;for(const p of list)if(p.on)on(p);plBoot=0}).catch(()=>{});
 })();
+/* ---------- sliders: on touch screens drag anywhere along a slider to change it from where it is; never a panel swipe ---------- */
+window.SLDR=false;(()=>{const CO=matchMedia('(pointer:coarse)');let D=null;
+ const find=(t,x,y)=>{for(let el=t,i=0;el&&el!==document.body&&i<4;el=el.parentElement,i++){if(el.matches?.('input[type=range]'))return el;for(const r of el.querySelectorAll?.('input[type=range]')||[]){const b=r.getBoundingClientRect();if(b.width&&x>=b.left-4&&x<=b.right+4&&y>=b.top-10&&y<=b.bottom+10)return r}}return null};
+ const set=(r,v)=>{const mn=+r.min||0,mx=r.max===''?100:+r.max,st=r.step==='any'?0:+r.step||1;v=Math.max(mn,Math.min(mx,v));if(st)v=Math.round((v-mn)/st)*st+mn;v=+v.toFixed(6);if(+r.value===v)return;r.value=v;r.dispatchEvent(new Event('input',{bubbles:true}))};
+ addEventListener('pointerdown',e=>{SLDR=false;D=null;if(!CO.matches&&e.pointerType==='mouse')return;if(!e.isPrimary)return;const r=find(e.target,e.clientX,e.clientY);if(!r||r.disabled)return;
+  SLDR=true;const b=r.getBoundingClientRect();D={r,x:e.clientX,y:e.clientY,v0:+r.value,id:e.pointerId,on:false,w:b.width,b,m:e.pointerType==='mouse'};e.stopImmediatePropagation();if(D.m)e.preventDefault()},true);
+ addEventListener('pointermove',e=>{if(!D||e.pointerId!==D.id)return;e.stopImmediatePropagation();const dx=e.clientX-D.x,dy=e.clientY-D.y;
+  if(!D.on){if(!D.m&&Math.abs(dy)>10&&Math.abs(dy)>Math.abs(dx)){D=null;SLDR=false;return}if(Math.abs(dx)<4)return;D.on=true;D.x=e.clientX;return}
+  const r=D.r,mn=+r.min||0,mx=r.max===''?100:+r.max;set(r,D.v0+(e.clientX-D.x)/Math.max(60,D.w)*(mx-mn));e.preventDefault()},true);
+ const end=e=>{if(!D||e.pointerId!==D.id)return;e.stopImmediatePropagation();const d=D;D=null;setTimeout(()=>SLDR=false);
+  if(!d.on&&d.m&&e.type==='pointerup'){const r=d.r,mn=+r.min||0,mx=r.max===''?100:+r.max;set(r,mn+(e.clientX-d.b.left)/d.w*(mx-mn))}
+  if(d.on||d.m)d.r.dispatchEvent(new Event('change',{bubbles:true}))};
+ addEventListener('pointerup',end,true);addEventListener('pointercancel',end,true);
+})();
 /* ---------- tablet: drag a panel toward its edge to hide it, drag in from the canvas edge to bring it back; the panel follows the finger ---------- */
 (()=>{const TQ=matchMedia('(min-width:721px) and (max-width:1100px),(min-width:721px) and (pointer:coarse)'),BC=document.body.classList,EDGE=28;
  const P={l:{el:$('lay'),cls:'lcol',dir:-1},r:{el:$('inspW'),cls:'icol',dir:1}};let S=null;
  const skip=t=>t.closest('input,select,textarea,.nf,#gb,.rv,#cpW,#cpAlB,[contenteditable]');
  const clr=el=>{el.style.transition=el.style.transform=el.style.opacity=el.style.visibility=''};
- addEventListener('pointerdown',e=>{S=null;if(e.pointerType!=='touch'||!TQ.matches||!e.isPrimary)return;
+ addEventListener('pointerdown',e=>{S=null;if(SLDR||e.pointerType!=='touch'||!TQ.matches||!e.isPrimary)return;
   for(const k in P){const p=P[k];if(!BC.contains(p.cls)&&p.el.contains(e.target)&&!skip(e.target)){S={k,m:'hide',x:e.clientX,y:e.clientY,id:e.pointerId};return}}
   const m=$('mid').getBoundingClientRect();if(!$('mid').contains(e.target)||e.target.closest('#tbar,.fab,#bDone'))return;
   const k=e.clientX-m.left<EDGE?'l':m.right-e.clientX<EDGE?'r':null;if(!k||!BC.contains(P[k].cls))return;
@@ -2647,8 +2665,8 @@ window.ONB=(()=>{const get=k=>{try{return localStorage.getItem(k)}catch(e){retur
  return(async()=>{if(get('cv-onb'))return;let old=false;try{const[c,r]=await Promise.all([kvGet('cur').catch(()=>null),kvGet('recent').catch(()=>null)]);old=!!(r&&r.length)||!!(c&&c.d&&c.d.length>40)}catch(e){}if(old){put('cv-onb','1');return}await run()})()})();
 /* ---------- what's new (patch notes). Add a new entry at the TOP of this list; the landing page reads it too. ---------- */
 /*CC-NOTES*/const NOTES=[
-{"v":"1.6","date":"2026-10-29","title":["Plugins, auto layout, HTML export","Плагины, автораскладка, экспорт в HTML"],"en":[["plug","Plugins from the puzzle button: Apple and Google design kits, 6,000 icons, placeholders, patterns, noise, QR codes and lorem ipsum"],["layout","Auto layout and constraints, like in Figma"],["export","Export to HTML/CSS, and multi-page PDF with your own page order"],["helper","Cocoa Helper understands typos, synonyms and chained commands"],["text","New text copies the style of the last text you edited; F2 renames"],["helper","A hello and a short tour on first launch, made for your phone, tablet or computer"],["touch","Tablets: side panels slide with your finger: swipe one toward the edge to hide it, swipe in from the edge to bring it back"],["fix","Fixes: pinch zoom jump, menu firing under the finger, helper covering buttons"]],
- "ru":[["plug","Плагины по кнопке с пазлом: наборы Apple и Google, 6000 иконок, заготовки, узоры, шум, QR-коды и lorem ipsum"],["layout","Автораскладка и привязки, как в Figma"],["export","Экспорт в HTML/CSS и многостраничный PDF со своим порядком страниц"],["helper","Cocoa Helper понимает опечатки, синонимы и цепочки команд"],["text","Новый текст берёт стиль последнего изменённого; F2 переименовывает"],["helper","Приветствие и короткое знакомство при первом запуске, отдельно для телефона, планшета и компьютера"],["touch","Планшеты: боковые панели следуют за пальцем: смахните панель к краю, чтобы скрыть, и потяните от края, чтобы вернуть"],["fix","Исправлено: скачок при масштабировании, меню под пальцем, помощник поверх кнопок"]]},
+{"v":"1.6","date":"2026-10-29","title":["Plugins, auto layout, HTML export","Плагины, автораскладка, экспорт в HTML"],"en":[["plug","Plugins from the puzzle button: Apple and Google design kits, 6,000 icons, placeholders, patterns, noise, QR codes and lorem ipsum"],["layout","Auto layout and constraints, like in Figma"],["export","Export to HTML/CSS, and multi-page PDF with your own page order"],["helper","Cocoa Helper understands typos, synonyms and chained commands"],["text","New text copies the style of the last text you edited; F2 renames"],["touch","Rotation snaps to 15° with a finger or pen (strength in Settings), and every slider can be dragged from anywhere along it"],["helper","A hello and a short tour on first launch, made for your phone, tablet or computer"],["touch","Tablets: side panels slide with your finger: swipe one toward the edge to hide it, swipe in from the edge to bring it back"],["fix","Fixes: pinch zoom jump, menu firing under the finger, helper covering buttons"]],
+ "ru":[["plug","Плагины по кнопке с пазлом: наборы Apple и Google, 6000 иконок, заготовки, узоры, шум, QR-коды и lorem ipsum"],["layout","Автораскладка и привязки, как в Figma"],["export","Экспорт в HTML/CSS и многостраничный PDF со своим порядком страниц"],["helper","Cocoa Helper понимает опечатки, синонимы и цепочки команд"],["text","Новый текст берёт стиль последнего изменённого; F2 переименовывает"],["touch","Поворот пальцем или пером притягивается к 15° (сила в настройках), а любой ползунок можно тянуть с любого места"],["helper","Приветствие и короткое знакомство при первом запуске, отдельно для телефона, планшета и компьютера"],["touch","Планшеты: боковые панели следуют за пальцем: смахните панель к краю, чтобы скрыть, и потяните от края, чтобы вернуть"],["fix","Исправлено: скачок при масштабировании, меню под пальцем, помощник поверх кнопок"]]},
 {"v":"1.5","date":"2026-10-29","title":["Settings, full screen, install as app","Настройки, полный экран, установка"],"en":[["settings","A Settings window for language, start screen, colour picker and storage"],["phone","Full screen mode and install as an app, with offline support"],["undo","Two-finger tap to undo, three-finger tap to redo"],["fix","Smoother panning and more accurate pinch zoom"]],
  "ru":[["settings","Окно настроек: язык, стартовый экран, палитра, хранилище"],["phone","Полноэкранный режим и установка как приложение, работа офлайн"],["undo","Касание двумя пальцами отменяет, тремя повторяет"],["fix","Плавнее прокрутка и точнее масштабирование"]]},
 {"v":"1.4","date":"2026-10-28","title":["Colour picker, corners, gradients","Палитра, углы, градиенты"],"en":[["color","A built-in colour picker with eyedropper"],["corners","Drag corner handles; round, bevel or smooth corners"],["gradient","Edit gradients right on the canvas"],["layout","Spacing guides, maths in number fields, aspect lock and frame presets"]],
