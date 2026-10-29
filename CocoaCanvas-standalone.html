@@ -419,9 +419,10 @@ function drawUI(){let s='';const z=view.z,hs=matchMedia('(pointer:coarse)').matc
   const one=ts.length===1&&!isGrp(ts[0])&&!ts[0].dq?ts[0]:null,b=one||(selBox()&&{...selBox(),rot:0});
   if(b){const C=corners(b),P=C.map(p=>w2s(...p)),txt=one&&one.type==='text';
    if(!one)s+=poly(C);
-   for(const[a,c,k,cu]of[[0,1,'0,-1','ns'],[1,2,'1,0','ew'],[2,3,'0,1','ns'],[3,0,'-1,0','ew']]){if(txt&&!one.fixW&&cu==='ns')continue;s+=`<line class="he" data-h="${k}" x1="${P[a][0]}" y1="${P[a][1]}" x2="${P[c][0]}" y2="${P[c][1]}" style="cursor:${cu}-resize"/>`}
-   if(!ts.every(n=>n.type==='frame')){const cx=P.reduce((a,p)=>a+p[0],0)/4,cy=P.reduce((a,p)=>a+p[1],0)/4;P.forEach(p=>{const dx=p[0]-cx,dy=p[1]-cy,l=Math.hypot(dx,dy)||1;s+=`<circle class="rz" data-h="rot" cx="${p[0]+dx/l*(hs*2+1)}" cy="${p[1]+dy/l*(hs*2+1)}" r="${hs*2+2}"/>`})}
-   if(!txt||one.fixW)['-1,-1','1,-1','1,1','-1,1'].forEach((k,i)=>s+=`<rect class="hd" data-h="${k}" x="${P[i][0]-hs}" y="${P[i][1]-hs}" width="${hs*2}" height="${hs*2}" style="cursor:${i%2?'nesw':'nwse'}-resize"/>`);
+   for(const[a,c,k,cu]of[[0,1,'0,-1','ns'],[1,2,'1,0','ew'],[2,3,'0,1','ns'],[3,0,'-1,0','ew']]){s+=`<line class="he" data-h="${k}" x1="${P[a][0]}" y1="${P[a][1]}" x2="${P[c][0]}" y2="${P[c][1]}" style="cursor:${cu}-resize"/>`}
+   if(!ts.every(n=>n.type==='frame')){const cx=P.reduce((a,p)=>a+p[0],0)/4,cy=P.reduce((a,p)=>a+p[1],0)/4;P.forEach(p=>{const dx=p[0]-cx,dy=p[1]-cy,l=Math.hypot(dx,dy)||1;if(hs>4){const R=30,t=Math.atan2(dy,dx),a=[t-.62,t+.62].map(u=>[p[0]+Math.cos(u)*R,p[1]+Math.sin(u)*R]),A=`M${a[0][0]} ${a[0][1]} A${R} ${R} 0 0 1 ${a[1][0]} ${a[1][1]}`;s+=`<path d="${A}" fill="none" stroke="rgba(0,0,0,.45)" stroke-width="5" stroke-linecap="round"/><path d="${A}" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><circle class="rz" data-h="rot" cx="${p[0]+dx/l*R}" cy="${p[1]+dy/l*R}" r="20"/>`}else s+=`<circle class="rz" data-h="rot" cx="${p[0]+dx/l*(hs*2+1)}" cy="${p[1]+dy/l*(hs*2+1)}" r="${hs*2+2}"/>`})}
+   if(hs>4)[[0,1,'0,-1'],[1,2,'1,0'],[2,3,'0,1'],[3,0,'-1,0']].forEach(([a,c,k])=>{const mx=(P[a][0]+P[c][0])/2,my=(P[a][1]+P[c][1])/2,hz=k[0]==='0',an=Math.atan2(P[c][1]-P[a][1],P[c][0]-P[a][0])*180/Math.PI;s+=`<rect data-h="${k}" x="${mx-16}" y="${my-16}" width="32" height="32" fill="transparent"/><rect class="hd" data-h="${k}" x="${mx-9}" y="${my-3.5}" width="18" height="7" rx="3.5" transform="rotate(${an} ${mx} ${my})"/>`});
+   ['-1,-1','1,-1','1,1','-1,1'].forEach((k,i)=>s+=`<rect class="hd" data-h="${k}" x="${P[i][0]-hs}" y="${P[i][1]-hs}" width="${hs*2}" height="${hs*2}" style="cursor:${i%2?'nesw':'nwse'}-resize"/>`);
    const CO=matchMedia('(pointer:coarse)').matches,MS=CO?110:40;if(one&&/rect|frame|image|poly|star/.test(one.type)&&one.w*z>=MS&&one.h*z>=MS){const pg=/poly|star/.test(one.type),R=rcOf(one),m=(CO?30:14)/z,mx=Math.min(one.w,one.h)/2,D=pg?[[one.w/2,Math.min(mx,Math.max(one.r||0,m)),0]]:[[0,0,1,1],[one.w,0,-1,1],[one.w,one.h,-1,-1],[0,one.h,1,-1]].map(([x,y,sx,sy],i)=>{const t=Math.min(mx,Math.max(R[i]||0,m));return[x+sx*t,y+sy*t,i]});
     for(const[x,y,i]of D){const[X,Y]=w2s(...l2w(one,x,y));s+=`<circle class="cdot" data-h="cr${i}" cx="${X}" cy="${Y}" r="${CO?22:9}" fill="transparent"/><circle class="hd cdot" data-h="cr${i}" cx="${X}" cy="${Y}" r="${hs+.5}"/>`;if(drag?.m==='cr'&&drag.moved&&(pg||i===drag.i)){const lb=pg||!drag.single?L('Radius ','Радиус ')+drag.r:['↖','↗','↘','↙'][i]+' '+drag.r,lw=lb.length*6.4+12;s+=`<g class="badge"><rect x="${X+10}" y="${Y-9}" width="${lw}" height="18" rx="3"/><text x="${X+10+lw/2}" y="${Y+4}" text-anchor="middle">${lb}</text></g>`}}}
    if(one&&isG(one.fill)&&!distort&&one.type!=='image')s+=gradUI(one,hs);
@@ -525,8 +526,9 @@ V.addEventListener('pointerdown',e=>{if(e.target===TED)return;DN={x:e.clientX,y:
  if(n&&!par(n)&&n.type==='frame'&&n.children.length&&!sel.includes(n)){ctx=n;n=null}
  if(!n){const b=selBox();if(b&&sel.length&&!SH&&inBox(p,b))return startMove(e,p,null);
   if(!SH){scope=null;setSel([])}drag={m:'marq',p0:p,ctx,base:[...sel]};return}
+ const was=sel.length===1&&sel[0]===n;
  if(SH){toggleSel(n);if(!sel.includes(n))return}else if(!sel.includes(n))setSel([n]);
- startMove(e,p,n)});
+ startMove(e,p,n);drag.was=was});
 
 V.addEventListener('pointermove',e=>{const p=toW(e);mouse=p;const d=drag;
  if(!d){if(tool==='move'){const el=e.target.closest('#scene [data-id]');let n=el?pick(el.dataset.id,e.ctrlKey||e.metaKey):null;if(n&&!par(n)&&n.type==='frame'&&n.children.length)n=null;if(n!==hover){hover=n;drawUI()}}else if(pen)drawUI();return}
@@ -553,7 +555,7 @@ V.addEventListener('pointermove',e=>{const p=toW(e);mouse=p;const d=drag;
  case'pt':{const q=w2l(d.n,p),P=ptAt(d.n,d.i).p;if(d.k==='a'){P.x=q.x;P.y=q.y}else{const o=d.k,x=d.k==='o'?'i':'o';P[o+'x']=q.x-P.x;P[o+'y']=q.y-P.y;if(!e.altKey||d.pull){P[x+'x']=-P[o+'x'];P[x+'y']=-P[o+'y']}}d.moved=true;return render()}}});
 
 function endDrag(e){const d=drag;if(!d)return;drag=null;V.classList.remove('dn');
- if(d.m==='move'){if(d.moved){reparent();commit()}else{if(d.n&&!e.shiftKey&&!document.body.classList.contains('multi')&&sel.length>1)setSel([d.n])}}
+ if(d.m==='move'){if(d.moved){reparent();commit()}else if(d.was&&d.n?.type==='text'&&e.pointerType&&e.pointerType!=='mouse'&&!document.body.classList.contains('multi')&&tool==='move'){render();return editText(d.n)}else{if(d.n&&!e.shiftKey&&!document.body.classList.contains('multi')&&sel.length>1)setSel([d.n])}}
  else if((d.m==='rs'||d.m==='rot')&&d.moved)commit();
  else if(d.m==='new')endNew(d);
  else if(d.m==='pencil')endPencil(d);
@@ -570,7 +572,7 @@ function reparent(){for(const n of topSel()){const p=par(n);if(p&&(p.type!=='fra
 function startRs(k){const[hx,hy]=k.split(',').map(Number),ts=topSel();if(ts.length===1&&ts[0].type==='text'&&hy&&!ts[0].fixH){ts[0].fixW=true;ts[0].fixH=true;ts[0].hh=ts[0].h}drag={m:'rs',hx,hy,ts,one:ts.length===1&&!isGrp(ts[0])&&!ts[0].dq?ts[0]:null,o:ts.map(clone),fb:selBox(),moved:false}}
 function startRot(p){const ts=topSel(),one=ts.length===1&&!isGrp(ts[0])?ts[0]:null,b=one||selBox(),c={x:b.x+b.w/2,y:b.y+b.h/2};drag={m:'rot',ts,one,c,a0:Math.atan2(p.y-c.y,p.x-c.x),o:ts.map(clone),moved:false}}
 function restore(d){d.ts.forEach((n,i)=>{for(const k in n)delete n[k];Object.assign(n,clone(d.o[i]))});reindex()}
-function doRs(p,e){const d=drag;d.moved=true;restore(d);const{hx,hy}=d,sh=e.shiftKey!==!!(d.one?d.o[0].lar:d.ts.every(n=>n.lar));
+function doRs(p,e){const d=drag;d.moved=true;restore(d);const{hx,hy}=d,lk=!!(d.one?d.o[0].lar:d.ts.every(n=>n.lar)),sh=e.pointerType&&e.pointerType!=='mouse'&&hx&&hy?true:e.shiftKey!==lk;
  if(d.one){const n=d.one,o=d.o[0],c={x:o.x+o.w/2,y:o.y+o.h/2},t=(o.rot||0)*Math.PI/180,cs=Math.cos(t),sn=Math.sin(t),qx=p.x-c.x,qy=p.y-c.y,lx=qx*cs+qy*sn,ly=-qx*sn+qy*cs,ax=-hx*o.w/2,ay=-hy*o.h/2;
   let w=o.w,h=o.h;if(hx)w=Math.max(1,(lx-ax)*hx);if(hy)h=Math.max(1,(ly-ay)*hy);
   if(sh&&o.w&&o.h){const k=hx&&hy?Math.max(w/o.w,h/o.h):hx?w/o.w:h/o.h;w=o.w*k;h=o.h*k}
@@ -793,8 +795,12 @@ function textToggle(k){const p=TXK[k],get=(n,x)=>p==='fw'?((x?.fw??n.fw??400)>=6
  if(n&&s<e){const A=charStyles(n);let all=true;for(let i=s;i<e;i++)if(!get(n,A[i]))all=false;setRunK(n,s,e,x=>{if(p==='fw')x.fw=all?400:700;else x[p]=!all})}
  else{const T=n?[n]:TX();if(!T.length)return;const on=!T.every(t=>get(t));T.forEach(t=>{if(p==='fw')t.fw=on?700:400;else if(on)t[p]=true;else delete t[p];if(t.runs)setRunK(t,0,String(t.text).length,x=>delete x[p]);if(p==='fw'||p==='it')delete t.tS})}
  if(editing){render();posTed()}else commit()}
-function startPick(k){if(window.EyeDropper){new EyeDropper().open().then(r=>setV(k,r.sRGBHex)).catch(()=>{});return}pickK=k;V.classList.add('t-pick');toast(L('Tap a layer to copy its color','Нажмите на слой, чтобы взять его цвет'))}
-function pickAt(e){e.preventDefault();const k=pickK;pickK=null;V.classList.remove('t-pick');const el=e.target.closest('#scene [data-id]'),n=el&&IDX.get(el.dataset.id)?.n;if(!n)return;if(n.type==='image')return toast(L('Can’t pick from images in this browser. Chrome on a computer can.','В этом браузере нельзя взять цвет с изображения. В Chrome на компьютере можно.'));const f=n.fill||n.stroke,c=isG(f)?gSort(f)[0].c:f;if(c){if(k==='__cp')cpHex(c,1);else setV(k,c)}}
+function tapPick(k){pickK=k;V.classList.add('t-pick');toast(L('Tap a layer to copy its color','Нажмите на слой, чтобы взять его цвет'))}
+function startPick(k){if(window.EyeDropper&&!matchMedia('(pointer:coarse)').matches){new EyeDropper().open().then(r=>k==='__cp'?cpHex(r.sRGBHex,1):setV(k,r.sRGBHex)).catch(e=>{if(e?.name!=='AbortError')tapPick(k)});return}return tapPick(k);pickK=k;V.classList.add('t-pick');toast(L('Tap a layer to copy its color','Нажмите на слой, чтобы взять его цвет'))}
+function pickAt(e){e.preventDefault();e.stopImmediatePropagation?.();const k=pickK;pickK=null;V.classList.remove('t-pick');const el=document.elementsFromPoint(e.clientX,e.clientY).find(x=>x.closest?.('#scene [data-id]'))?.closest('#scene [data-id]'),n=el&&IDX.get(el.dataset.id)?.n;if(!n)return toast(L('Nothing to pick there','Здесь нечего взять'));
+ let c=null;if(n.type==='image'){const im=imgOf(n.asset);if(im){try{const q=w2l(n,toW(e)),cv=document.createElement('canvas');cv.width=cv.height=1;const x=cv.getContext('2d');x.drawImage(im,clamp(q.x/n.w,0,.9999)*im.naturalWidth,clamp(q.y/n.h,0,.9999)*im.naturalHeight,1,1,0,0,1,1);const d=x.getImageData(0,0,1,1).data;c='#'+[d[0],d[1],d[2]].map(v=>v.toString(16).padStart(2,'0')).join('')}catch(_){}}}
+ else{const f=n.fill||n.stroke;c=isG(f)?gSort(f)[0].c:f}
+ if(c){if(k==='__cp')cpHex(c,1);else setV(k,c);toast(L('Picked ','Взят цвет ')+c.toUpperCase())}}
 function setRow(el,live){const v=el.type==='checkbox'?el.checked:el.value,d=el.dataset;
  if(d.xf!=null){const i=+d.xf;FL().forEach(n=>{const p=n.fills?.[i];if(!p)return;delete n.cS;if(d.xk==='o')p.o=clamp(+v,0,100)/100;else{const c=hex(v);if(c)p.f=c}})}
  else if(d.xs!=null){const i=+d.xs;STK().forEach(n=>{const p=n.strokes?.[i];if(!p)return;if(d.xk==='w')p.w=Math.max(0,+v||0);else{const c=hex(v);if(c)p.c=c}})}
@@ -1544,7 +1550,7 @@ V.addEventListener('pointermove',e=>{if(e.pointerType!=='touch'||!PT.has(e.point
 const ptEnd=e=>{if(e.pointerType!=='touch')return;clearTimeout(lpT);PT.delete(e.pointerId);
  if(G){e.stopImmediatePropagation();if(PT.size<2)G=null;tapT=0;return}
  if(e.type==='pointerup'&&lp0&&BC.contains('iopen')&&phone()&&!document.elementFromPoint(e.clientX,e.clientY)?.closest?.('#scene [data-id],#ui [data-h]'))BC.remove('iopen','ifull');
- if(e.type==='pointerup'&&lp0){const now=Date.now();if(tapP&&now-tapT<320&&Math.hypot(e.clientX-tapP.x,e.clientY-tapP.y)<24){tapT=0;synthT=now;const x=e.clientX,y=e.clientY;setTimeout(()=>V.dispatchEvent(new MouseEvent('dblclick',{clientX:x,clientY:y,bubbles:true})))}else{tapT=now;tapP={x:e.clientX,y:e.clientY}}}lp0=null};
+ if(e.type==='pointerup'&&lp0){const now=Date.now();if(tapP&&now-tapT<320&&Math.hypot(e.clientX-tapP.x,e.clientY-tapP.y)<24){tapT=0;synthT=now;V.dispatchEvent(new MouseEvent('dblclick',{clientX:e.clientX,clientY:e.clientY,bubbles:true}))}else{tapT=now;tapP={x:e.clientX,y:e.clientY}}}lp0=null};
 V.addEventListener('pointerup',ptEnd,{capture:true});
 ['pointerup','pointercancel'].forEach(t=>window.addEventListener(t,e=>{if(e.pointerType==='touch'&&PT.delete(e.pointerId)&&PT.size<2)G=null},true));
 V.addEventListener('lostpointercapture',e=>{if(e.pointerType==='touch'&&!PT.has(e.pointerId))return});V.addEventListener('pointercancel',ptEnd,{capture:true});
@@ -1719,7 +1725,7 @@ CP.addEventListener('change',e=>{if(e.target.id==='cpHex'){const x=hex(e.target.
 CP.addEventListener('keydown',e=>{if(e.target.matches('input')){e.stopPropagation();if(e.key==='Enter')e.target.blur()}});
 CP.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
  if(b.dataset.sw)return cpHex(b.dataset.sw,1);
- if(b.id==='cpEye'){if(window.EyeDropper){new EyeDropper().open().then(r=>cpHex(r.sRGBHex,1)).catch(()=>{});return}pickK='__cp';V.classList.add('t-pick');return toast(L('Tap a layer to copy its color','Нажмите на слой, чтобы взять его цвет'))}
+ if(b.id==='cpEye'){return startPick('__cp');pickK='__cp';V.classList.add('t-pick');return toast(L('Tap a layer to copy its color','Нажмите на слой, чтобы взять его цвет'))}
  if(b.dataset.cpt==='sys'){const el=cpEl;setPickMode('s');cpClose();toast(L('Using the system colour picker. Switch back in the Help menu.','Включена системная палитра. Вернуть встроенную можно в меню «Справка».'));if(el){try{el.showPicker?el.showPicker():el.click()}catch(_){el.click()}}return}
  if(b.dataset.cpt){cpTab=b.dataset.cpt;cpSync()}});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-pm]');if(!b)return;setPickMode(b.dataset.pm);closeMenus();toast(b.dataset.pm==='s'?L('Using the system colour picker','Включена системная палитра'):L('Using the built-in colour picker','Включена встроенная палитра'))});
