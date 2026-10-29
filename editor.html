@@ -353,7 +353,7 @@ body{grid-template-columns:minmax(0,1fr)}#top{min-width:0}
 <div class="modal" id="xModal" hidden><div class="box">
  <h2 data-ru="Экспорт">Export</h2>
  <div class="f"><span data-ru="Что">What</span><select id="xWhat"></select></div>
- <div class="f"><span data-ru="Формат">Format</span><select id="xFmt"><option value="png">PNG</option><option value="jpg">JPG</option><option value="webp">WebP</option><option value="svg">SVG</option><option value="pdf">PDF</option></select></div>
+ <div class="f"><span data-ru="Формат">Format</span><select id="xFmt"><option value="png">PNG</option><option value="jpg">JPG</option><option value="webp">WebP</option><option value="svg">SVG</option><option value="pdf">PDF</option><option value="html">HTML / CSS</option></select></div>
  <div class="f"><span data-ru="Масштаб">Scale</span><select id="xSc"><option value="1">1x</option><option value="2">2x</option><option value="3">3x</option><option value="4">4x</option></select></div>
  <div class="row"><button data-c="xno" data-ru="Отмена">Cancel</button><button class="pri" data-c="xgo" data-ru="Экспорт">Export</button></div>
 </div></div>
@@ -643,7 +643,7 @@ function reparent(){for(const n of topSel()){const p=par(n);if(p&&(p.type!=='fra
 function startRs(k){const[hx,hy]=k.split(',').map(Number),ts=topSel();if(ts.length===1&&ts[0].type==='text'&&hy&&!ts[0].fixH){ts[0].fixW=true;ts[0].fixH=true;ts[0].hh=ts[0].h}drag={m:'rs',hx,hy,ts,one:ts.length===1&&!isGrp(ts[0])&&!ts[0].dq?ts[0]:null,o:ts.map(clone),fb:selBox(),moved:false}}
 function startRot(p){const ts=topSel(),one=ts.length===1&&!isGrp(ts[0])?ts[0]:null,b=one||selBox(),c={x:b.x+b.w/2,y:b.y+b.h/2};drag={m:'rot',ts,one,c,a0:Math.atan2(p.y-c.y,p.x-c.x),o:ts.map(clone),moved:false}}
 function restore(d){d.ts.forEach((n,i)=>{for(const k in n)delete n[k];Object.assign(n,clone(d.o[i]))});reindex()}
-function doRs(p,e){const d=drag;d.moved=true;restore(d);const{hx,hy}=d,lk=!!(d.one?d.o[0].lar:d.ts.every(n=>n.lar)),sh=e.pointerType&&e.pointerType!=='mouse'&&hx&&hy?true:e.shiftKey!==lk;
+function doRs(p,e){const d=drag;d.moved=true;restore(d);const{hx,hy}=d,lk=!!(d.one?d.o[0].lar:d.ts.every(n=>n.lar)),isT=d.ts.every(n=>n.type==='text'),sh=!isT&&e.pointerType&&e.pointerType!=='mouse'&&hx&&hy?true:e.shiftKey!==lk;
  if(d.one){const n=d.one,o=d.o[0],c={x:o.x+o.w/2,y:o.y+o.h/2},t=(o.rot||0)*Math.PI/180,cs=Math.cos(t),sn=Math.sin(t),qx=p.x-c.x,qy=p.y-c.y,lx=qx*cs+qy*sn,ly=-qx*sn+qy*cs,ax=-hx*o.w/2,ay=-hy*o.h/2;
   let w=o.w,h=o.h;if(hx)w=Math.max(1,(lx-ax)*hx);if(hy)h=Math.max(1,(ly-ay)*hy);
   if(sh&&o.w&&o.h){const k=hx&&hy?Math.max(w/o.w,h/o.h):hx?w/o.w:h/o.h;w=o.w*k;h=o.h*k}
@@ -1580,12 +1580,59 @@ function makePDF(pages){const enc=new TextEncoder(),parts=[],off=[];let len=0;co
   obj(o+1,()=>put(`<< /Length ${cs.length} >>\nstream\n${cs}\nendstream`));
   obj(o+2,()=>{put(`<< /Type /XObject /Subtype /Image /Width ${p.pw} /Height ${p.ph} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.jpg.length} >>\nstream\n`);put(p.jpg);put('\nendstream')})});
  const xo=len,N=3+n*3;put(`xref\n0 ${N}\n0000000000 65535 f \n`);for(let i=1;i<N;i++)put(String(off[i]).padStart(10,'0')+' 00000 n \n');put(`trailer\n<< /Size ${N} /Root 1 0 R >>\nstartxref\n${xo}\n%%EOF\n`);return new Blob(parts,{type:'application/pdf'})}
-async function expRun(it,fmt,sc){if(!it.length)return toast(L('Nothing to export.','Нечего экспортировать.'));
+async function expRun(it,fmt,sc){if(fmt==='html')return exportHTML(it);if(!it.length)return toast(L('Nothing to export.','Нечего экспортировать.'));
  try{if(fmt==='pdf'){const pg=[];for(const[ns,b]of it){const css=await fontCSS(ns),k=Math.min(Math.max(2,sc),8000/Math.max(b.w,b.h)),c=await rastC(svgStr(ns,b,k,css),b.w*k,b.h*k,'#fff'),bl=await new Promise(r=>c.toBlob(r,'image/jpeg',.92));pg.push({w:b.w,h:b.h,pw:c.width,ph:c.height,jpg:new Uint8Array(await bl.arrayBuffer())})}
    dl(makePDF(pg),safe(it.length===1?it[0][2]:doc.name||L('Untitled','Без названия'))+'.pdf');return toast(L(`Exported a PDF with ${pg.length} ${plu(pg.length,'page','pages')}`,`PDF экспортирован: ${pg.length} ${plu(pg.length,'страница','страницы','страниц')}`))}
   let warn=false;for(const[ns,b,name]of it){const f=safe(name)+(sc!==1&&fmt!=='svg'?`@${sc}x`:'')+'.'+fmt;const css=await fontCSS(ns);if(fmt==='svg')dl(new Blob([svgStr(ns,b,1,css)],{type:'image/svg+xml'}),f);else{const bl=await rast(svgStr(ns,b,sc,css),b.w*sc,b.h*sc,fmt);if(fmt==='webp'&&bl.type!=='image/webp'){warn=true;dl(bl,f.replace(/\.webp$/,'.png'))}else dl(bl,f)}}
   toast(warn?L('This browser can’t save WebP, so you got PNG instead.','Этот браузер не умеет сохранять WebP, поэтому сохранён PNG.'):L(`Exported ${it.length} ${plu(it.length,'file','files')}`,`Экспортировано: ${it.length} ${plu(it.length,'файл','файла','файлов')}`))}catch(e){toast(L('Export failed: ','Не удалось экспортировать: ')+(e.message||e))}}
 async function doExport(what,fmt,sc){return expRun(expItems(what),fmt,sc)}
+/* ---------- HTML / CSS export ---------- */
+function htmlDoc(items,css,title){const R=[],used=new Map(),px=v=>`${r2(v)}px`,
+ slug=n=>{let b=String(nm(n)||n.type).toLowerCase().normalize('NFKD').replace(/[^\w]+/g,'-').replace(/^-+|-+$/g,'').slice(0,28)||n.type;if(/^\d/.test(b))b='l-'+b;const k=(used.get(b)||0)+1;used.set(b,k);return k>1?`${b}-${k}`:b},
+ col=(c,o=1)=>c&&typeof c==='string'?(o<1?rgba(c,o):c):'transparent',
+ paint=(f,o,n)=>{if(!f)return null;if(!isG(f))return col(f,o??1);const st=gSort(f).map(x=>`${rgba(x.c,(x.a??1)*(o??1))} ${r2(x.o*100)}%`).join(', ');
+  if(f.t==='radial'){const{c,r}=gRad(f);return`radial-gradient(${px(r[0]*n.w)} ${px(r[1]*n.h)} at ${r2(c[0]*100)}% ${r2(c[1]*100)}%, ${st})`}
+  const[a,b]=gLin(f);return`linear-gradient(${r2(nrm(Math.atan2((b[1]-a[1])*n.h,(b[0]-a[0])*n.w)*180/Math.PI+90))}deg, ${st})`},
+ bgs=n=>{const L0=fillsOf(n).map(p=>paint(p.f,p.o,n)).filter(Boolean).reverse();if(!L0.length)return[];if(L0.length===1&&!/gradient/.test(L0[0]))return[`background: ${L0[0]}`];return[`background: ${L0.map(x=>/gradient/.test(x)?x:`linear-gradient(${x}, ${x})`).join(', ')}`]},
+ radius=n=>{if(n.type==='ellipse')return['border-radius: 50%'];const r=rcOf(n);return r.some(Boolean)?[`border-radius: ${r.every(v=>v===r[0])?px(r[0]):r.map(px).join(' ')}`]:[]},
+ stroke=n=>{if(!n.stroke||!(n.sw>0))return[];const w=n.sw;return[`outline: ${px(w)} ${n.dash==='dot'?'dotted':n.dash?'dashed':'solid'} ${col(n.stroke,n.sop??1)}`,`outline-offset: ${px(n.sa==='i'?-w:n.sa==='o'?0:-w/2)}`]},
+ fx=(n,txt)=>{const o=[],F=fxOn(n),sh=[];for(const f of F){const c=rgba(f.c||'#000000',f.a??.25);if(f.t==='ds')sh.push(txt?`${px(f.x||0)} ${px(f.y||0)} ${px(f.b||0)} ${c}`:`${px(f.x||0)} ${px(f.y||0)} ${px(f.b||0)} ${px(f.s||0)} ${c}`);else if(f.t==='is'&&!txt)sh.push(`inset ${px(f.x||0)} ${px(f.y||0)} ${px(f.b||0)} ${px(f.s||0)} ${c}`)}
+  if(sh.length)o.push(`${txt?'text-shadow':'box-shadow'}: ${sh.join(', ')}`);const lb=F.find(f=>f.t==='lb');if(lb)o.push(`filter: blur(${px(lb.b||0)})`);const bb=F.find(f=>f.t==='bb');if(bb)o.push(`backdrop-filter: blur(${px(bb.b||0)})`,`-webkit-backdrop-filter: blur(${px(bb.b||0)})`);return o},
+ common=n=>{const o=[];if((n.op??1)<1)o.push(`opacity: ${r2(n.op)}`);if(n.bl)o.push(`mix-blend-mode: ${n.bl}`);const t=[];if(n.rot)t.push(`rotate(${r2(n.rot)}deg)`);if(n.fx)t.push('scaleX(-1)');if(n.fy)t.push('scaleY(-1)');if(t.length)o.push(`transform: ${t.join(' ')}`);return o},
+ asSVG=n=>n.type==='path'||n.type==='poly'||n.type==='star'||n.type==='bool'||n.mask||n.dq||n.tp||n.type==='text'&&(n.stroke&&n.sw>0&&false);
+ const box=n=>{const it=itemOf(n);return n.type==='frame'||!asSVG(n)?(isGrp(n)?aabb(n):{x:n.x,y:n.y,w:n.w,h:n.h}):it?it[1]:aabb(n)};
+ function place(n,P,o){const b=box(n),A=P.al&&!n.abs;
+  if(A){const H=P.al.d!=='v',wv=rsVal(n,'w'),hv=rsVal(n,'h');o.push('position: relative','flex-shrink: 0');
+   const main=H?wv:hv,cross=H?hv:wv,mk=H?'width':'height',ck=H?'height':'width';
+   if(main==='fill')o.push('flex: 1 1 0',`min-${mk}: 0`);else if(main==='fixed'||n.type!=='text'&&!n.al)o.push(`${mk}: ${px(H?b.w:b.h)}`);
+   if(cross==='fill')o.push('align-self: stretch');else if(cross==='fixed'||n.type!=='text'&&!n.al)o.push(`${ck}: ${px(H?b.h:b.w)}`);return}
+  o.push('position: absolute');const pw=P.w,ph=P.h,x=b.x-P.x,y=b.y-P.y,c=P.frame?(n.cn||{}):{};
+  switch(c.h||'l'){case'r':o.push(`right: ${px(pw-x-b.w)}`,`width: ${px(b.w)}`);break;case'lr':o.push(`left: ${px(x)}`,`right: ${px(pw-x-b.w)}`);break;case'c':o.push(`left: calc(50% + ${px(x+b.w/2-pw/2-b.w/2)})`,`width: ${px(b.w)}`);break;case's':o.push(`left: ${r2(x/pw*100)}%`,`width: ${r2(b.w/pw*100)}%`);break;default:o.push(`left: ${px(x)}`);if(!(n.type==='text'&&!n.fixW)&&!(n.al&&n.al.sw==='h'))o.push(`width: ${px(b.w)}`)}
+  switch(c.v||'t'){case'b':o.push(`bottom: ${px(ph-y-b.h)}`,`height: ${px(b.h)}`);break;case'tb':o.push(`top: ${px(y)}`,`bottom: ${px(ph-y-b.h)}`);break;case'c':o.push(`top: calc(50% + ${px(y+b.h/2-ph/2-b.h/2)})`,`height: ${px(b.h)}`);break;case's':o.push(`top: ${r2(y/ph*100)}%`,`height: ${r2(b.h/ph*100)}%`);break;default:o.push(`top: ${px(y)}`);if(!(n.type==='text'&&!n.fixH)&&!(n.al&&n.al.sh==='h'))o.push(`height: ${px(b.h)}`)}}
+ function alCSS(n,o){const A=n.al,P=A.p||[0,0,0,0],J=['flex-start','center','flex-end'],H=A.d!=='v';o.push('display: flex',`flex-direction: ${H?'row':'column'}`);if(A.d==='w')o.push('flex-wrap: wrap');
+  if(A.ga)o.push('justify-content: space-between');else o.push(`justify-content: ${J[H?A.ax||0:A.ay||0]}`);o.push(`align-items: ${J[H?A.ay||0:A.ax||0]}`);if(A.d==='w')o.push(`align-content: ${J[A.ay||0]}`);
+  if(!A.ga&&A.g)o.push(`gap: ${px(A.g)}`);if(P.some(Boolean))o.push(`padding: ${P.map(px).join(' ')}`);o.push('box-sizing: border-box')}
+ const esc2=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+ function textHTML(n){const A=charStyles(n),T=String(n.text),paras=[];let i=0;for(const p of T.split('\n')){let h='',j=0;while(j<p.length){const k=A[i+j];let e=j+1;while(e<p.length&&A[i+e]===k)e++;const seg=esc2(p.slice(j,e));if(k&&Object.keys(k).length){const st=[];if(k.fw)st.push(`font-weight:${k.fw}`);if(k.it!=null)st.push(`font-style:${k.it?'italic':'normal'}`);if(k.fill)st.push(`color:${k.fill}`);if(k.fs)st.push(`font-size:${px(k.fs)}`);if(k.ff)st.push(`font-family:${ffCss(k.ff)}`);const d=[k.ud&&'underline',k.sk&&'line-through'].filter(Boolean);if(d.length)st.push(`text-decoration:${d.join(' ')}`);h+=`<span style="${st.join(';').replace(/"/g,"'")}">${seg}</span>`}else h+=seg;j=e}paras.push(h||'<br>');i+=p.length+1}
+  if(n.list){const t=n.list==='ol'?'ol':'ul';return`<${t} style="margin:0;padding-left:1.3em">${paras.map(p=>`<li>${p}</li>`).join('')}</${t}>`}return paras.map(p=>`<p style="margin:0">${p}</p>`).join('')}
+ function el(n,P,ind){if(n.hid)return'';const cls=slug(n),o=[],pad='  '.repeat(ind),ri=R.push('')-1;place(n,P,o);let inner='',tag='div';
+  if(asSVG(n)){const b=box(n);inner=svgStr([n],b,1,'').replace(/^<svg /,'<svg style="display:block;width:100%;height:100%;overflow:visible" ');o.push(...common(n));R[ri]=`.${cls} { ${o.join('; ')}; }`;return`${pad}<div class="${cls}" data-name="${esc2(nm(n))}">${inner}</div>\n`}
+  o.push(...common(n));
+  if(n.type==='text'){tag='div';const f=typeof n.fill==='string'?col(n.fill,n.fop??1):null;o.push(`font-family: ${ffCss(n.ff)}`,`font-size: ${px(n.fs)}`,`font-weight: ${n.fw||400}`,`line-height: ${r2(n.lh||1.2)}`);if(n.ls)o.push(`letter-spacing: ${px(n.ls)}`);if(n.it)o.push('font-style: italic');const d=[n.ud&&'underline',n.sk&&'line-through'].filter(Boolean);if(d.length)o.push(`text-decoration: ${d.join(' ')}`);
+   if(n.ta&&n.ta!=='left')o.push(`text-align: ${n.ta}`);if(f)o.push(`color: ${f}`);else if(isG(n.fill))o.push(`background: ${paint(n.fill,n.fop,n)}`,'-webkit-background-clip: text','background-clip: text','color: transparent');
+   o.push(n.fixW?'white-space: pre-wrap':'white-space: pre');if(n.fixH)o.push('overflow: hidden');if(n.stroke&&n.sw>0)o.push(`-webkit-text-stroke: ${px(n.sw)} ${col(n.stroke,n.sop??1)}`);o.push(...fx(n,1));inner=textHTML(n)}
+  else if(n.type==='image'){o.push(`background: url(${ASSETS[n.asset]||''}) ${n.fit==='tile'?'repeat':'no-repeat'} center / ${n.fit==='fill'||n.fit==='crop'?'cover':n.fit==='fit'?'contain':n.fit==='tile'?`${r2((n.tsc||1)*100)}%`:'100% 100%'}`,...radius(n),...stroke(n),...fx(n))}
+  else if(isGrp(n)){const b=aabb(n)||{x:0,y:0,w:0,h:0};inner='\n'+n.children.map(c=>el(c,{...b,frame:false},ind+1)).join('')+pad}
+  else{o.push(...bgs(n),...radius(n),...stroke(n),...fx(n));if(n.type==='frame'){if(n.clip!==false)o.push('overflow: hidden');if(n.al)alCSS(n,o);inner=n.children.length?'\n'+n.children.map(c=>el(c,{x:n.x,y:n.y,w:n.w,h:n.h,frame:true,al:n.al},ind+1)).join('')+pad:''}}
+  R[ri]=`.${cls} { ${o.join('; ')}; }`;return`${pad}<${tag} class="${cls}" data-name="${esc2(nm(n))}">${inner}</${tag}>\n`}
+ let body='';for(const[ns,b,name]of items){const one=ns.length===1&&ns[0].type==='frame'?ns[0]:null;
+  if(one){const cls=slug(one),ri=R.push('')-1,o=['position: relative',`width: ${px(one.w)}`,'flex-shrink: 0'];if(!(one.al&&one.al.sh==='h'))o.push(`min-height: ${px(one.h)}`);o.push(...bgs(one),...radius(one),...stroke(one),...fx(one),...common(one));if(one.clip!==false)o.push('overflow: hidden');if(one.al)alCSS(one,o);
+   R[ri]=`.${cls} { ${o.join('; ')}; }`;body+=`<section class="${cls}" data-name="${esc2(nm(one))}">\n${one.children.map(c=>el(c,{x:one.x,y:one.y,w:one.w,h:one.h,frame:true,al:one.al},1)).join('')}</section>\n`}
+  else{const cls=slug({name:name||'canvas',type:'canvas'});R.push(`.${cls} { position: relative; width: ${px(b.w)}; height: ${px(b.h)}; flex-shrink: 0; }`);body+=`<section class="${cls}">\n${ns.map(c=>el(c,{...b,frame:false},1)).join('')}</section>\n`}}
+ const fonts=(css||'').replace(/^<style>|<\/style>$/g,'');
+ return`<!doctype html>\n<html lang="${LANG}">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>${esc2(title)}</title>\n<!-- Exported from CocoaCanvas -->\n<style>\n${fonts}\n*, *::before, *::after { box-sizing: border-box; }\nbody { margin: 0; padding: 48px 24px; background: #e9e9e9; display: flex; flex-direction: column; align-items: center; gap: 48px; -webkit-font-smoothing: antialiased; }\n${R.join('\n')}\n</style>\n</head>\n<body>\n${body}</body>\n</html>\n`}
+async function exportHTML(it){if(!it.length)return toast(L('Nothing to export.','Нечего экспортировать.'));try{const css=await fontCSS(it.flatMap(x=>x[0])),name=it.length===1?it[0][2]:doc.name||L('Untitled','Без названия');
+ dl(new Blob([htmlDoc(it,css,name)],{type:'text/html'}),safe(name)+'.html');toast(L('Exported HTML and CSS','HTML и CSS экспортированы'))}catch(e){toast(L('Export failed: ','Не удалось экспортировать: ')+(e.message||e))}}
 async function exportLayers(){const ts=topSel();if(!ts.length)return;for(const n of ts){const it=itemOf(n);if(!it)continue;for(const s of n.ex?.length?n.ex:[{sc:1,fmt:'png'}])await expRun([it],s.fmt,s.sc)}}
 
 /* ---------- send to CocoaSuite ---------- */
