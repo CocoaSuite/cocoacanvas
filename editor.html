@@ -253,6 +253,7 @@ body{grid-template-columns:minmax(0,1fr)}#top{min-width:0}
  #lay{position:absolute;left:12px;top:12px;bottom:84px;width:250px;z-index:30;border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
  #inspW{position:absolute;right:12px;top:12px;bottom:84px;width:290px;z-index:30;border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
  body.lcol #lay,body.icol #inspW{display:none}
+ #lay,#inspW,#insp,#layList{touch-action:pan-y}
  #tbar{position:absolute;left:50%;transform:translateX(-50%);bottom:16px;border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:31;max-width:calc(100% - 24px);overflow-x:auto}
  #tbar .ic{width:40px;height:40px;flex:none}
  #hSlot{min-width:200px}
@@ -2524,10 +2525,28 @@ Promise.all([kvGet(KEY),kvGet('plstore').then(x=>{try{PST=JSON.parse(x||'{}')||{
  try{localStorage.setItem('cv-pl-boot',String(n+1))}catch(e){}const clr=()=>{try{localStorage.removeItem('cv-pl-boot')}catch(e){}};for(const ev of['pagehide','beforeunload'])addEventListener(ev,clr);document.addEventListener('visibilitychange',()=>{if(document.hidden)clr()});setTimeout(clr,3000);
  plBoot=1;for(const p of list)if(p.on)on(p);plBoot=0}).catch(()=>{});
 })();
+/* ---------- tablet: swipe a panel toward its edge to hide it, swipe in from the canvas edge to bring it back ---------- */
+(()=>{const TQ=matchMedia('(min-width:721px) and (max-width:1100px),(min-width:721px) and (pointer:coarse)'),BC=document.body.classList,EDGE=28,MIN=50;
+ const P={l:{el:$('lay'),cls:'lcol',dir:-1},r:{el:$('inspW'),cls:'icol',dir:1}};let S=null;
+ const skip=t=>t.closest('input,select,textarea,.nf,#gb,.rv,#cpW,#cpAlB,[contenteditable]');
+ addEventListener('pointerdown',e=>{S=null;if(e.pointerType!=='touch'||!TQ.matches||!e.isPrimary)return;
+  for(const k in P){const p=P[k];if(!BC.contains(p.cls)&&p.el.contains(e.target)&&!skip(e.target)){S={k,m:'hide',x:e.clientX,y:e.clientY,id:e.pointerId};return}}
+  const m=$('mid').getBoundingClientRect();if(e.clientY<m.top||e.clientY>m.bottom||!$('mid').contains(e.target)||e.target.closest('#tbar,.fab,#bDone'))return;
+  const k=e.clientX-m.left<EDGE?'l':m.right-e.clientX<EDGE?'r':null;if(!k||!BC.contains(P[k].cls))return;
+  S={k,m:'show',x:e.clientX,y:e.clientY,id:e.pointerId};e.stopImmediatePropagation();e.preventDefault()},true);
+ addEventListener('pointermove',e=>{if(!S||e.pointerId!==S.id)return;const dx=e.clientX-S.x,dy=e.clientY-S.y,p=P[S.k];
+  if(S.m==='show')e.stopImmediatePropagation();
+  if(Math.abs(dy)>Math.max(40,Math.abs(dx))){S=null;return}
+  const want=S.m==='hide'?p.dir:-p.dir;if(dx*want>MIN&&Math.abs(dx)>Math.abs(dy)*2){const k=S.k,m=S.m;S=null;
+   if(m==='hide'){try{ldrag=null;const ln=$('dropLn');if(ln)ln.hidden=true;clearTimeout(llT)}catch(_){}BC.add(p.cls)}else BC.remove(p.cls);
+   try{viewUpd()}catch(_){}}},true);
+ addEventListener('pointerup',e=>{if(S?.m==='show'&&e.pointerId===S.id)e.stopImmediatePropagation();S=null},true);
+ addEventListener('pointercancel',()=>{S=null},true);
+})();
 /* ---------- what's new (patch notes). Add a new entry at the TOP of this list; the landing page reads it too. ---------- */
 /*CC-NOTES*/const NOTES=[
-{"v":"1.6","date":"2026-10-29","title":["Plugins, auto layout, HTML export","Плагины, автораскладка, экспорт в HTML"],"en":[["plug","Plugins from the puzzle button: Apple and Google design kits, 6,000 icons, placeholders, patterns, noise, QR codes and lorem ipsum"],["layout","Auto layout and constraints, like in Figma"],["export","Export to HTML/CSS, and multi-page PDF with your own page order"],["helper","Cocoa Helper understands typos, synonyms and chained commands"],["text","New text copies the style of the last text you edited; F2 renames"],["fix","Fixes: pinch zoom jump, menu firing under the finger, helper covering buttons"]],
- "ru":[["plug","Плагины по кнопке с пазлом: наборы Apple и Google, 6000 иконок, заготовки, узоры, шум, QR-коды и lorem ipsum"],["layout","Автораскладка и привязки, как в Figma"],["export","Экспорт в HTML/CSS и многостраничный PDF со своим порядком страниц"],["helper","Cocoa Helper понимает опечатки, синонимы и цепочки команд"],["text","Новый текст берёт стиль последнего изменённого; F2 переименовывает"],["fix","Исправлено: скачок при масштабировании, меню под пальцем, помощник поверх кнопок"]]},
+{"v":"1.6","date":"2026-10-29","title":["Plugins, auto layout, HTML export","Плагины, автораскладка, экспорт в HTML"],"en":[["plug","Plugins from the puzzle button: Apple and Google design kits, 6,000 icons, placeholders, patterns, noise, QR codes and lorem ipsum"],["layout","Auto layout and constraints, like in Figma"],["export","Export to HTML/CSS, and multi-page PDF with your own page order"],["helper","Cocoa Helper understands typos, synonyms and chained commands"],["text","New text copies the style of the last text you edited; F2 renames"],["touch","Tablets: swipe a side panel toward the edge to hide it, swipe in from the edge to bring it back"],["fix","Fixes: pinch zoom jump, menu firing under the finger, helper covering buttons"]],
+ "ru":[["plug","Плагины по кнопке с пазлом: наборы Apple и Google, 6000 иконок, заготовки, узоры, шум, QR-коды и lorem ipsum"],["layout","Автораскладка и привязки, как в Figma"],["export","Экспорт в HTML/CSS и многостраничный PDF со своим порядком страниц"],["helper","Cocoa Helper понимает опечатки, синонимы и цепочки команд"],["text","Новый текст берёт стиль последнего изменённого; F2 переименовывает"],["touch","Планшеты: смахните боковую панель к краю, чтобы скрыть, и потяните от края, чтобы вернуть"],["fix","Исправлено: скачок при масштабировании, меню под пальцем, помощник поверх кнопок"]]},
 {"v":"1.5","date":"2026-10-29","title":["Settings, full screen, install as app","Настройки, полный экран, установка"],"en":[["settings","A Settings window for language, start screen, colour picker and storage"],["phone","Full screen mode and install as an app, with offline support"],["undo","Two-finger tap to undo, three-finger tap to redo"],["fix","Smoother panning and more accurate pinch zoom"]],
  "ru":[["settings","Окно настроек: язык, стартовый экран, палитра, хранилище"],["phone","Полноэкранный режим и установка как приложение, работа офлайн"],["undo","Касание двумя пальцами отменяет, тремя повторяет"],["fix","Плавнее прокрутка и точнее масштабирование"]]},
 {"v":"1.4","date":"2026-10-28","title":["Colour picker, corners, gradients","Палитра, углы, градиенты"],"en":[["color","A built-in colour picker with eyedropper"],["corners","Drag corner handles; round, bevel or smooth corners"],["gradient","Edit gradients right on the canvas"],["layout","Spacing guides, maths in number fields, aspect lock and frame presets"]],
