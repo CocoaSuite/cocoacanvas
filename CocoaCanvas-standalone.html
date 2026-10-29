@@ -252,7 +252,7 @@ body{grid-template-columns:minmax(0,1fr)}#top{min-width:0}
  #mid{grid-template-columns:minmax(0,1fr)}
  #lay{position:absolute;left:12px;top:12px;bottom:84px;width:250px;z-index:30;border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
  #inspW{position:absolute;right:12px;top:12px;bottom:84px;width:290px;z-index:30;border:1px solid var(--line);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
- body.lcol #lay,body.icol #inspW{display:none}
+ #lay,#inspW{transition:transform .34s cubic-bezier(.22,.8,.24,1),opacity .3s,visibility 0s}body.lcol #lay,body.icol #inspW{opacity:0;visibility:hidden;pointer-events:none;transition:transform .34s cubic-bezier(.22,.8,.24,1),opacity .3s .04s,visibility 0s .34s}body.lcol #lay{transform:translateX(calc(-100% - 16px))}body.icol #inspW{transform:translateX(calc(100% + 16px))}@media (prefers-reduced-motion:reduce){#lay,#inspW{transition:none!important}}
  #lay,#inspW,#insp,#layList{touch-action:pan-y}
  #tbar{position:absolute;left:50%;transform:translateX(-50%);bottom:16px;border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:31;max-width:calc(100% - 24px);overflow-x:auto}
  #tbar .ic{width:40px;height:40px;flex:none}
@@ -2525,23 +2525,29 @@ Promise.all([kvGet(KEY),kvGet('plstore').then(x=>{try{PST=JSON.parse(x||'{}')||{
  try{localStorage.setItem('cv-pl-boot',String(n+1))}catch(e){}const clr=()=>{try{localStorage.removeItem('cv-pl-boot')}catch(e){}};for(const ev of['pagehide','beforeunload'])addEventListener(ev,clr);document.addEventListener('visibilitychange',()=>{if(document.hidden)clr()});setTimeout(clr,3000);
  plBoot=1;for(const p of list)if(p.on)on(p);plBoot=0}).catch(()=>{});
 })();
-/* ---------- tablet: swipe a panel toward its edge to hide it, swipe in from the canvas edge to bring it back ---------- */
-(()=>{const TQ=matchMedia('(min-width:721px) and (max-width:1100px),(min-width:721px) and (pointer:coarse)'),BC=document.body.classList,EDGE=28,MIN=50;
+/* ---------- tablet: drag a panel toward its edge to hide it, drag in from the canvas edge to bring it back; the panel follows the finger ---------- */
+(()=>{const TQ=matchMedia('(min-width:721px) and (max-width:1100px),(min-width:721px) and (pointer:coarse)'),BC=document.body.classList,EDGE=28;
  const P={l:{el:$('lay'),cls:'lcol',dir:-1},r:{el:$('inspW'),cls:'icol',dir:1}};let S=null;
  const skip=t=>t.closest('input,select,textarea,.nf,#gb,.rv,#cpW,#cpAlB,[contenteditable]');
+ const clr=el=>{el.style.transition=el.style.transform=el.style.opacity=el.style.visibility=''};
  addEventListener('pointerdown',e=>{S=null;if(e.pointerType!=='touch'||!TQ.matches||!e.isPrimary)return;
   for(const k in P){const p=P[k];if(!BC.contains(p.cls)&&p.el.contains(e.target)&&!skip(e.target)){S={k,m:'hide',x:e.clientX,y:e.clientY,id:e.pointerId};return}}
-  const m=$('mid').getBoundingClientRect();if(e.clientY<m.top||e.clientY>m.bottom||!$('mid').contains(e.target)||e.target.closest('#tbar,.fab,#bDone'))return;
+  const m=$('mid').getBoundingClientRect();if(!$('mid').contains(e.target)||e.target.closest('#tbar,.fab,#bDone'))return;
   const k=e.clientX-m.left<EDGE?'l':m.right-e.clientX<EDGE?'r':null;if(!k||!BC.contains(P[k].cls))return;
   S={k,m:'show',x:e.clientX,y:e.clientY,id:e.pointerId};e.stopImmediatePropagation();e.preventDefault()},true);
- addEventListener('pointermove',e=>{if(!S||e.pointerId!==S.id)return;const dx=e.clientX-S.x,dy=e.clientY-S.y,p=P[S.k];
-  if(S.m==='show')e.stopImmediatePropagation();
-  if(Math.abs(dy)>Math.max(40,Math.abs(dx))){S=null;return}
-  const want=S.m==='hide'?p.dir:-p.dir;if(dx*want>MIN&&Math.abs(dx)>Math.abs(dy)*2){const k=S.k,m=S.m;S=null;
-   if(m==='hide'){try{ldrag=null;const ln=$('dropLn');if(ln)ln.hidden=true;clearTimeout(llT)}catch(_){}BC.add(p.cls)}else BC.remove(p.cls);
-   try{viewUpd()}catch(_){}}},true);
- addEventListener('pointerup',e=>{if(S?.m==='show'&&e.pointerId===S.id)e.stopImmediatePropagation();S=null},true);
- addEventListener('pointercancel',()=>{S=null},true);
+ addEventListener('pointermove',e=>{if(!S||e.pointerId!==S.id)return;const dx=e.clientX-S.x,dy=e.clientY-S.y,p=P[S.k],el=p.el;
+  if(!S.on){if(S.m==='show')e.stopImmediatePropagation();
+   if(Math.abs(dy)>Math.max(16,Math.abs(dx))){if(S.m==='hide')S=null;return}
+   if(Math.abs(dx)<10||Math.abs(dx)<Math.abs(dy)*1.5)return;
+   S.on=true;S.w=el.offsetWidth+16;S.t=[];if(S.m==='hide'){try{ldrag=null;const ln=$('dropLn');if(ln)ln.hidden=true;clearTimeout(llT)}catch(_){}}
+   el.style.transition='none';el.style.visibility='visible';el.style.opacity='1'}
+  e.stopImmediatePropagation();S.t.push([e.timeStamp,e.clientX]);if(S.t.length>5)S.t.shift();
+  const w=S.w,d=p.dir,off=S.m==='hide'?Math.max(0,Math.min(w,dx*d)):Math.max(0,Math.min(w,w+dx*d));
+  S.off=off;el.style.transform=`translateX(${off*d}px)`},true);
+ addEventListener('pointerup',e=>{if(!S||e.pointerId!==S.id)return;const s=S;S=null;if(s.m==='show'&&!s.on){e.stopImmediatePropagation();return}if(!s.on)return;e.stopImmediatePropagation();
+  const p=P[s.k],t=s.t,v=t.length>1?(t[t.length-1][1]-t[0][1])/Math.max(1,t[t.length-1][0]-t[0][0])*p.dir:0,hide=v>.35?true:v<-.35?false:s.off>s.w*.4;
+  BC.toggle(p.cls,hide);clr(p.el);try{viewUpd()}catch(_){}},true);
+ addEventListener('pointercancel',e=>{if(S?.on)clr(P[S.k].el);S=null},true);
 })();
 /* ---------- what's new (patch notes). Add a new entry at the TOP of this list; the landing page reads it too. ---------- */
 /*CC-NOTES*/const NOTES=[
