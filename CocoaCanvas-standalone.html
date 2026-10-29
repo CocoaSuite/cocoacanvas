@@ -121,6 +121,7 @@ input[type=range]::-moz-range-track{background:transparent}input[type=range]::-m
 .frow .fm{font:11px var(--sans);color:var(--mute);margin-left:auto}
 #insp>*{flex-shrink:0}
 #gModal{z-index:75}
+@media (pointer:coarse){.sg{stroke-width:30}}
 #cp{position:fixed;z-index:66;width:284px;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:12px;box-shadow:0 18px 50px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:10px;touch-action:none}
 #cp[hidden]{display:none}
 .cpW{position:relative;width:240px;height:240px;margin:2px auto 0;touch-action:none}
@@ -410,8 +411,8 @@ function drawUI(){let s='';const z=view.z,hs=matchMedia('(pointer:coarse)').matc
  for(const f of doc.nodes)if(f.type==='frame'&&!f.hid){const[x,y]=w2s(f.x,f.y),mx=Math.max(0,f.w*z/6.4|0);let t=nm(f);if(t.length>mx)t=mx>2?t.slice(0,mx-1)+'…':'';s+=`<text class="fl${sel.includes(f)?' on':''}" data-h="fl" data-f="${f.id}" x="${x}" y="${y-6}">${esc(t)}</text>`}
  if(hover&&!sel.includes(hover)&&IDX.has(hover.id)&&!drag)s+=outline(hover,2);
  const ts=topSel();
- if(editPath){const n=IDX.get(editPath)?.n;if(n){s+=outline(n,1);const sp=(x,y)=>w2s(...l2w(n,x,y)).join(' ');let g0=0;for(const S of subs(n)){const Q=S.pts;for(let i=0;i<Q.length-(S.closed?0:1);i++){const a=Q[i],c=Q[(i+1)%Q.length];s+=`<path class="sg" data-h="s${g0+i}" d="M${sp(a.x,a.y)} C${sp(a.x+a.ox,a.y+a.oy)} ${sp(c.x+c.ix,c.y+c.iy)} ${sp(c.x,c.y)}"/>`}g0+=Q.length}subs(n).flatMap(S=>S.pts).forEach((p,i)=>{const A=w2s(...l2w(n,p.x,p.y));for(const k of['i','o']){const hx=p[k+'x'],hy=p[k+'y'];if(!hx&&!hy)continue;const H=w2s(...l2w(n,p.x+hx,p.y+hy));s+=`<line x1="${A[0]}" y1="${A[1]}" x2="${H[0]}" y2="${H[1]}" stroke="var(--sel)"/><circle class="hd" data-h="${k}${i}" cx="${H[0]}" cy="${H[1]}" r="${hs}"/>`}
-  s+=`<rect class="hd" data-h="a${i}" x="${A[0]-hs}" y="${A[1]-hs}" width="${hs*2}" height="${hs*2}"${i===actPt?' style="fill:var(--sel)"':''}/>`})}}
+ if(editPath){const n=IDX.get(editPath)?.n;if(n){s+=outline(n,1);const sp=(x,y)=>w2s(...l2w(n,x,y)).join(' ');let g0=0;for(const S of subs(n)){const Q=S.pts;for(let i=0;i<Q.length-(S.closed?0:1);i++){const a=Q[i],c=Q[(i+1)%Q.length];s+=`<path class="sg" data-h="s${g0+i}" d="M${sp(a.x,a.y)} C${sp(a.x+a.ox,a.y+a.oy)} ${sp(c.x+c.ix,c.y+c.iy)} ${sp(c.x,c.y)}"/>`}g0+=Q.length}subs(n).flatMap(S=>S.pts).forEach((p,i)=>{const A=w2s(...l2w(n,p.x,p.y));for(const k of['i','o']){const hx=p[k+'x'],hy=p[k+'y'];if(!hx&&!hy)continue;const H=w2s(...l2w(n,p.x+hx,p.y+hy));s+=`<line x1="${A[0]}" y1="${A[1]}" x2="${H[0]}" y2="${H[1]}" stroke="var(--sel)"/>${hs>4?`<circle data-h="${k}${i}" cx="${H[0]}" cy="${H[1]}" r="20" fill="transparent"/>`:''}<circle class="hd" data-h="${k}${i}" cx="${H[0]}" cy="${H[1]}" r="${hs}"/>`}
+  s+=`${hs>4?`<circle data-h="a${i}" cx="${A[0]}" cy="${A[1]}" r="22" fill="transparent"/>`:''}<rect class="hd" data-h="a${i}" x="${A[0]-hs}" y="${A[1]-hs}" width="${hs*2}" height="${hs*2}"${i===actPt?' style="fill:var(--sel)"':''}/>`})}}
  else if(distort&&IDX.get(distort)){const n=IDX.get(distort).n,P=n.dq.map(([x,y])=>w2s(...l2w(n,x,y)));s+=`<polygon points="${P.map(p=>p.join(',')).join(' ')}" fill="none" stroke="var(--sel)"/>`;P.forEach((p,i)=>s+=`<rect class="hd" data-h="q${i}" x="${p[0]-hs-1}" y="${p[1]-hs-1}" width="${hs*2+2}" height="${hs*2+2}" style="cursor:move"/>`)}
  else if(ts.length&&!editing&&!pen){
   for(const n of sel)s+=outline(n,1);
@@ -432,7 +433,7 @@ function drawUI(){let s='';const z=view.z,hs=matchMedia('(pointer:coarse)').matc
   const l=P[P.length-1];if(drag?.m!=='penh')d+=` C${f(l.x+l.ox,l.y+l.oy)} ${f(mouse.x,mouse.y)} ${f(mouse.x,mouse.y)}`;s+=`<path d="${d}" fill="none" stroke="var(--sel)" stroke-width="1.5"/>`;
   P.forEach((p,i)=>{const A=w2s(p.x,p.y);if(p.ox||p.oy){const o=w2s(p.x+p.ox,p.y+p.oy),q=w2s(p.x+p.ix,p.y+p.iy);s+=`<line x1="${q[0]}" y1="${q[1]}" x2="${o[0]}" y2="${o[1]}" stroke="var(--sel)"/><circle cx="${o[0]}" cy="${o[1]}" r="3" class="hd"/><circle cx="${q[0]}" cy="${q[1]}" r="3" class="hd"/>`}s+=`<rect class="hd" x="${A[0]-hs}" y="${A[1]-hs}" width="${hs*2}" height="${hs*2}"${i===0&&P.length>2?' style="fill:var(--sel)"':''}/>`})}
  if(drag?.m==='pencil')s+=`<polyline points="${drag.pts.map(p=>w2s(p.x,p.y).join(',')).join(' ')}" fill="none" stroke="var(--sel)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
- UI.innerHTML=s;const bd=$('bDone');if(bd)bd.hidden=!(pen||editPath||distort)}
+ UI.innerHTML=s;const bd=$('bDone');if(bd)bd.hidden=!(pen||editPath||distort||document.body.classList.contains('multi'))}
 
 let frameNo=0;
 function mk(t,o={}){const b={id:nid(),type:t,name:'',x:0,y:0,w:0,h:0};
@@ -500,12 +501,13 @@ function reid(n){const c=clone(n);walk(k=>{k.id=nid()},[c]);return c}
 
 let DN={x:0,y:0,th:0};
 V.addEventListener('pointerdown',e=>{if(e.target===TED)return;DN={x:e.clientX,y:e.clientY,th:e.pointerType==='touch'?10:e.pointerType==='pen'?6:0};if(pickK)return pickAt(e);if(editing)TED.blur();closeMenus();
- const p=toW(e);mouse=p;
+ const p=toW(e);mouse=p;const SH=e.shiftKey||document.body.classList.contains('multi');
  if(e.button===1||space||tool==='hand'){e.preventDefault();cap(e);drag={m:'pan',sx:e.clientX,sy:e.clientY,vx:view.x,vy:view.y};V.classList.add('dn');return}
  if(e.button!==0)return;cap(e);
  const h=e.target.closest('[data-h]');
  if(h&&!pen){const k=h.dataset.h;
-  if(k==='fl'){const f=IDX.get(h.dataset.f)?.n;if(f&&!f.lock){if(e.shiftKey)toggleSel(f);else if(!sel.includes(f))setSel([f]);startMove(e,p,f)}return}
+  if(k==='fl'&&(editPath||distort)&&e.pointerType!=='mouse')return;
+  if(k==='fl'){const f=IDX.get(h.dataset.f)?.n;if(f&&!f.lock){if(SH)toggleSel(f);else if(!sel.includes(f))setSel([f]);startMove(e,p,f)}return}
   if(/^g[a-z]/.test(k)){const n=topSel()[0];if(n&&isG(n.fill))gradDown(n,k,p);return}
   if(k.startsWith('cr')){const n=topSel()[0];if(n)drag={m:'cr',i:+k.slice(2),n,t0:Date.now(),touch:e.pointerType==='touch',alt:e.altKey,moved:false};return}
   if(k==='rot')return startRot(p);
@@ -514,15 +516,16 @@ V.addEventListener('pointerdown',e=>{if(e.target===TED)return;DN={x:e.clientX,y:
   return startRs(k)}
  if(tool==='pen')return penDown(p);
  if(tool==='pencil'){drag={m:'pencil',pts:[p]};return}
+ if((editPath||distort)&&e.pointerType!=='mouse'){actPt=-1;drag={m:'pan',sx:e.clientX,sy:e.clientY,vx:view.x,vy:view.y};drawUI();return}
  if(distort)endDistort();
  if(editPath)exitPath();
  if(tool!=='move'){drag={m:'new',t:tool,p0:p,n:null};return}
  const el=e.target.closest('#scene [data-id]');
  let n=el?pick(el.dataset.id,e.ctrlKey||e.metaKey):null,ctx=null;
  if(n&&!par(n)&&n.type==='frame'&&n.children.length&&!sel.includes(n)){ctx=n;n=null}
- if(!n){const b=selBox();if(b&&sel.length&&!e.shiftKey&&inBox(p,b))return startMove(e,p,null);
-  if(!e.shiftKey){scope=null;setSel([])}drag={m:'marq',p0:p,ctx,base:[...sel]};return}
- if(e.shiftKey){toggleSel(n);if(!sel.includes(n))return}else if(!sel.includes(n))setSel([n]);
+ if(!n){const b=selBox();if(b&&sel.length&&!SH&&inBox(p,b))return startMove(e,p,null);
+  if(!SH){scope=null;setSel([])}drag={m:'marq',p0:p,ctx,base:[...sel]};return}
+ if(SH){toggleSel(n);if(!sel.includes(n))return}else if(!sel.includes(n))setSel([n]);
  startMove(e,p,n)});
 
 V.addEventListener('pointermove',e=>{const p=toW(e);mouse=p;const d=drag;
@@ -550,7 +553,7 @@ V.addEventListener('pointermove',e=>{const p=toW(e);mouse=p;const d=drag;
  case'pt':{const q=w2l(d.n,p),P=ptAt(d.n,d.i).p;if(d.k==='a'){P.x=q.x;P.y=q.y}else{const o=d.k,x=d.k==='o'?'i':'o';P[o+'x']=q.x-P.x;P[o+'y']=q.y-P.y;if(!e.altKey||d.pull){P[x+'x']=-P[o+'x'];P[x+'y']=-P[o+'y']}}d.moved=true;return render()}}});
 
 function endDrag(e){const d=drag;if(!d)return;drag=null;V.classList.remove('dn');
- if(d.m==='move'){if(d.moved){reparent();commit()}else{if(d.n&&!e.shiftKey&&sel.length>1)setSel([d.n])}}
+ if(d.m==='move'){if(d.moved){reparent();commit()}else{if(d.n&&!e.shiftKey&&!document.body.classList.contains('multi')&&sel.length>1)setSel([d.n])}}
  else if((d.m==='rs'||d.m==='rot')&&d.moved)commit();
  else if(d.m==='new')endNew(d);
  else if(d.m==='pencil')endPencil(d);
@@ -640,7 +643,7 @@ LL.addEventListener('pointerdown',e=>{const r=e.target.closest('.lr');if(!r||e.t
  if(e.target.closest('[data-eye]')){n.hid=!n.hid;if(n.hid)sel=sel.filter(x=>x!==n&&!anc(x,n));return commit()}
  if(e.target.closest('[data-lk]')){n.lock=!n.lock;return commit()}
  if(editPath)exitPath();
- if(e.shiftKey||e.ctrlKey||e.metaKey)toggleSel(n);else if(!sel.includes(n)){const p=par(n);scope=p&&p.type==='group'?p.id:null;setSel([n])}
+ if(e.shiftKey||e.ctrlKey||e.metaKey||document.body.classList.contains('multi'))toggleSel(n);else if(!sel.includes(n)){const p=par(n);scope=p&&p.type==='group'?p.id:null;setSel([n])}
  ldrag={y0:e.clientY,on:false}});
 LL.addEventListener('pointerover',e=>{const r=e.target.closest('.lr'),n=r&&IDX.get(r.dataset.id)?.n||null;if(n!==hover){hover=n;drawUI()}});
 LL.addEventListener('pointerleave',()=>{hover=null;drawUI()});
@@ -1524,7 +1527,7 @@ $('tbar').addEventListener('click',e=>{if(e.target.closest('[data-t],[data-c]')&
 LL.addEventListener('click',e=>{if(phone()&&e.target.closest('.ln'))setTimeout(()=>BC.remove('lopen'),120)});
 let gy=null;$('grab').addEventListener('pointerdown',e=>{gy=e.clientY;e.preventDefault()});
 window.addEventListener('pointerup',e=>{if(gy==null)return;const d=e.clientY-gy;gy=null;if(d>50){if(BC.contains('ifull'))BC.remove('ifull');else BC.remove('iopen')}else if(d<-40)BC.add('ifull');else BC.toggle('ifull')});
-Object.assign(CMD,{laycol:()=>BC.toggle('lcol'),inspcol:()=>BC.toggle('icol'),done:()=>{if(distort)endDistort();else if(pen)endPen();else if(editPath)exitPath()},edittext:()=>{const n=topSel()[0];if(n?.type==='text')editText(n)}});
+Object.assign(CMD,{laycol:()=>BC.toggle('lcol'),inspcol:()=>BC.toggle('icol'),multi:()=>{BC.toggle('multi');if(BC.contains('multi'))toast(L('Tap layers to add or remove them. Tap Done when finished.','Нажимайте на слои, чтобы добавлять или убирать их. Затем нажмите «Готово».'));drawUI()},done:()=>{if(BC.contains('multi')&&!distort&&!pen&&!editPath){BC.remove('multi');return drawUI()}if(distort)endDistort();else if(pen)endPen();else if(editPath)exitPath()},edittext:()=>{const n=topSel()[0];if(n?.type==='text')editText(n)}});
 
 const PT=new Map();let ctxT=0,G=null,penSeen=false,lpT=0,lp0=null,tapT=0,tapP=null,synthT=0;
 function abortDrag(){clearTimeout(lpT);const d=drag;if(!d)return;drag=null;V.classList.remove('dn');
@@ -1548,7 +1551,8 @@ V.addEventListener('lostpointercapture',e=>{if(e.pointerType==='touch'&&!PT.has(
 V.addEventListener('dblclick',e=>{if(e.isTrusted&&Date.now()-synthT<700)e.stopImmediatePropagation()},{capture:true});
 
 function ctxItems(){const ts=topSel(),n=ts.length,one=n===1?ts[0]:null,I=[],a=(c,en,ru)=>I.push([c,L(en,ru)]),hr=()=>I.push(null);
- if(!n){a('paste','Paste','Вставить');a('all','Select all','Выделить всё');return I}
+ if(!n){a('multi','Select multiple','Выбрать несколько');a('paste','Paste','Вставить');a('all','Select all','Выделить всё');return I}
+ a('multi',BC.contains('multi')?'Stop selecting multiple':'Select multiple',BC.contains('multi')?'Закончить выбор':'Выбрать несколько');
  if(one?.type==='text')a('edittext','Edit text','Редактировать текст');else if(one&&/path|rect|ellipse|poly|star/.test(one.type))a('points','Edit points','Редактировать точки');
  a('copy','Copy','Копировать');a('cut','Cut','Вырезать');a('paste','Paste','Вставить');a('dup','Duplicate','Дублировать');a('del','Delete','Удалить');hr();
  a('front','Bring to front','На передний план');a('fwd','Bring forward','Выше');a('bwd','Send backward','Ниже');a('back','Send to back','На задний план');hr();
