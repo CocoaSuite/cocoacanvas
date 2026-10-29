@@ -121,6 +121,16 @@ input[type=range]::-moz-range-track{background:transparent}input[type=range]::-m
 .frow .fm{font:11px var(--sans);color:var(--mute);margin-left:auto}
 #insp>*{flex-shrink:0}
 #gModal{z-index:75}
+@media (pointer:coarse){
+ body,#insp,#lay,.modal .box,#ctx,.dd,#cp{font-size:15px}
+ input,select,textarea,#qIn{font-size:16px!important}
+ button,.dd button,#ctx button,.mq button,body.mmenu .dd button,.ln,.pgl,.stN,.fpick,.frow .fn{font-size:15px!important}
+ .seg button,.sty span,.qex button,.fmoods button{font-size:14px!important}
+ .hint,.stM2,.stTip,.stE,.pgs,.vr small,.fca,.frow .fs,.qh,.qok,.qbad,#toast{font-size:13px!important}
+ .sec,.ph,.cpLab,.stLab,.kt h3,body.mmenu .mt,.ed-tag{font-size:12px!important}
+ .nf span,.rv>span,.rv output{font-size:13px!important}
+ .modal h2{font-size:18px}
+}
 @media (pointer:coarse){#fabX{display:grid!important;place-items:center;position:absolute;left:12px;bottom:calc(84px + env(safe-area-inset-bottom));width:52px;height:52px;border-radius:16px;background:var(--panel);border:1px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:6;padding:0;opacity:0;pointer-events:none;transform:scale(.85);transition:opacity .15s,transform .15s}
  body.hassel #fabX{opacity:1;pointer-events:auto;transform:none}#fabX svg{width:22px;height:22px;fill:none;stroke:var(--bad);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
  body.tmore #fabX{bottom:calc(136px + env(safe-area-inset-bottom))}body.iopen #fabX{bottom:calc(min(58vh,520px) + 12px);z-index:36}body.iopen.ifull #fabX{display:none!important}}
@@ -1569,16 +1579,16 @@ let gy=null;$('grab').addEventListener('pointerdown',e=>{gy=e.clientY;e.preventD
 window.addEventListener('pointerup',e=>{if(gy==null)return;const d=e.clientY-gy;gy=null;if(d>50){if(BC.contains('ifull'))BC.remove('ifull');else BC.remove('iopen')}else if(d<-40)BC.add('ifull');else BC.toggle('ifull')});
 Object.assign(CMD,{laycol:()=>BC.toggle('lcol'),inspcol:()=>BC.toggle('icol'),multi:()=>{BC.toggle('multi');if(BC.contains('multi'))toast(L('Tap layers to add or remove them. Tap Done when finished.','Нажимайте на слои, чтобы добавлять или убирать их. Затем нажмите «Готово».'));drawUI()},done:()=>{if(BC.contains('multi')&&!distort&&!pen&&!editPath){BC.remove('multi');return drawUI()}if(distort)endDistort();else if(pen)endPen();else if(editPath)exitPath()},edittext:()=>{const n=topSel()[0];if(n?.type==='text')editText(n)}});
 
-const PT=new Map();let ctxT=0,G=null,penSeen=false,lpT=0,lp0=null,tapT=0,tapP=null,synthT=0;
+const PT=new Map();let MT=null;let ctxT=0,G=null,penSeen=false,lpT=0,lp0=null,tapT=0,tapP=null,synthT=0;
 function abortDrag(){clearTimeout(lpT);const d=drag;if(!d)return;drag=null;V.classList.remove('dn');
  if(d.m==='penh'&&pen){pen.pts.pop();if(!pen.pts.length)pen=null}else if(!/pan|marq|pencil/.test(d.m)&&(d.moved||(d.m==='new'&&d.n)))restoreDoc(last);render()}
-V.addEventListener('pointerdown',e=>{if(e.pointerType==='pen')penSeen=true;if(e.pointerType!=='touch')return;if(e.isPrimary){PT.clear();G=null;gxEnd()}
+V.addEventListener('pointerdown',e=>{if(e.pointerType==='pen')penSeen=true;if(e.pointerType!=='touch')return;if(e.isPrimary){PT.clear();G=null;MT=null;gxEnd()}
  PT.set(e.pointerId,{x:e.clientX,y:e.clientY});
- if(PT.size>=2){e.stopImmediatePropagation();lp0=null;abortDrag();if(editing)TED.blur();if(PT.size===2){const[a,b]=[...PT.values()],r=V.getBoundingClientRect();gxStart();G={d:Math.hypot(a.x-b.x,a.y-b.y)||1,c:{x:(a.x+b.x)/2-r.left,y:(a.y+b.y)/2-r.top},v:{...view}}}return}
+ if(PT.size>=2){if(!MT){MT={t:Date.now(),n:0,mv:0,v:{...view},s:new Map()};for(const[id,p]of PT)MT.s.set(id,{...p})}else MT.s.set(e.pointerId,{x:e.clientX,y:e.clientY});MT.n=Math.max(MT.n,PT.size);e.stopImmediatePropagation();lp0=null;abortDrag();if(editing)TED.blur();if(PT.size===2){const[a,b]=[...PT.values()],r=V.getBoundingClientRect();gxStart();G={d:Math.hypot(a.x-b.x,a.y-b.y)||1,c:{x:(a.x+b.x)/2-r.left,y:(a.y+b.y)/2-r.top},v:{...view}}}return}
  if(penSeen&&tool!=='move'&&tool!=='hand'&&e.target!==TED){e.stopImmediatePropagation();closeMenus();cap(e);drag={m:'pan',sx:e.clientX,sy:e.clientY,vx:view.x,vy:view.y};return}
  lp0={x:e.clientX,y:e.clientY};clearTimeout(lpT);
  if(tool==='move'&&e.target!==TED&&!e.target.closest?.('[data-h]'))lpT=setTimeout(()=>{if(PT.size!==1||!lp0)return;abortDrag();ctxT=Date.now();openCtx(lp0.x,lp0.y,1);lp0=null},500)},{capture:true});
-V.addEventListener('pointermove',e=>{if(e.pointerType!=='touch'||!PT.has(e.pointerId))return;PT.set(e.pointerId,{x:e.clientX,y:e.clientY});
+V.addEventListener('pointermove',e=>{if(e.pointerType!=='touch'||!PT.has(e.pointerId))return;PT.set(e.pointerId,{x:e.clientX,y:e.clientY});if(MT){const s0=MT.s.get(e.pointerId);if(s0)MT.mv=Math.max(MT.mv,Math.hypot(e.clientX-s0.x,e.clientY-s0.y))}
  if(lp0&&Math.hypot(e.clientX-lp0.x,e.clientY-lp0.y)>8){clearTimeout(lpT);lp0=null}
  if(G&&PT.size>=2){e.stopImmediatePropagation();const[a,b]=[...PT.values()],r=V.getBoundingClientRect(),d=Math.hypot(a.x-b.x,a.y-b.y),c={x:(a.x+b.x)/2-r.left,y:(a.y+b.y)/2-r.top},z=clamp(G.v.z*d/G.d,.02,256),wx=(G.c.x-G.v.x)/G.v.z,wy=(G.c.y-G.v.y)/G.v.z;view.z=z;view.x=c.x-wx*z;view.y=c.y-wy*z;gxApply()}},{capture:true});
 const ptEnd=e=>{if(e.pointerType!=='touch')return;clearTimeout(lpT);PT.delete(e.pointerId);
@@ -1586,7 +1596,7 @@ const ptEnd=e=>{if(e.pointerType!=='touch')return;clearTimeout(lpT);PT.delete(e.
  if(e.type==='pointerup'&&lp0&&BC.contains('iopen')&&phone()&&!document.elementFromPoint(e.clientX,e.clientY)?.closest?.('#scene [data-id],#ui [data-h]'))BC.remove('iopen','ifull');
  if(e.type==='pointerup'&&lp0){const now=Date.now();if(tapP&&now-tapT<320&&Math.hypot(e.clientX-tapP.x,e.clientY-tapP.y)<24){tapT=0;synthT=now;V.dispatchEvent(new MouseEvent('dblclick',{clientX:e.clientX,clientY:e.clientY,bubbles:true}))}else{tapT=now;tapP={x:e.clientX,y:e.clientY}}}lp0=null};
 V.addEventListener('pointerup',ptEnd,{capture:true});
-['pointerup','pointercancel'].forEach(t=>window.addEventListener(t,e=>{if(e.pointerType==='touch'&&PT.delete(e.pointerId)&&PT.size<2){G=null;if(!drag)gxEnd()}},true));
+['pointerup','pointercancel'].forEach(t=>window.addEventListener(t,e=>{if(e.pointerType!=='touch')return;if(PT.delete(e.pointerId)&&PT.size<2){G=null;if(!drag)gxEnd()}if(!PT.size&&MT){const m=MT;MT=null;if(t==='pointerup'&&Date.now()-m.t<400&&m.mv<16&&m.n>=2){view={...m.v};viewUpd();if(m.n===2){if(H.length){undo();toast(L('Undo','Отменено'))}}else if(F.length){redo();toast(L('Redo','Повторено'))}}}},true));
 V.addEventListener('lostpointercapture',e=>{if(e.pointerType==='touch'&&!PT.has(e.pointerId))return});V.addEventListener('pointercancel',ptEnd,{capture:true});
 V.addEventListener('dblclick',e=>{if(e.isTrusted&&Date.now()-synthT<700)e.stopImmediatePropagation()},{capture:true});
 
