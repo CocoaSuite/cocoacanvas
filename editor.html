@@ -2309,7 +2309,7 @@ function head(code){const m=String(code).match(/==CocoaCanvas Plugin==([\s\S]*?)
  o.icon=[...String(o.icon||'')].slice(0,2).join('');o.color=/^#[0-9a-f]{6}$/i.test(o.color||'')?o.color:'#555555';for(const k of['name_ru','description','description_ru','author'])if(o[k])o[k]=String(o[k]).slice(0,300);return o}
 const PN=p=>LANG==='ru'&&p.name_ru||p.name,PD=p=>LANG==='ru'&&p.description_ru||p.description||'';
 const esc_=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const fail=(p,e,stop)=>{console.error('[plugin '+p.id+']',e);p.err=String(e&&e.message||e).slice(0,300);if(stop){halt(p);p.on=false;store()}toast(H('Plugin problem: ','Проблема с плагином: ')+PN(p)+' — '+p.err.slice(0,80));ui()};
+let plBoot=0;const fail=(p,e,stop)=>{console.error('[plugin '+p.id+']',e);p.err=String(e&&e.message||e).slice(0,300);if(stop){halt(p);p.on=false;if(!plBoot)store()}toast(H('Plugin problem: ','Проблема с плагином: ')+PN(p)+' — '+p.err.slice(0,80));ui()};
 function halt(p){const lv=live[p.id];if(!lv)return;delete live[p.id];delete ACT[p.id];for(const f of lv.reverse())try{f()}catch(e){console.warn(e)}}
 
 /* --- layers in and out --- */
@@ -2513,10 +2513,11 @@ Object.assign(CMD,{plugins:()=>window.plugOpen(),plugbrowse:()=>window.plugBrows
 /* --- start: if the app didn't get through its last start with plugins on, start this time without them --- */
 Promise.all([kvGet(KEY),kvGet('plstore').then(x=>{try{PST=JSON.parse(x||'{}')||{}}catch(e){PST={}}}).catch(()=>{})]).then(([v])=>{try{list=JSON.parse(v||'[]')}catch(e){list=[]}
  for(const p of list){try{const h=head(p.code);Object.assign(p,{access:h.access,perms:h.perms,icon:h.icon,color:h.color,name_ru:h.name_ru,description_ru:h.description_ru})}catch(e){p.on=false}}
- let bad=false;try{bad=localStorage.getItem('cv-pl-boot')==='1'||/[?&]noplugins\b/.test(location.search)}catch(e){}
- if(bad&&list.some(p=>p.on)){for(const p of list)p.on=false;store();setTimeout(()=>toast(H('Plugins were turned off because CocoaCanvas didn’t start properly last time. Turn them back on in Plugins → Manage.','Плагины выключены: в прошлый раз CocoaCanvas не запустился нормально. Включите их в «Плагины → Управление».')),600);return}
- try{localStorage.setItem('cv-pl-boot','1')}catch(e){}const clr=()=>{try{localStorage.removeItem('cv-pl-boot')}catch(e){}};addEventListener('beforeunload',clr);setTimeout(clr,8000);
- for(const p of list)if(p.on)on(p)}).catch(()=>{});
+ /* crash guard: only skip plugins after two failed starts in a row, and only for this session; enabled plugins stay enabled */
+ let n=0;try{n=+localStorage.getItem('cv-pl-boot')||0}catch(e){}const skip=/[?&]noplugins\b/.test(location.search);
+ if(list.some(p=>p.on)&&(skip||n>=2)){try{localStorage.removeItem('cv-pl-boot')}catch(e){}if(!skip)setTimeout(()=>toast(H('Plugins were skipped this time because CocoaCanvas didn’t start properly twice. They’ll load again next time.','Плагины пропущены: CocoaCanvas дважды не запустился нормально. В следующий раз они загрузятся снова.')),600);return}
+ try{localStorage.setItem('cv-pl-boot',String(n+1))}catch(e){}const clr=()=>{try{localStorage.removeItem('cv-pl-boot')}catch(e){}};for(const ev of['pagehide','beforeunload'])addEventListener(ev,clr);document.addEventListener('visibilitychange',()=>{if(document.hidden)clr()});setTimeout(clr,3000);
+ plBoot=1;for(const p of list)if(p.on)on(p);plBoot=0}).catch(()=>{});
 })();
 /* ---------- what's new (patch notes). Add a new entry at the TOP of this list; the landing page reads it too. ---------- */
 /*CC-NOTES*/const NOTES=[
