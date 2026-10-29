@@ -403,8 +403,8 @@ function drawUI(){let s='';const z=view.z,hs=matchMedia('(pointer:coarse)').matc
    for(const[a,c,k,cu]of[[0,1,'0,-1','ns'],[1,2,'1,0','ew'],[2,3,'0,1','ns'],[3,0,'-1,0','ew']]){if(txt&&!one.fixW&&cu==='ns')continue;s+=`<line class="he" data-h="${k}" x1="${P[a][0]}" y1="${P[a][1]}" x2="${P[c][0]}" y2="${P[c][1]}" style="cursor:${cu}-resize"/>`}
    if(!ts.every(n=>n.type==='frame')){const cx=P.reduce((a,p)=>a+p[0],0)/4,cy=P.reduce((a,p)=>a+p[1],0)/4;P.forEach(p=>{const dx=p[0]-cx,dy=p[1]-cy,l=Math.hypot(dx,dy)||1;s+=`<circle class="rz" data-h="rot" cx="${p[0]+dx/l*(hs*2+1)}" cy="${p[1]+dy/l*(hs*2+1)}" r="${hs*2+2}"/>`})}
    if(!txt||one.fixW)['-1,-1','1,-1','1,1','-1,1'].forEach((k,i)=>s+=`<rect class="hd" data-h="${k}" x="${P[i][0]-hs}" y="${P[i][1]-hs}" width="${hs*2}" height="${hs*2}" style="cursor:${i%2?'nesw':'nwse'}-resize"/>`);
-   if(one&&/rect|frame|image|poly|star/.test(one.type)&&one.w*z>=40&&one.h*z>=40){const pg=/poly|star/.test(one.type),R=rcOf(one),m=14/z,mx=Math.min(one.w,one.h)/2,D=pg?[[one.w/2,Math.min(mx,Math.max(one.r||0,m)),0]]:[[0,0,1,1],[one.w,0,-1,1],[one.w,one.h,-1,-1],[0,one.h,1,-1]].map(([x,y,sx,sy],i)=>{const t=Math.min(mx,Math.max(R[i]||0,m));return[x+sx*t,y+sy*t,i]});
-    for(const[x,y,i]of D){const[X,Y]=w2s(...l2w(one,x,y));s+=`<circle class="hd cdot" data-h="cr${i}" cx="${X}" cy="${Y}" r="${hs+.5}"/>`;if(drag?.m==='cr'&&drag.moved&&(pg||i===drag.i)){const lb=pg||!drag.single?L('Radius ','Радиус ')+drag.r:['↖','↗','↘','↙'][i]+' '+drag.r,lw=lb.length*6.4+12;s+=`<g class="badge"><rect x="${X+10}" y="${Y-9}" width="${lw}" height="18" rx="3"/><text x="${X+10+lw/2}" y="${Y+4}" text-anchor="middle">${lb}</text></g>`}}}
+   const CO=matchMedia('(pointer:coarse)').matches,MS=CO?110:40;if(one&&/rect|frame|image|poly|star/.test(one.type)&&one.w*z>=MS&&one.h*z>=MS){const pg=/poly|star/.test(one.type),R=rcOf(one),m=(CO?30:14)/z,mx=Math.min(one.w,one.h)/2,D=pg?[[one.w/2,Math.min(mx,Math.max(one.r||0,m)),0]]:[[0,0,1,1],[one.w,0,-1,1],[one.w,one.h,-1,-1],[0,one.h,1,-1]].map(([x,y,sx,sy],i)=>{const t=Math.min(mx,Math.max(R[i]||0,m));return[x+sx*t,y+sy*t,i]});
+    for(const[x,y,i]of D){const[X,Y]=w2s(...l2w(one,x,y));s+=`<circle class="cdot" data-h="cr${i}" cx="${X}" cy="${Y}" r="${CO?22:9}" fill="transparent"/><circle class="hd cdot" data-h="cr${i}" cx="${X}" cy="${Y}" r="${hs+.5}"/>`;if(drag?.m==='cr'&&drag.moved&&(pg||i===drag.i)){const lb=pg||!drag.single?L('Radius ','Радиус ')+drag.r:['↖','↗','↘','↙'][i]+' '+drag.r,lw=lb.length*6.4+12;s+=`<g class="badge"><rect x="${X+10}" y="${Y-9}" width="${lw}" height="18" rx="3"/><text x="${X+10+lw/2}" y="${Y+4}" text-anchor="middle">${lb}</text></g>`}}}
    const xs=P.map(p=>p[0]),ys=P.map(p=>p[1]),bt=`${r2(b.w)} × ${r2(b.h)}`,bw=bt.length*6.4+12,bx=(Math.min(...xs)+Math.max(...xs))/2;
    s+=`<g class="badge"><rect x="${bx-bw/2}" y="${Math.max(...ys)+8}" width="${bw}" height="18" rx="3"/><text x="${bx}" y="${Math.max(...ys)+21}" text-anchor="middle">${bt}</text></g>`}}
  if(drag?.g)for(const g of drag.g){if(g.seg){for(const[u,v]of g.s){const[a,b]=g.seg==='x'?[w2s(u,g.c),w2s(v,g.c)]:[w2s(g.c,u),w2s(g.c,v)],o=g.seg==='x'?[0,-4,0,4]:[-4,0,4,0];s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="var(--guide)"/>`+[a,b].map(P=>`<line x1="${P[0]+o[0]}" y1="${P[1]+o[1]}" x2="${P[0]+o[2]}" y2="${P[1]+o[3]}" stroke="var(--guide)"/>`).join('');const lb=String(Math.round(g.gap)),lw=lb.length*6.5+8,mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;s+=`<g class="badge"><rect x="${mx-lw/2}" y="${my-8}" width="${lw}" height="16" rx="3" style="fill:var(--guide)"/><text x="${mx}" y="${my+4}" text-anchor="middle">${lb}</text></g>`}continue}const[a,b]=g.x!=null?[w2s(g.x,g.a),w2s(g.x,g.b)]:[w2s(g.a,g.y),w2s(g.b,g.y)];s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="var(--guide)"/>`}
@@ -479,7 +479,8 @@ function startMove(e,p,n){drag={m:'move',p0:p,ax:0,ay:0,b0:selBox(),moved:false,
 function dupIn(off){const out=[];const ts=[];walk(n=>{if(topSel().includes(n))ts.push(n)});for(const n of ts){const c=reid(n);moveN(c,off,off);const l=sibs(n);l.splice(l.indexOf(n)+1,0,c);out.push(c)}reindex();sel=out;return out}
 function reid(n){const c=clone(n);walk(k=>{k.id=nid()},[c]);return c}
 
-V.addEventListener('pointerdown',e=>{if(e.target===TED)return;if(pickK)return pickAt(e);if(editing)TED.blur();closeMenus();
+let DN={x:0,y:0,th:0};
+V.addEventListener('pointerdown',e=>{if(e.target===TED)return;DN={x:e.clientX,y:e.clientY,th:e.pointerType==='touch'?10:e.pointerType==='pen'?6:0};if(pickK)return pickAt(e);if(editing)TED.blur();closeMenus();
  const p=toW(e);mouse=p;
  if(e.button===1||space||tool==='hand'){e.preventDefault();cap(e);drag={m:'pan',sx:e.clientX,sy:e.clientY,vx:view.x,vy:view.y};V.classList.add('dn');return}
  if(e.button!==0)return;cap(e);
@@ -506,6 +507,7 @@ V.addEventListener('pointerdown',e=>{if(e.target===TED)return;if(pickK)return pi
 
 V.addEventListener('pointermove',e=>{const p=toW(e);mouse=p;const d=drag;
  if(!d){if(tool==='move'){const el=e.target.closest('#scene [data-id]');let n=el?pick(el.dataset.id,e.ctrlKey||e.metaKey):null;if(n&&!par(n)&&n.type==='frame'&&n.children.length)n=null;if(n!==hover){hover=n;drawUI()}}else if(pen)drawUI();return}
+ if(!d.armed&&d.m!=='pan'&&d.m!=='pencil'){if(DN.th&&Math.hypot(e.clientX-DN.x,e.clientY-DN.y)<DN.th)return;d.armed=true}
  switch(d.m){
  case'pan':view.x=d.vx+e.clientX-d.sx;view.y=d.vy+e.clientY-d.sy;return viewUpd();
  case'move':{let dx=p.x-d.p0.x,dy=p.y-d.p0.y;if(!d.moved){if(Math.hypot(dx,dy)*view.z<3)return;d.moved=true;hover=null;if(d.alt)dupIn(0);d.b0=selBox();d.T=snapT()}
@@ -527,7 +529,7 @@ V.addEventListener('pointermove',e=>{const p=toW(e);mouse=p;const d=drag;
  case'pt':{const q=w2l(d.n,p),P=ptAt(d.n,d.i).p;if(d.k==='a'){P.x=q.x;P.y=q.y}else{const o=d.k,x=d.k==='o'?'i':'o';P[o+'x']=q.x-P.x;P[o+'y']=q.y-P.y;if(!e.altKey||d.pull){P[x+'x']=-P[o+'x'];P[x+'y']=-P[o+'y']}}d.moved=true;return render()}}});
 
 function endDrag(e){const d=drag;if(!d)return;drag=null;V.classList.remove('dn');
- if(d.m==='move'){if(d.moved){reparent();commit()}else{if(d.n&&!e.shiftKey&&sel.length>1)setSel([d.n]);if(d.n&&e.pointerType!=='mouse'&&matchMedia('(max-width:720px)').matches)document.body.classList.add('iopen')}}
+ if(d.m==='move'){if(d.moved){reparent();commit()}else{if(d.n&&!e.shiftKey&&sel.length>1)setSel([d.n])}}
  else if((d.m==='rs'||d.m==='rot')&&d.moved)commit();
  else if(d.m==='new')endNew(d);
  else if(d.m==='pencil')endPencil(d);
