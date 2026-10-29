@@ -406,6 +406,7 @@ function drawUI(){let s='';const z=view.z,hs=matchMedia('(pointer:coarse)').matc
    if(!txt||one.fixW)['-1,-1','1,-1','1,1','-1,1'].forEach((k,i)=>s+=`<rect class="hd" data-h="${k}" x="${P[i][0]-hs}" y="${P[i][1]-hs}" width="${hs*2}" height="${hs*2}" style="cursor:${i%2?'nesw':'nwse'}-resize"/>`);
    const CO=matchMedia('(pointer:coarse)').matches,MS=CO?110:40;if(one&&/rect|frame|image|poly|star/.test(one.type)&&one.w*z>=MS&&one.h*z>=MS){const pg=/poly|star/.test(one.type),R=rcOf(one),m=(CO?30:14)/z,mx=Math.min(one.w,one.h)/2,D=pg?[[one.w/2,Math.min(mx,Math.max(one.r||0,m)),0]]:[[0,0,1,1],[one.w,0,-1,1],[one.w,one.h,-1,-1],[0,one.h,1,-1]].map(([x,y,sx,sy],i)=>{const t=Math.min(mx,Math.max(R[i]||0,m));return[x+sx*t,y+sy*t,i]});
     for(const[x,y,i]of D){const[X,Y]=w2s(...l2w(one,x,y));s+=`<circle class="cdot" data-h="cr${i}" cx="${X}" cy="${Y}" r="${CO?22:9}" fill="transparent"/><circle class="hd cdot" data-h="cr${i}" cx="${X}" cy="${Y}" r="${hs+.5}"/>`;if(drag?.m==='cr'&&drag.moved&&(pg||i===drag.i)){const lb=pg||!drag.single?L('Radius ','Радиус ')+drag.r:['↖','↗','↘','↙'][i]+' '+drag.r,lw=lb.length*6.4+12;s+=`<g class="badge"><rect x="${X+10}" y="${Y-9}" width="${lw}" height="18" rx="3"/><text x="${X+10+lw/2}" y="${Y+4}" text-anchor="middle">${lb}</text></g>`}}}
+   if(one&&isG(one.fill)&&!distort&&one.type!=='image')s+=gradUI(one,hs);
    const xs=P.map(p=>p[0]),ys=P.map(p=>p[1]),bt=`${r2(b.w)} × ${r2(b.h)}`,bw=bt.length*6.4+12,bx=(Math.min(...xs)+Math.max(...xs))/2;
    s+=`<g class="badge"><rect x="${bx-bw/2}" y="${Math.max(...ys)+8}" width="${bw}" height="18" rx="3"/><text x="${bx}" y="${Math.max(...ys)+21}" text-anchor="middle">${bt}</text></g>`}}
  if(drag?.g)for(const g of drag.g){if(g.seg){for(const[u,v]of g.s){const[a,b]=g.seg==='x'?[w2s(u,g.c),w2s(v,g.c)]:[w2s(g.c,u),w2s(g.c,v)],o=g.seg==='x'?[0,-4,0,4]:[-4,0,4,0];s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="var(--guide)"/>`+[a,b].map(P=>`<line x1="${P[0]+o[0]}" y1="${P[1]+o[1]}" x2="${P[0]+o[2]}" y2="${P[1]+o[3]}" stroke="var(--guide)"/>`).join('');const lb=String(Math.round(g.gap)),lw=lb.length*6.5+8,mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;s+=`<g class="badge"><rect x="${mx-lw/2}" y="${my-8}" width="${lw}" height="16" rx="3" style="fill:var(--guide)"/><text x="${mx}" y="${my+4}" text-anchor="middle">${lb}</text></g>`}continue}const[a,b]=g.x!=null?[w2s(g.x,g.a),w2s(g.x,g.b)]:[w2s(g.a,g.y),w2s(g.b,g.y)];s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="var(--guide)"/>`}
@@ -488,6 +489,7 @@ V.addEventListener('pointerdown',e=>{if(e.target===TED)return;DN={x:e.clientX,y:
  const h=e.target.closest('[data-h]');
  if(h&&!pen){const k=h.dataset.h;
   if(k==='fl'){const f=IDX.get(h.dataset.f)?.n;if(f&&!f.lock){if(e.shiftKey)toggleSel(f);else if(!sel.includes(f))setSel([f]);startMove(e,p,f)}return}
+  if(/^g[a-z]/.test(k)){const n=topSel()[0];if(n&&isG(n.fill))gradDown(n,k,p);return}
   if(k.startsWith('cr')){const n=topSel()[0];if(n)drag={m:'cr',i:+k.slice(2),n,t0:Date.now(),touch:e.pointerType==='touch',alt:e.altKey,moved:false};return}
   if(k==='rot')return startRot(p);
   if(/^[aios]\d/.test(k)){const n=IDX.get(editPath).n;let i=+k.slice(1),t=k[0];if(t==='s'){i=splitSeg(n,i,p);t='a'}else if(t==='a'&&e.altKey){const P=ptAt(n,i).p;P.ox=P.oy=P.ix=P.iy=0;t='o'}actPt=i;drag={m:'pt',k:t,i,n,pull:t==='o'&&e.altKey,moved:k[0]==='s'};return render()}
@@ -521,6 +523,7 @@ V.addEventListener('pointermove',e=>{const p=toW(e);mouse=p;const d=drag;
   const cand=d.ctx?d.ctx.children:scope&&IDX.get(scope)?IDX.get(scope).n.children:doc.nodes;const hs=cand.filter(n=>{if(n.hid||n.lock)return false;const b=aabb(n);return b&&touch(b,r)});
   sel=[...new Set([...d.base,...hs])];return render()}
  case'new':return doNew(p,e);
+ case'gd':return gradMove(d,p,e);
  case'cr':{const n=d.n,q=w2l(n,p),pg=/poly|star/.test(n.type),mx=Math.min(n.w,n.h)/2;if(!d.moved){d.moved=true;d.single=!pg&&(d.alt||e.altKey||(d.touch&&Date.now()-d.t0>450))}let r;
   if(pg)r=q.y;else{const C=[[0,0,1,1],[n.w,0,-1,1],[n.w,n.h,-1,-1],[0,n.h,1,-1]][d.i];r=((q.x-C[0])*C[2]+(q.y-C[1])*C[3])/2}r=clamp(r,0,mx);r=e.shiftKey?Math.round(r/4)*4:Math.round(r);
   if(d.single){const R=[...rcOf(n)];R[d.i]=r;if(R.every(x=>x===R[0])){n.r=r;delete n.rc}else{n.rc=R;n.r=R[0]}}else{n.r=r;delete n.rc}d.r=r;return render()}
@@ -535,6 +538,7 @@ function endDrag(e){const d=drag;if(!d)return;drag=null;V.classList.remove('dn')
  else if(d.m==='new')endNew(d);
  else if(d.m==='pencil')endPencil(d);
  else if(d.m==='cr'&&d.moved)commit();
+ else if(d.m==='gd'){if(d.moved||d.added){delete d.n.cS;commit()}else render()}
  else if(d.m==='dq'&&d.moved){WC.clear();commit()}
  else if(d.m==='pt'&&d.moved){normPath(d.n);commit()}
  render()}
@@ -739,7 +743,7 @@ function setV(k,v,live){const ts=topSel();if(!ts.length)return;const one=ts.leng
  case'ft':FL().forEach(n=>{const f=n.fill,c=isG(f)?gSort(f)[0].c:f||'#d9d9d9';n.fill=v==='solid'?c:isG(f)?{...clone(f),t:v}:{t:v,a:90,s:[{o:0,c,a:1},{o:1,c,a:0}]}});gsel=0;break;
  case'gc':case'gcx':{const c=hex(v);if(!c)return;gEdit(g=>g.s[gsel].c=c);break}
  case'go':gEdit(g=>g.s[gsel].a=clamp(+v,0,100)/100);break;
- case'ga':gEdit(g=>g.a=nrm(+v||0));break;
+ case'ga':gEdit(g=>{const a=nrm(+v||0);if(g.p){const[p,q]=g.p,mx=(p[0]+q[0])/2,my=(p[1]+q[1])/2,l=Math.hypot(q[0]-p[0],q[1]-p[1])/2,t=a*Math.PI/180;g.p=[[mx-Math.cos(t)*l,my-Math.sin(t)*l],[mx+Math.cos(t)*l,my+Math.sin(t)*l]]}g.a=a});break;
  case'stroke':case'strokex':{const c=hex(v);if(!c)return;STK().forEach(n=>n.stroke=c);break}
  case'sw':STK().forEach(n=>n.sw=Math.max(0,+v||0));break;
  case'sop':STK().forEach(n=>{const o=clamp(+v,0,100)/100;if(o<1)n.sop=o;else delete n.sop});break;
@@ -1213,9 +1217,11 @@ function layoutT(n){const txt=String(n.text),A=charStyles(n),lh=n.fs*(n.lh||1.2)
  const hh=out.length*lh;n.h=n.fixH&&n.hh?n.hh:hh;
  return n._L={lines:out,lh,b:(lh-(asc+dsc))/2+asc}}
 
-function gradDef(f,id){const S=gSort(f).map(s=>`<stop offset="${r2(s.o)}" stop-color="${s.c}"${s.a<1?` stop-opacity="${r2(s.a)}"`:''}/>`).join('');
- if(f.t==='radial')return`<radialGradient id="${id}" cx=".5" cy=".5" r=".5">${S}</radialGradient>`;
- const t=(f.a||0)*Math.PI/180,c=Math.cos(t)/2,s=Math.sin(t)/2;return`<linearGradient id="${id}" x1="${r2(.5-c)}" y1="${r2(.5-s)}" x2="${r2(.5+c)}" y2="${r2(.5+s)}">${S}</linearGradient>`}
+function gLin(f){if(f.p)return f.p;const t=(f.a||0)*Math.PI/180,c=Math.cos(t)/2,s=Math.sin(t)/2;return[[.5-c,.5-s],[.5+c,.5+s]]}
+function gRad(f){return{c:f.c||[.5,.5],r:f.r||[.5,.5]}}
+function gradDef(f,id,box){const S=gSort(f).map(s=>`<stop offset="${r2(s.o)}" stop-color="${s.c}"${s.a<1?` stop-opacity="${r2(s.a)}"`:''}/>`).join(''),U=box?' gradientUnits="userSpaceOnUse"':'',X=v=>box?r2(box.x+v*box.w):r2(v),Y=v=>box?r2(box.y+v*box.h):r2(v),q=v=>Math.round(v*1e4)/1e4;
+ if(f.t==='radial'){const{c,r}=gRad(f),cx=box?X(c[0]):q(c[0]),cy=box?Y(c[1]):q(c[1]),rx=box?r[0]*box.w:r[0],ry=box?r[1]*box.h:r[1],k=rx?ry/rx:1;return`<radialGradient id="${id}"${U} cx="${cx}" cy="${cy}" r="${q(Math.max(rx,1e-4))}"${Math.abs(k-1)>1e-3?` gradientTransform="translate(${cx} ${cy}) scale(1 ${q(k)}) translate(${-cx} ${-cy})"`:''}>${S}</radialGradient>`}
+ const[a,b]=gLin(f);return`<linearGradient id="${id}"${U} x1="${box?X(a[0]):q(a[0])}" y1="${box?Y(a[1]):q(a[1])}" x2="${box?X(b[0]):q(b[0])}" y2="${box?Y(b[1]):q(b[1])}">${S}</linearGradient>`}
 function gdef(n){return isG(n.fill)?gradDef(n.fill,'gf'+n.id):''}
 const rcOf=n=>n.rc||[n.r||0,n.r||0,n.r||0,n.r||0];
 function rectPts(w,h,R,ct){const P=[],M=Math.min(w,h)/2,add=(x,y,ix=0,iy=0,ox=0,oy=0)=>P.push({x,y,ix,iy,ox,oy}),D=v=>ct==='smooth'?Math.min(v*1.35,M):v,Kf=v=>ct==='bevel'?0:ct==='smooth'?D(v)*.6:v*.5523,[a,b,c,d]=R.map(v=>v||0);
@@ -1228,7 +1234,7 @@ function rshape(n,at){const R=rcOf(n).map(v=>Math.max(0,Math.min(v||0,n.w/2,n.h/
 const shD=n=>subsD([{pts:shapePts(n),closed:true}],n.x,n.y);
 const fillsOf=n=>[n.fill?{f:n.fill,o:n.fop}:null,...(n.fills||[]).map(p=>p.f?{f:p.f,o:p.o}:null)].filter(Boolean);
 const strokesOf=n=>[n.stroke&&n.sw>0?{c:n.stroke,w:n.sw,o:n.sop}:null,...(n.strokes||[]).filter(s=>s.c&&s.w>0)].filter(Boolean);
-function fillsS(n,G){return fillsOf(n).map((p,i)=>{const id='gf'+n.id+(i?'_'+i:'');return(isG(p.f)?gradDef(p.f,id):'')+G(` fill="${isG(p.f)?`url(#${id})`:p.f}"${p.o!=null&&p.o<1?` fill-opacity="${r2(p.o)}"`:''}`)}).join('')}
+function fillsS(n,G){return fillsOf(n).map((p,i)=>{const id='gf'+n.id+(i?'_'+i:'');return(isG(p.f)?gradDef(p.f,id,n.type==='text'?n:null):'')+G(` fill="${isG(p.f)?`url(#${id})`:p.f}"${p.o!=null&&p.o<1?` fill-opacity="${r2(p.o)}"`:''}`)}).join('')}
 const mkr=(t,id,c)=>`<marker id="${id}" viewBox="-6 -6 12 12" markerWidth="4.8" markerHeight="4.8" orient="auto-start-reverse" overflow="visible">${{line:`<path d="M-3.5 -4L.5 0L-3.5 4" fill="none" stroke="${c}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`,tri:`<path d="M-3 -3.5L3 0L-3 3.5Z" fill="${c}"/>`,circle:`<circle r="2.5" fill="${c}"/>`,square:`<rect x="-2.2" y="-2.2" width="4.4" height="4.4" fill="${c}"/>`,bar:`<path d="M0 -4V4" stroke="${c}" stroke-width="2"/>`}[t]||''}</marker>`;
 function strokesS(n,G){const S=strokesOf(n);if(!S.length)return'';const pth=n.type==='path'||n.type==='bool',open=n.type==='path'&&!n.closed&&!n.more,al=open?'c':n.sa||'c',cap=n.cap||(pth?'round':'butt'),jn=n.join||(pth?'round':'miter'),dot=n.dash==='dot';
  let o='',d='';S.forEach((k,i)=>{const w=al==='c'?k.w:k.w*2,da=n.dash?dot?`0 ${r2(n.dg||k.w*2)}`:`${r2(n.dl||k.w*3)} ${r2(n.dg||k.w*2)}`:'';
@@ -1615,6 +1621,34 @@ function selSame(k){const s0=leaves(topSel())[0];if(!s0)return toast(L('Select a
  if(v==null)return toast(k==='fill'?L('This layer has no fill.','У слоя нет заливки.'):k==='stroke'?L('This layer has no stroke.','У слоя нет обводки.'):L('Select a text layer.','Выделите текст.'));
  const out=[];walk(n=>{if(n.hid||n.lock||isGrp(n)||(n.type==='frame'&&s0.type!=='frame'))return;if(key(n)===v)out.push(n)});setSel(out);toast(L(`Selected ${out.length} ${plu(out.length,'layer','layers')}`,`Выделено: ${out.length} ${plu(out.length,'слой','слоя','слоёв')}`))}
 Object.assign(CMD,{samefill:()=>selSame('fill'),samestroke:()=>selSame('stroke'),samefont:()=>selSame('font')});
+const gBox=n=>n.type==='bool'?(boolGeo(n)?.b||n):n;
+function gW(n,fx,fy){const b=gBox(n);return n.type==='bool'?[b.x+fx*b.w,b.y+fy*b.h]:l2w(n,fx*n.w,fy*n.h)}
+function gF(n,p){const b=gBox(n);if(n.type==='bool')return[(p.x-b.x)/(b.w||1),(p.y-b.y)/(b.h||1)];const q=w2l(n,p);return[q.x/(n.w||1),q.y/(n.h||1)]}
+function gradUI(n,hs){const f=n.fill,S=v=>w2s(...v),CO=matchMedia('(pointer:coarse)').matches,R=CO?11:7,HR=CO?22:10,line=(a,b)=>`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#000" stroke-opacity=".35" stroke-width="4"/><line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#fff" stroke-width="2"/>`,
+ dot=(P,k,col,r=R)=>`<circle data-h="${k}" cx="${P[0]}" cy="${P[1]}" r="${HR}" fill="transparent"/><circle data-h="${k}" cx="${P[0]}" cy="${P[1]}" r="${r}" fill="${col}" stroke="#fff" stroke-width="2.5" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))"/>`,srt=gSort(f),first=srt[0].c,lastc=srt[srt.length-1].c;let o='',A,B;
+ if(f.t==='radial'){const{c,r}=gRad(f);A=S(gW(n,...c));B=S(gW(n,c[0]+r[0],c[1]));const Q=S(gW(n,c[0],c[1]-r[1]));let d='';for(let i=0;i<=48;i++){const t=i/48*Math.PI*2,P=S(gW(n,c[0]+Math.cos(t)*r[0],c[1]+Math.sin(t)*r[1]));d+=(i?'L':'M')+P[0]+' '+P[1]}
+  o+=`<path d="${d}" fill="none" stroke="#fff" stroke-width="1.5" stroke-dasharray="4 4"/>`+line(A,Q)+line(A,B)+`<line data-h="gl" x1="${A[0]}" y1="${A[1]}" x2="${B[0]}" y2="${B[1]}" stroke="transparent" stroke-width="${HR}"/>`;
+  o+=dot(Q,'gq','#fff',R-2)}
+ else{const[p0,p1]=gLin(f);A=S(gW(n,...p0));B=S(gW(n,...p1));o+=line(A,B)+`<line data-h="gl" x1="${A[0]}" y1="${A[1]}" x2="${B[0]}" y2="${B[1]}" stroke="transparent" stroke-width="${HR}"/>`}
+ f.s.forEach((st,i)=>{if((st.o<=0&&st===srt[0])||(st.o>=1&&st===srt[srt.length-1]))return;const P=[A[0]+(B[0]-A[0])*st.o,A[1]+(B[1]-A[1])*st.o],z=CO?9:6,an=Math.atan2(B[1]-A[1],B[0]-A[0])*180/Math.PI;
+  o+=`<rect data-h="gs${i}" x="${P[0]-HR}" y="${P[1]-HR}" width="${HR*2}" height="${HR*2}" fill="transparent"/><rect data-h="gs${i}" x="${P[0]-z}" y="${P[1]-z}" width="${z*2}" height="${z*2}" rx="3" fill="${st.c}" stroke="${i===gsel?'var(--sel)':'#fff'}" stroke-width="2.5" transform="rotate(${an} ${P[0]} ${P[1]})"/>`});
+ o+=dot(A,f.t==='radial'?'gc':'gp0',first)+dot(B,f.t==='radial'?'gr':'gp1',lastc);
+ if(drag?.m==='gd'&&drag.moved&&drag.lb){const lw=drag.lb.length*6.6+12,P=drag.k==='gp0'?A:B;o+=`<g class="badge"><rect x="${P[0]+14}" y="${P[1]-22}" width="${lw}" height="18" rx="3"/><text x="${P[0]+14+lw/2}" y="${P[1]-9}" text-anchor="middle">${drag.lb}</text></g>`}
+ return o}
+function gProj(n,p){const f=n.fill,P=gF(n,p),w=gBox(n).w||1,h=gBox(n).h||1;let a,b;if(f.t==='radial'){const{c,r}=gRad(f);a=c;b=[c[0]+r[0],c[1]]}else[a,b]=gLin(f);const vx=(b[0]-a[0])*w,vy=(b[1]-a[1])*h,l2=vx*vx+vy*vy||1;return clamp(((P[0]-a[0])*w*vx+(P[1]-a[1])*h*vy)/l2,0,1)}
+function gradDown(n,k,p){const f=n.fill;let i=-1,added=false;
+ if(k==='gl'){const t=gProj(n,p),S=gSort(f);let lo=S[0],hi=S[S.length-1];for(const x of S)if(x.o<=t)lo=x;for(const x of [...S].reverse())if(x.o>=t)hi=x;const m=(hi.o-lo.o)?(t-lo.o)/(hi.o-lo.o):0,mix=(a,b)=>'#'+[0,2,4].map(j=>Math.round(parseInt(a.substr(1+j,2),16)*(1-m)+parseInt(b.substr(1+j,2),16)*m).toString(16).padStart(2,'0')).join('');f.s.push({o:r2(t),c:mix(lo.c,hi.c),a:r2(lo.a+(hi.a-lo.a)*m)});i=f.s.length-1;k='gs'+i;added=true}
+ if(k.startsWith('gs')){i=+k.slice(2);gsel=i}
+ if((k==='gp0'||k==='gp1')&&!f.p)f.p=gLin(f).map(v=>[...v]);
+ if(k==='gp0'||k==='gp1'){const S=gSort(f),st=k==='gp0'?S[0]:S[S.length-1];gsel=f.s.indexOf(st)}
+ drag={m:'gd',k,n,i,added,moved:false};render()}
+function gradMove(d,p,e){const n=d.n,f=n.fill,P=gF(n,p),b=gBox(n),w=b.w||1,h=b.h||1;d.moved=true;delete n.cS;
+ if(d.k==='gp0'||d.k==='gp1'){const j=d.k==='gp0'?0:1,o=f.p[1-j];let x=P[0],y=P[1];if(e.shiftKey){const dx=(x-o[0])*w,dy=(y-o[1])*h,l=Math.hypot(dx,dy),a=Math.round(Math.atan2(dy,dx)/(Math.PI/12))*(Math.PI/12);x=o[0]+Math.cos(a)*l/w;y=o[1]+Math.sin(a)*l/h}
+  f.p[j]=[Math.round(x*1e3)/1e3,Math.round(y*1e3)/1e3];const[a,c]=f.p;f.a=nrm(Math.atan2(c[1]-a[1],c[0]-a[0])*180/Math.PI);d.lb=Math.round(nrm(Math.atan2((c[1]-a[1])*h,(c[0]-a[0])*w)*180/Math.PI))+'°'}
+ else if(d.k.startsWith('gs')){const st=f.s[d.i];if(st)st.o=r2(gProj(n,p))}
+ else if(d.k==='gc'){f.c=[Math.round(P[0]*1e3)/1e3,Math.round(P[1]*1e3)/1e3]}
+ else if(d.k==='gr'||d.k==='gq'){const{c,r}=gRad(f),R=[...r];if(d.k==='gr')R[0]=Math.max(.01,Math.hypot((P[0]-c[0])*w,(P[1]-c[1])*h)/w);else R[1]=Math.max(.01,Math.hypot((P[0]-c[0])*w,(P[1]-c[1])*h)/h);if(e.shiftKey){if(d.k==='gr')R[1]=R[0]*w/h;else R[0]=R[1]*h/w}f.r=R.map(v=>Math.round(v*1e3)/1e3);if(!f.c)f.c=[.5,.5]}
+ render()}
 setTool('move');setLang(LANG);
 kvGet('cur').then(v=>{if(v?.d){try{Object.assign(ASSETS,v.a||{});last=v.d;restoreDoc(last);setTimeout(zfit);return}catch(e){}}last=snap();reindex();render()}).catch(()=>{last=snap();render()});
 </script>
