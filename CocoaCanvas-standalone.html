@@ -121,6 +121,10 @@ input[type=range]::-moz-range-track{background:transparent}input[type=range]::-m
 .frow .fm{font:11px var(--sans);color:var(--mute);margin-left:auto}
 #insp>*{flex-shrink:0}
 #gModal{z-index:75}
+@media (pointer:coarse){#fabX{display:grid!important;place-items:center;position:absolute;left:12px;bottom:calc(84px + env(safe-area-inset-bottom));width:52px;height:52px;border-radius:16px;background:var(--panel);border:1px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:6;padding:0;opacity:0;pointer-events:none;transform:scale(.85);transition:opacity .15s,transform .15s}
+ body.hassel #fabX{opacity:1;pointer-events:auto;transform:none}#fabX svg{width:22px;height:22px;fill:none;stroke:var(--bad);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+ body.tmore #fabX{bottom:calc(136px + env(safe-area-inset-bottom))}body.iopen #fabX{bottom:calc(min(58vh,520px) + 12px);z-index:36}body.iopen.ifull #fabX{display:none!important}}
+@media (pointer:coarse) and (min-width:721px){#fabX{bottom:96px;left:276px}body.lcol #fabX{left:12px}}
 html,body{touch-action:manipulation;overscroll-behavior:none}
 #scene,#ui{transform-origin:0 0}
 #spDel.bad{background:var(--bad);border-color:var(--bad);color:#111}.vr input[type=checkbox]{flex:none;width:18px;height:18px;margin:0}
@@ -293,7 +297,7 @@ body{grid-template-columns:minmax(0,1fr)}#top{min-width:0}
  <aside id="lay"><div class="ph"><span data-ru="Слои">Layers</span><button data-c="img" data-ru="+ Изображение">+ Image</button><button class="ic tb" data-c="laycol" data-tt="Hide panel|Скрыть панель"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button></div><input id="laySearch" type="search" autocomplete="off" spellcheck="false"><div id="layList"></div></aside>
  <section id="stage">
   <div id="view"><svg id="scene" xmlns="http://www.w3.org/2000/svg"><g id="world"></g></svg><svg id="ui"></svg><textarea id="ted" hidden spellcheck="false"></textarea></div>
-  <button id="fabL" class="fab" data-tt="Layers|Слои"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></button><button id="fabD" class="fab" data-tt="Design|Дизайн"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button><button id="bDone" class="pri" data-c="done" data-ru="Готово" hidden>Done</button>
+  <button id="fabL" class="fab" data-tt="Layers|Слои"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></button><button id="fabX" class="fab" data-c="del" data-tt="Delete|Удалить"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button><button id="fabD" class="fab" data-tt="Design|Дизайн"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button><button id="bDone" class="pri" data-c="done" data-ru="Готово" hidden>Done</button>
   <div id="tbar">
    <button id="dkL" class="ic dk" data-tt="Layers|Слои"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></button>
    <button class="ic" data-t="move" data-tt="Move|Выбор"><svg viewBox="0 0 24 24"><path d="M5 3l6 17 2.5-7.5L21 10z"/></svg></button>
@@ -461,7 +465,7 @@ function drawUI(){let s='';const z=view.z,hs=matchMedia('(pointer:coarse)').matc
   const l=P[P.length-1];if(drag?.m!=='penh')d+=` C${f(l.x+l.ox,l.y+l.oy)} ${f(mouse.x,mouse.y)} ${f(mouse.x,mouse.y)}`;s+=`<path d="${d}" fill="none" stroke="var(--sel)" stroke-width="1.5"/>`;
   P.forEach((p,i)=>{const A=w2s(p.x,p.y);if(p.ox||p.oy){const o=w2s(p.x+p.ox,p.y+p.oy),q=w2s(p.x+p.ix,p.y+p.iy);s+=`<line x1="${q[0]}" y1="${q[1]}" x2="${o[0]}" y2="${o[1]}" stroke="var(--sel)"/><circle cx="${o[0]}" cy="${o[1]}" r="3" class="hd"/><circle cx="${q[0]}" cy="${q[1]}" r="3" class="hd"/>`}s+=`<rect class="hd" x="${A[0]-hs}" y="${A[1]-hs}" width="${hs*2}" height="${hs*2}"${i===0&&P.length>2?' style="fill:var(--sel)"':''}/>`})}
  if(drag?.m==='pencil')s+=`<polyline points="${drag.pts.map(p=>w2s(p.x,p.y).join(',')).join(' ')}" fill="none" stroke="var(--sel)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
- UI.innerHTML=s;const bd=$('bDone');if(bd)bd.hidden=!(pen||editPath||distort||document.body.classList.contains('multi'))}
+ UI.innerHTML=s;document.body.classList.toggle('hassel',!!sel.length&&!editing&&!editPath&&!pen);const bd=$('bDone');if(bd)bd.hidden=!(pen||editPath||distort||document.body.classList.contains('multi'))}
 
 let frameNo=0;
 function mk(t,o={}){const b={id:nid(),type:t,name:'',x:0,y:0,w:0,h:0};
@@ -1323,11 +1327,11 @@ function bbWrap(n,acc){const f=fxOn(n).find(f=>f.t==='bb');if(!f||!acc)return'';
 function renderKids(l,ed,inh=''){if(!anyBB)return l.map(c=>svgOf(c,ed)).join('');let acc=inh,o='';for(const c of l){if(c.hid)continue;o+=bbWrap(c,acc)+svgOf(c,ed,acc);acc+=svgOf(c,0,acc)}return o}
 
 function svgOf(n,ed,inh){if(n.hid)return'';const fd=fxDef(n),a=(ed?` data-id="${n.id}"`:'')+opa(n)+(n.bl?` style="mix-blend-mode:${n.bl}"`:'')+(fd?` filter="url(#fx${n.id})"`:'');return`<g${a}>${fd}${svgBody(n,ed,inh)}</g>`}
-function svgBody(n,ed,inh){const hit=G=>ed&&!fillsOf(n).length?G(` fill="none" stroke="transparent" stroke-width="${r2(10/view.z)}"`):'';
+function svgBody(n,ed,inh){const hit=G=>ed&&!fillsOf(n).length?G(` fill="none" stroke="transparent" stroke-width="${r2(HITW()/view.z)}"`):'';
  if(n.dq&&!(n.type==='text'&&n.tp)){const z=deformSVG(n,'',ed);if(z!=null)return z}
  switch(n.type){
  case'rect':case'ellipse':case'poly':case'star':{const G=n.type==='rect'?at=>rshape(n,at):n.type==='ellipse'?at=>`<ellipse cx="${r2(n.x+n.w/2)}" cy="${r2(n.y+n.h/2)}" rx="${r2(n.w/2)}" ry="${r2(n.h/2)}"${at}/>`:at=>`<path d="${shD(n)}"${at}/>`;return`<g${xf(n)}>${hit(G)}${fillsS(n,G)}${strokesS(n,G)}</g>`}
- case'path':{const d=pathD(n),fr=n.more?` fill-rule="${n.fr||'nonzero'}"`:'',G=at=>`<path d="${d}"${fr}${at}/>`;return`<g${xf(n)}>${ed?`<path d="${d}" fill="none" stroke="transparent" stroke-width="${r2(10/view.z)}"/>`:''}${fillsS(n,G)}${strokesS(n,G)}</g>`}
+ case'path':{const d=pathD(n),fr=n.more?` fill-rule="${n.fr||'nonzero'}"`:'',G=at=>`<path d="${d}"${fr}${at}/>`;return`<g${xf(n)}>${ed?`<path d="${d}" fill="none" stroke="transparent" stroke-width="${r2(HITW()/view.z)}"/>`:''}${fillsS(n,G)}${strokesS(n,G)}</g>`}
  case'text':return textSVG(n,ed);
  case'image':return imageSVG(n);
  case'group':{if(n.mask&&n.children.length>1&&!n.children[0].hid){const[m,...r]=n.children,id='mk'+n.id;return`<mask id="${id}" style="mask-type:alpha">${svgOf(m,0)}</mask><g mask="url(#${id})">${renderKids(r,ed,inh)}</g>`}return renderKids(n.children,ed,inh)}
@@ -1354,7 +1358,7 @@ function imageSVG(n){const u=ASSETS[n.asset]||'',G=at=>rshape(n,at),fit=n.fit||'
 function textCanvas(n){const L=n._L||layoutT(n),c=document.createElement('canvas');c.width=Math.max(1,Math.ceil(n.w*2));c.height=Math.max(1,Math.ceil(n.h*2));const x=c.getContext('2d');x.scale(2,2);const base=isG(n.fill)?gSort(n.fill)[0].c:n.fill||'#000';if('letterSpacing'in x)x.letterSpacing=(n.ls||0)+'px';
  L.lines.forEach((ln,i)=>{const y=i*L.lh+L.b;if(ln.pre){x.font=tStyle(n,NOK);x.fillStyle=base;x.fillText(ln.pre,0,y)}let X=ln.x;for(const g of ln.segs){x.font=tStyle(n,g.k);x.fillStyle=g.k.fill||base;x.fillText(g.t,X,y);const th=Math.max(.5,n.fs/14);if(g.k.ud??n.ud)x.fillRect(X,y+n.fs*.12-th/2,g.w,th);if(g.k.sk??n.sk)x.fillRect(X,y-n.fs*.3-th/2,g.w,th);X+=g.w}});return c}
 function deformSVG(n,a,ed){const k=drag?.m==='dq'?1:2;
- if(/rect|ellipse|path|poly|star/.test(n.type)){const d=subsD(deformSubs(n),n.x,n.y),G=at=>`<path d="${d}"${at}/>`;return`<g${a}${xf(n)}>${ed&&!fillsOf(n).length?`<path d="${d}" fill="none" stroke="transparent" stroke-width="${r2(10/view.z)}"/>`:''}${fillsS(n,G)}${strokesS(n,G)}</g>`}
+ if(/rect|ellipse|path|poly|star/.test(n.type)){const d=subsD(deformSubs(n),n.x,n.y),G=at=>`<path d="${d}"${at}/>`;return`<g${a}${xf(n)}>${ed&&!fillsOf(n).length?`<path d="${d}" fill="none" stroke="transparent" stroke-width="${r2(HITW()/view.z)}"/>`:''}${fillsS(n,G)}${strokesS(n,G)}</g>`}
  let r;if(n.type==='image'){const im=imgOf(n.asset);if(!im)return`<g${a}></g>`;r=warp(n.asset+JSON.stringify([n.w,n.h,n.dq,k]),im,im.naturalWidth,im.naturalHeight,n.dq,k)}
  else if(n.type==='text'){const key=JSON.stringify([n.text,n.runs,n.fs,n.ff,n.fw,n.it,n.ls,n.list,n.ud,n.sk,n.ta,n.lh,n.fill,n.w,n.h,n.dq,k]);if(WC.has(key))r=WC.get(key);else{const c=textCanvas(n);r=warp(key,c,c.width,c.height,n.dq,k)}}
  else return null;return`<g${a}${xf(n)}><image href="${r.url}" x="${r2(n.x+r.b.x)}" y="${r2(n.y+r.b.y)}" width="${r2(r.b.w)}" height="${r2(r.b.h)}" preserveAspectRatio="none"/></g>`}
@@ -1536,7 +1540,7 @@ $('fImp').addEventListener('change',e=>{importFiles([...e.target.files]);e.targe
 function rdp(P,e){if(P.length<3)return P;const a=P[0],b=P[P.length-1],dx=b.x-a.x,dy=b.y-a.y,ln=Math.hypot(dx,dy);let mi=0,md=0;for(let i=1;i<P.length-1;i++){const p=P[i],d=ln?Math.abs(dy*p.x-dx*p.y+b.x*a.y-b.y*a.x)/ln:Math.hypot(p.x-a.x,p.y-a.y);if(d>md){md=d;mi=i}}return md>e?[...rdp(P.slice(0,mi+1),e).slice(0,-1),...rdp(P.slice(mi),e)]:[a,b]}
 function endPencil(d){let P=d.pts;if(P.length<2)return render();P=rdp(P,1.2/view.z);const s0=w2s(d.pts[0].x,d.pts[0].y),e0=w2s(d.pts[d.pts.length-1].x,d.pts[d.pts.length-1].y),closed=d.pts.length>8&&P.length>3&&Math.hypot(s0[0]-e0[0],s0[1]-e0[1])<12;if(closed)P=P.slice(0,-1);
  const N=P.length,Q=P.map((p,i)=>{const a=P[closed?(i-1+N)%N:Math.max(0,i-1)],b=P[closed?(i+1)%N:Math.min(N-1,i+1)],tx=(b.x-a.x)/6,ty=(b.y-a.y)/6,st=!closed&&i===0,en=!closed&&i===N-1;return{x:r2(p.x),y:r2(p.y),ix:st?0:-tx,iy:st?0:-ty,ox:en?0:tx,oy:en?0:ty}});
- const n=addNode(mk('path'),frameAt(P[0]));Object.assign(n,pathFrom(Q,closed));sel=[n];commit()}
+ const n=addNode(mk('path'),frameAt(P[0]));Object.assign(n,pathFrom(Q,closed));sel=[];commit()}
 
 $('laySearch').addEventListener('input',()=>layRender());$('laySearch').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape'){e.target.value='';layRender();e.target.blur()}});
 /* ---------- edge rounding ---------- */
@@ -1821,6 +1825,7 @@ CMD.storage=openStorage;
 /* stop the browser's own page zoom from fighting canvas pinch */
 ['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
 document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault()},{passive:false});
+const HITW=()=>matchMedia('(pointer:coarse)').matches?26:10;
 setTool('move');setLang(LANG);
 kvGet('cur').then(v=>{if(v?.d){try{Object.assign(ASSETS,v.a||{});last=v.d;restoreDoc(last);setTimeout(zfit);return}catch(e){}}last=snap();reindex();render()}).catch(()=>{last=snap();render()});
 </script>
