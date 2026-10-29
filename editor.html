@@ -308,6 +308,42 @@ body{grid-template-columns:minmax(0,1fr)}#top{min-width:0}
  .hint,.pgs,.setr small,.stM2,.stTip,.stE,.qh,.qfx,.qcat,.xpg .nm i,.xpl,.xpf,.xpf button,.nf span,.sec,.setH,.stLab,.xaz>span,.xcs span,.fca,.frow .fs,.frow .fm,.stAsk span,.vr small,.mt,body.mmenu .mt,.empty,.ph>span,.stCur,.qLbl,.cr .hex,.badge,.kbd{font-size:14px!important}
  .modal h2,.box>h2{font-size:18px!important}
 }
+#bPlug svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round}
+#plMenu{position:fixed;z-index:62;width:280px;max-height:min(70vh,560px);overflow:auto;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:6px;box-shadow:0 14px 40px rgba(0,0,0,.6);display:flex;flex-direction:column}
+#plMenu button{background:none;border:0;text-align:left;padding:7px 10px 7px 34px;border-radius:6px;display:flex;justify-content:space-between;gap:8px}#plMenu button:hover{background:var(--panel)}
+#plMenu button[data-pm]{padding-left:10px}#plMenu button span{color:var(--mute)}#plMenu hr{border:0;border-top:1px solid var(--line);margin:6px 4px;width:auto}
+.pmG{display:flex;align-items:center;gap:8px;color:var(--mute);font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:9px 10px 3px}.pmG i{width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-style:normal;font-size:11px;color:#fff;flex:none;text-transform:none}
+.pmE{color:var(--mute);font-size:12px;padding:4px 10px 6px 34px}
+.plV{width:13px;height:13px;fill:#4c9dff;vertical-align:-2px;margin-left:4px}
+.plw{position:fixed;z-index:58;right:12px;top:48px;bottom:12px;width:330px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 14px 40px rgba(0,0,0,.55)}
+.plwH{display:flex;align-items:center;gap:10px}.plwH h2{margin:0;font-size:15px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.plwI{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;font-style:normal;color:#fff;font-size:13px;flex:none}.plwX{font-size:18px;padding:0 8px}
+.pfW[hidden]{display:none!important}.pfW{display:contents}.pfB{display:flex;flex-direction:column;gap:8px;overflow:auto;min-height:0;flex:1;padding-right:2px}
+.pfH{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);margin-top:6px}.pfL{color:var(--mute);font-size:12px}
+.pfR{display:grid;grid-template-columns:minmax(0,1fr) 160px;gap:10px;align-items:center}.pfR>span:first-child{color:var(--fg)}
+.pfC{display:flex;gap:6px;align-items:center}.pfC input[type=color]{width:30px;height:28px;padding:0;flex:none}.pfC .hex{flex:1;min-width:0;font-family:var(--mono);font-size:12px}
+.pfG{display:flex;gap:8px;align-items:center}.plw input[type=range]{background:linear-gradient(to right,var(--sfill) 0 var(--p,50%),var(--bg) var(--p,50%));box-shadow:inset 0 0 0 1px var(--line)}.pfG input{flex:1;min-width:0}.pfG output{min-width:34px;text-align:right;color:var(--mute);font:12px var(--mono)}
+.pfN{position:relative;display:block}.pfN input{width:100%;box-sizing:border-box;padding-right:28px}.pfN i{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-style:normal;color:var(--mute);font-size:12px}
+.pfK{display:flex;flex-wrap:wrap;gap:4px}.pfK button{padding:5px 9px;border-radius:7px}.pfK button.on{background:#D15A2C;border-color:#D15A2C;color:#fff}
+.plw textarea{width:100%;box-sizing:border-box;resize:vertical;font:inherit}
+.pfP{border:1px solid var(--line);border-radius:8px;background:repeating-conic-gradient(#e9e9e9 0 25%,#fff 0 50%) 0 0/16px 16px;display:grid;place-items:center;overflow:hidden;flex:none}.pfP.dk{background:#2a2a2a}.pfP img{width:100%;height:100%;object-fit:contain;display:block;padding:6px;box-sizing:border-box}.pfP.empty img{display:none}
+.pfS{width:100%;box-sizing:border-box}
+.pfY{display:grid;grid-template-columns:repeat(var(--c),1fr);gap:6px;flex:none}.pfY.lb button{grid-template-rows:minmax(0,1fr) auto;gap:4px;overflow:hidden}.pfY.lb span{font-size:11px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.pfY button{aspect-ratio:var(--a,1);padding:6px;display:grid;place-items:center;background:var(--panel);border:1px solid var(--line);border-radius:8px;min-height:0!important}.pfY button.on{border-color:#D15A2C;box-shadow:0 0 0 1px #D15A2C}.pfY img{width:100%;height:100%;min-height:0;object-fit:scale-down;display:block}
+.plw .row{display:flex;gap:8px;justify-content:flex-end}
+#plList,#pbList{display:flex;flex-direction:column;gap:8px;max-height:52vh;overflow:auto}#plList:empty::before{content:attr(data-e);color:var(--mute);font-size:12px}
+.plI{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:9px;padding:10px;background:var(--panel2)}.plI>div{flex:1;min-width:0}.plI b{font-weight:600}.plI .er,.plW{color:#ff6b5e;font-size:12px;margin-top:4px}.plI>button{flex:none}
+.plIc{width:38px;height:38px;border-radius:9px;display:grid;place-items:center;font-style:normal;font-size:19px;color:#fff;flex:none}
+.plT{white-space:nowrap;display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;padding:1px 6px;border-radius:8px;border:1px solid var(--line);color:var(--mute);margin-left:6px}.plT.full{border-color:#ff6b5e;color:#ff6b5e}
+#plAsk{border:1px solid #D15A2C;border-radius:9px;padding:10px;display:flex;flex-direction:column;gap:8px}#plAsk ul{margin:0;padding-left:18px;color:var(--mute);font-size:12px;line-height:1.6}#plAsk label{display:flex;gap:6px;align-items:center;font-size:12px}
+.plRow{flex-wrap:wrap}#pbQ{width:100%;box-sizing:border-box}
+body.plwin #insp{visibility:hidden}
+@media (max-width:720px){
+ #plMenu{left:8px!important;right:8px;width:auto}
+ .plw{left:0;right:0;top:auto;bottom:0;width:auto;max-height:72vh;border-radius:20px 20px 0 0;padding:10px 16px calc(14px + env(safe-area-inset-bottom))}
+ .plw::before{content:'';display:block;width:44px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 2px;flex:none}
+ .plw .row button{flex:1;padding:11px}.pfR{grid-template-columns:minmax(0,1fr) 170px}
+ #plModal,#pbModal{place-items:end stretch;padding:0}#plModal .box,#pbModal .box{width:100%!important;border-radius:22px 22px 0 0;max-height:88vh;overflow:auto;padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+ body.plwin #fabD,body.plwin #fabX,body.plwin #dock{display:none}
+}
 </style>
 </head>
 <body>
@@ -542,7 +578,7 @@ function toggleSel(n){if(sel.includes(n))sel=sel.filter(x=>x!==n);else{sel=sel.f
 let H=[],F=[],last='';
 const snap=()=>JSON.stringify(doc,rep);
 function commit(){prune();reindex();try{alRun()}catch(e){console.error(e)}try{trackTS()}catch(_){}const s=snap();if(s===last)return render();H.push(last);if(H.length>200)H.shift();F=[];last=s;autosave();render()}
-function restoreDoc(s){doc=JSON.parse(s);walk(n=>{if(Array.isArray(n.fx)){n.efx=n.fx;delete n.fx}});frameNo=0;walk(n=>{if(n.type==='frame')frameNo++});reindex();editPath=null;render()}
+function restoreDoc(s){doc=JSON.parse(s);walk(n=>{if(Array.isArray(n.fx)){n.efx=n.fx;delete n.fx}if(n.lh==='fill'){n.lvh='fill';if(n.type==='text')n.lh=1.2;else delete n.lh}});frameNo=0;walk(n=>{if(n.type==='frame')frameNo++});reindex();editPath=null;render()}
 function undo(){if(editing||!H.length)return;F.push(last);last=H.pop();restoreDoc(last);autosave()}
 function redo(){if(editing||!F.length)return;H.push(last);last=F.pop();restoreDoc(last);autosave()}
 
@@ -668,7 +704,7 @@ function doRs(p,e){const d=drag;d.moved=true;restore(d);const{hx,hy}=d,lk=!!(d.o
   if(sh&&o.w&&o.h){const k=hx&&hy?Math.max(w/o.w,h/o.h):hx?w/o.w:h/o.h;w=o.w*k;h=o.h*k}
   if(!o.rot){w=Math.round(w);h=Math.round(h)}
   const ncx=hx?ax+hx*w/2:(sh&&hy?0:0),ncy=hy?ay+hy*h/2:0,wx=c.x+ncx*cs-ncy*sn,wy=c.y+ncx*sn+ncy*cs;
-  let x=wx-w/2,y=wy-h/2;if(!o.rot){x=Math.round(x);y=Math.round(y)}if(n.type==='frame')frameResize(n,x,y,w,h,1);else{if(alPar(n)){if(hx&&n.lw==='fill')delete n.lw;if(hy&&n.lh==='fill')delete n.lh}setBox(n,x,y,w,h)}}
+  let x=wx-w/2,y=wy-h/2;if(!o.rot){x=Math.round(x);y=Math.round(y)}if(n.type==='frame')frameResize(n,x,y,w,h,1);else{if(alPar(n)){if(hx&&n.lw==='fill')delete n.lw;if(hy&&n.lvh==='fill')delete n.lvh}setBox(n,x,y,w,h)}}
  else{const fb=d.fb;let tb={...fb};
   if(hx>0)tb.w=Math.max(1,p.x-fb.x);if(hx<0){tb.w=Math.max(1,fb.x+fb.w-p.x);tb.x=fb.x+fb.w-tb.w}
   if(hy>0)tb.h=Math.max(1,p.y-fb.y);if(hy<0){tb.h=Math.max(1,fb.y+fb.h-p.y);tb.y=fb.y+fb.h-tb.h}
@@ -842,7 +878,7 @@ function setV(k,v,live){const ts=topSel();if(!ts.length)return;const one=ts.leng
  const UN={fill:'c',fillx:'c',ft:'c',gc:'c',gcx:'c',go:'c',ga:'c',fop:'c',fw:'t',fs:'t',lh:'t',ls:'t'}[k];if(UN&&!rn)(UN==='c'?FL():TX()).forEach(n=>delete n[UN+'S']);
  switch(k){
  case'x':case'y':{v=+v;if(isNaN(v))return;const d=v-(one||selBox())[k];ts.forEach(n=>moveN(n,k==='x'?d:0,k==='y'?d:0));break}
- case'w':case'h':{v=Math.max(1,+v);if(isNaN(v))return;if(one){if(one.type==='text'&&k==='h'){if(!one.fixW)return;one.fixH=true}{let W=k==='w'?v:one.w,Hh=k==='h'?v:one.h;if(one.lar&&one.w&&one.h){if(k==='w')Hh=one.h*v/one.w;else W=one.w*v/one.h}if(one.type==='frame')frameResize(one,one.x,one.y,W,Hh,1);else{if(alPar(one)){if(k==='w'&&one.lw==='fill')delete one.lw;if(k==='h'&&one.lh==='fill')delete one.lh}setBox(one,one.x,one.y,W,Hh)}}}else{const fb=selBox(),tb={...fb,[k]:v};ts.forEach(n=>scaleN(n,fb,tb,k==='w'?v/fb.w:v/fb.h))}break}
+ case'w':case'h':{v=Math.max(1,+v);if(isNaN(v))return;if(one){if(one.type==='text'&&k==='h'){if(!one.fixW)return;one.fixH=true}{let W=k==='w'?v:one.w,Hh=k==='h'?v:one.h;if(one.lar&&one.w&&one.h){if(k==='w')Hh=one.h*v/one.w;else W=one.w*v/one.h}if(one.type==='frame')frameResize(one,one.x,one.y,W,Hh,1);else{if(alPar(one)){if(k==='w'&&one.lw==='fill')delete one.lw;if(k==='h'&&one.lvh==='fill')delete one.lvh}setBox(one,one.x,one.y,W,Hh)}}}else{const fb=selBox(),tb={...fb,[k]:v};ts.forEach(n=>scaleN(n,fb,tb,k==='w'?v/fb.w:v/fb.h))}break}
  case'pre':{const p=PRE[+v];if(v===''||!p||!one)return;frameResize(one,one.x,one.y,p[1],p[2],1);if(!one.name||/^(Frame|Фрейм) \d+$/.test(one.name)||PRE.some(q=>q[0]===one.name))one.name=p[0];break}
  case'rot':ts.forEach(n=>{if(!isGrp(n)&&n.type!=='frame')n.rot=nrm(+v||0)});break;
  case'r':ts.forEach(n=>{if(/rect|frame|image|poly|star|path/.test(n.type)){n.r=Math.max(0,+v||0);delete n.rc}});break;
@@ -1787,16 +1823,18 @@ function svgConv(el,root,RM){const tag=el.localName;if(SVGSKIP.has(tag))return[]
  else if(tag==='image'){const href=el.getAttribute('href')||el.getAttributeNS(XL,'href');const w=A('width'),h=A('height');if(!href||w<=0||h<=0)return[];const id=nid();ASSETS[id]=href;const sx=Math.hypot(M.a,M.b),sy=Math.hypot(M.c,M.d),[cx,cy]=ap(A('x')+w/2,A('y')+h/2);n=mk('image',{asset:id,name:L('Image','Изображение'),w:w*sx,h:h*sy});n.x=cx-n.w/2;n.y=cy-n.h/2;const rt=Math.atan2(M.b,M.a)*180/Math.PI;if(Math.abs(rt)>.01)n.rot=nrm(rt);const par=el.getAttribute('preserveAspectRatio')||'';if(!/none/.test(par))n.fit=/slice/.test(par)?'fill':'fit'}
  else return[];
  if(!n)return[];svgPaint(n,cs,sc,root);return[n]}
-function importSVG(text,name,at){const dp=new DOMParser().parseFromString(text,'image/svg+xml'),src=dp.documentElement;if(!src||src.localName!=='svg'||dp.getElementsByTagName('parsererror').length)return toast(L('That SVG couldn’t be read.','Не удалось прочитать SVG.'));
+function svgToNodes(text,name){const dp=new DOMParser().parseFromString(text,'image/svg+xml'),src=dp.documentElement;if(!src||src.localName!=='svg'||dp.getElementsByTagName('parsererror').length)throw new Error(L('That SVG couldn’t be read.','Не удалось прочитать SVG.'));
  src.querySelectorAll('script,foreignObject').forEach(e=>e.remove());src.querySelectorAll('*').forEach(e=>{for(const a of[...e.attributes])if(/^on/i.test(a.name))e.removeAttribute(a.name)});
  const host=document.createElement('div');host.style.cssText='position:fixed;left:-20000px;top:0;width:4000px;height:4000px;overflow:hidden;pointer-events:none;opacity:0';const root=document.importNode(src,true);host.appendChild(root);document.body.appendChild(host);
  try{for(let pass=0;pass<5;pass++){const us=[...root.getElementsByTagName('use')];if(!us.length)break;for(const u of us){const h=u.getAttribute('href')||u.getAttributeNS(XL,'href')||'',t=h[0]==='#'?root.querySelector(`[id="${CSS.escape(h.slice(1))}"]`):null,g=document.createElementNS(SVGNS,'g');for(const a of[...u.attributes])if(!/^(href|xlink:href|x|y|width|height)$/.test(a.name))g.setAttribute(a.name,a.value);g.setAttribute('transform',`${u.getAttribute('transform')||''} translate(${numv(u.getAttribute('x'),0)} ${numv(u.getAttribute('y'),0)})`);if(t)for(const c of t.localName==='symbol'?[...t.childNodes]:[t]){const k=c.cloneNode(true);if(k.removeAttribute)k.removeAttribute('id');g.appendChild(k)}u.replaceWith(g)}}
   const RM=root.getScreenCTM()?.inverse();if(!RM)throw Error('no layout');const out=[...root.children].flatMap(el=>svgConv(el,root,RM));
-  if(!out.length)return toast(L('There’s nothing to import in that SVG.','В этом SVG нечего импортировать.'));
-  const top=out.length>1?[mk('group',{name:name||'SVG',children:out})]:out;if(out.length===1&&!out[0].name)out[0].name=name||'';
-  const bb=union(top.map(aabb)),c=at||vc();if(bb)top.forEach(n=>moveN(n,Math.round(c.x-bb.w/2-bb.x),Math.round(c.y-bb.h/2-bb.y)));
-  const fr=frameAt(c);(fr?fr.children:doc.nodes).push(...top);reindex();sel=top;setTool('move');commit();toast(L(`Imported ${name||'SVG'} as editable vectors`,`${name||'SVG'} импортирован как редактируемые векторы`))}
- catch(e){toast(L('That SVG couldn’t be read: ','Не удалось прочитать SVG: ')+(e.message||e))}finally{host.remove()}}
+  if(!out.length)return[];const top=out.length>1?[mk('group',{name:name||'SVG',children:out})]:out;if(out.length===1&&!out[0].name)out[0].name=name||'';
+  {const vb=(src.getAttribute('viewBox')||'').trim().split(/[\s,]+/).map(Number),W=parseFloat(src.getAttribute('width')),Hh=parseFloat(src.getAttribute('height'));if(vb.length===4&&vb[2]>0&&vb[3]>0&&W>0&&Hh>0&&!/%/.test(src.getAttribute('width')+src.getAttribute('height'))){const kx=W/vb[2],ky=Hh/vb[3];if(Math.abs(kx-1)>1e-6||Math.abs(ky-1)>1e-6||vb[0]||vb[1]){const k=Math.sqrt(kx*ky);for(const n of top){const fb=aabb(n);if(!fb)continue;scaleN(n,fb,{x:(fb.x-vb[0])*kx,y:(fb.y-vb[1])*ky,w:fb.w*kx,h:fb.h*ky},k);walk(q=>{if(q.sw)q.sw=Math.round(q.sw*k*1000)/1000;for(const t of q.strokes||[])if(t.w)t.w*=k},[n])}}}}
+ return top}finally{host.remove()}}
+function importSVG(text,name,at){let top;try{top=svgToNodes(text,name)}catch(e){return toast(e.message&&/SVG/.test(e.message)?e.message:L('That SVG couldn’t be read: ','Не удалось прочитать SVG: ')+(e.message||e))}
+ if(!top.length)return toast(L('There’s nothing to import in that SVG.','В этом SVG нечего импортировать.'));
+ const bb=union(top.map(aabb)),c=at||vc();if(bb)top.forEach(n=>moveN(n,Math.round(c.x-bb.w/2-bb.x),Math.round(c.y-bb.h/2-bb.y)));
+ const fr=frameAt(c);(fr?fr.children:doc.nodes).push(...top);reindex();sel=top;setTool('move');commit();toast(L(`Imported ${name||'SVG'} as editable vectors`,`${name||'SVG'} импортирован как редактируемые векторы`))}
 function importFiles(fs,at){for(const f of fs){const base=f.name.replace(/\.[^.]+$/,'');if(/\.psd$/i.test(f.name))f.arrayBuffer().then(b=>importPSD(b,base));else if(/\.svg$/i.test(f.name)||f.type==='image/svg+xml')f.text().then(t=>importSVG(t,base,at))}}
 $('fImp').addEventListener('change',e=>{importFiles([...e.target.files]);e.target.value=''});
 
@@ -2138,16 +2176,16 @@ function applyCn(c,O,N){const b=KB(c),cn=c.cn||{},kx=O.w?N.w/O.w:1,ky=O.h?N.h/O.
  if(Math.abs(w-b.w)>.01||Math.abs(h-b.h)>.01)sizeKid(c,Math.max(1,w),Math.max(1,h));const q=KB(c);moveN(c,x-q.x,y-q.y)}
 function frameResize(n,x,y,w,h,user){const O={x:n.x,y:n.y,w:n.w,h:n.h};
  if(user&&n.al){if(Math.abs(w-n.w)>.01)n.al.sw='f';if(Math.abs(h-n.h)>.01)n.al.sh='f'}
- if(user){const p=alPar(n);if(p&&!n.abs){if(Math.abs(w-n.w)>.01&&n.lw==='fill')delete n.lw;if(Math.abs(h-n.h)>.01&&n.lh==='fill')delete n.lh}}
+ if(user){const p=alPar(n);if(p&&!n.abs){if(Math.abs(w-n.w)>.01&&n.lw==='fill')delete n.lw;if(Math.abs(h-n.h)>.01&&n.lvh==='fill')delete n.lvh}}
  Object.assign(n,{x,y,w,h});for(const c of n.children||[]){if(n.al&&!c.abs)continue;applyCn(c,O,n)}if(n.al)layoutF(n)}
-function layoutF(f){const A=f.al;if(!A)return;const P=A.p=A.p||[0,0,0,0],K=kidsAL(f);if(!K.length)return;const g=A.g||0,ax=A.ax||0,ay=A.ay||0;
+function layoutF(f){const A=f.al;if(!A)return;if(f.lw==='fill'&&A.sw==='h')A.sw='f';if(f.lvh==='fill'&&A.sh==='h')A.sh='f';const P=A.p=A.p||[0,0,0,0],K=kidsAL(f);if(!K.length)return;const g=A.g||0,ax=A.ax||0,ay=A.ay||0;
  if(A.d==='w'&&A.sw!=='h'){const inner=f.w-P[1]-P[3],B=K.map(KB),rows=[];let row=[],used=0;
   B.forEach((b,i)=>{if(row.length&&used+g+b.w>inner+.01){rows.push(row);row=[];used=0}used+=(row.length?g:0)+b.w;row.push(i)});rows.push(row);
   const rh=rows.map(r=>Math.max(...r.map(i=>B[i].h))),tot=rh.reduce((a,v)=>a+v,0)+g*(rows.length-1);
   if(A.sh==='h')f.h=Math.max(1,tot+P[0]+P[2]);let y=f.y+P[0]+(A.sh==='h'?0:(f.h-P[0]-P[2]-tot)*ay/2);
   rows.forEach((r,ri)=>{const sum=r.reduce((a,i)=>a+B[i].w,0);let gap=g,x=f.x+P[3];if(A.ga&&r.length>1)gap=Math.max(0,(inner-sum)/(r.length-1));else x+=(inner-sum-g*(r.length-1))*ax/2;
    r.forEach(i=>{const b=B[i];moveN(K[i],x-b.x,y+(rh[ri]-b.h)*ay/2-b.y);x+=b.w+gap});y+=rh[ri]+g});return}
- const H=A.d!=='v',M=H?'w':'h',C=H?'h':'w',pm0=H?P[3]:P[0],pm1=H?P[1]:P[2],pc0=H?P[0]:P[3],pc1=H?P[2]:P[1],hugM=(H?A.sw:A.sh)==='h',hugC=(H?A.sh:A.sw)==='h',fm=c=>(H?c.lw:c.lh)==='fill',fc=c=>(H?c.lh:c.lw)==='fill';
+ const H=A.d!=='v',M=H?'w':'h',C=H?'h':'w',pm0=H?P[3]:P[0],pm1=H?P[1]:P[2],pc0=H?P[0]:P[3],pc1=H?P[2]:P[1],hugM=(H?A.sw:A.sh)==='h',hugC=(H?A.sh:A.sw)==='h',fm=c=>(H?c.lw:c.lvh)==='fill',fc=c=>(H?c.lvh:c.lw)==='fill';
  if(hugC){const nf=K.filter(c=>!fc(c));f[C]=Math.max(1,Math.max(0,...(nf.length?nf:K).map(c=>KB(c)[C]))+pc0+pc1)}
  const ic=f[C]-pc0-pc1;K.forEach(c=>{if(fc(c)){const b=KB(c);H?sizeKid(c,b.w,ic):sizeKid(c,ic,b.h)}});
  const nF=hugM?[]:K.filter(fm);let B=K.map(KB);const fixed=K.reduce((a,c,i)=>a+(nF.includes(c)?0:B[i][M]),0);
@@ -2167,7 +2205,7 @@ function alInfer(f,K,hug){const B=K.map(KB),u=union(B);let d='v';if(K.length>1){
 function alOn(n){if(n.mask)return toast(L('Mask groups can’t use auto layout.','Группы с маской не поддерживают автораскладку.')),false;
  let hug=false;if(n.type==='group'){const b=aabb(n)||{x:0,y:0,w:100,h:100};Object.assign(n,{type:'frame',x:b.x,y:b.y,w:b.w,h:b.h,fill:null,clip:false,open:true});if(!n.name)n.name=`${L('Frame','Фрейм')} ${++frameNo}`;delete n.op;hug=true}
  alInfer(n,n.children.filter(c=>!c.hid&&!c.abs),hug);return true}
-function alOff(n){delete n.al;for(const c of n.children||[]){delete c.lw;delete c.lh;delete c.abs}}
+function alOff(n){delete n.al;for(const c of n.children||[]){delete c.lw;delete c.lvh;delete c.abs}}
 function alWrap(){const ts=topSel();if(!ts.length)return;const o=[];walk(n=>{if(ts.includes(n))o.push(n)});const last=o[o.length-1],l=sibs(last),b=union(o.map(aabb));if(!b)return;
  const f=mk('frame',{x:b.x,y:b.y,w:b.w,h:b.h,fill:null,clip:false});l.splice(l.indexOf(last)+1,0,f);o.forEach(detach);f.children=o;reindex();alInfer(f,o,true);sel=[f];commit()}
 Object.assign(CMD,{autolayout:()=>{const ts=topSel(),n=ts[0];if(ts.length===1&&(n.type==='frame'||n.type==='group'&&!n.mask)){if(n.al)return toast(L('This already uses auto layout.','Здесь уже есть автораскладка.'));if(alOn(n)){inspKey='';commit()}}else alWrap()},
@@ -2195,8 +2233,8 @@ function alUI(){let s='';const z=view.z,ts=topSel(),one=ts.length===1?ts[0]:null
  if(one&&one.cn&&!drag){const p=par(one);if(p&&p.type==='frame'&&(!p.al||one.abs)){const b=KB(one),c=one.cn,my=b.y+b.h/2,mx=b.x+b.w/2,dl=(x1,y1,x2,y2)=>{const[a,e]=w2s(x1,y1),[q,r]=w2s(x2,y2);return`<line x1="${a}" y1="${e}" x2="${q}" y2="${r}" stroke="var(--sel)" stroke-dasharray="4 3"/>`};
   if(/l/.test(c.h||'l'))s+=dl(p.x,my,b.x,my);if(/r/.test(c.h||''))s+=dl(b.x+b.w,my,p.x+p.w,my);if(/t/.test(c.v||'t'))s+=dl(mx,p.y,mx,b.y);if(/b/.test(c.v||''))s+=dl(mx,b.y+b.h,mx,p.y+p.h)}}
  return s}
-function rsVal(n,a){if((a==='w'?n.lw:n.lh)==='fill')return'fill';if(n.type==='text')return a==='w'?(n.fixW?'fixed':'hug'):(n.fixH?'fixed':'hug');if(n.al)return(a==='w'?n.al.sw:n.al.sh)==='h'?'hug':'fixed';return'fixed'}
-function setRs(ts,a,v){for(const n of ts){const key=a==='w'?'lw':'lh';if(v==='fill'){n[key]='fill';if(n.type==='text'){n.fixW=true;if(a==='h'){n.fixH=true;n.hh=n.h}}if(n.al)n.al[a==='w'?'sw':'sh']='f'}
+function rsVal(n,a){if((a==='w'?n.lw:n.lvh)==='fill')return'fill';if(n.type==='text')return a==='w'?(n.fixW?'fixed':'hug'):(n.fixH?'fixed':'hug');if(n.al)return(a==='w'?n.al.sw:n.al.sh)==='h'?'hug':'fixed';return'fixed'}
+function setRs(ts,a,v){for(const n of ts){const key=a==='w'?'lw':'lvh';if(v==='fill'){n[key]='fill';if(n.type==='text'){n.fixW=true;if(a==='h'){n.fixH=true;n.hh=n.h}}if(n.al)n.al[a==='w'?'sw':'sh']='f'}
  else{delete n[key];if(n.type==='text'){if(a==='w'){n.fixW=v==='fixed';if(v==='hug')n.fixH=false}else{if(v==='fixed'){n.fixW=true;n.fixH=true;n.hh=n.h}else n.fixH=false}}if(n.al)n.al[a==='w'?'sw':'sh']=v==='hug'?'h':'f'}}}
 function alSig(ts){return JSON.stringify(ts.map(n=>[n.al?[n.al.d,!!n.al.x4]:0,!!alPar(n),!!n.abs,par(n)?.type==='frame',!!par(n)?.al]))}
 function alHTML(ts){const one=ts.length===1?ts[0]:null,sw=(k,on)=>`<label class="sw2"><input type="checkbox" data-k="${k}"${on?' checked':''}><i></i></label>`,seg=(at,opts)=>`<div class="seg">${opts.map(([v,t])=>`<button data-${at}="${v}">${t}</button>`).join('')}</div>`;let h='';
@@ -2247,6 +2285,227 @@ function renameNode(n,cv){if(!n)return;const row=LL.querySelector(`.lr[data-id="
  new MutationObserver(()=>{if(!q)q=requestAnimationFrame(clean)}).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['title']});clean()})();
 setTool('move');setLang(LANG);
 kvGet('cur').then(v=>{if(v?.d){try{Object.assign(ASSETS,v.a||{});last=v.d;restoreDoc(last);setTimeout(zfit);return}catch(e){}}last=snap();reindex();render()}).catch(()=>{last=snap();render()});
+/* ---------- plugins ---------- */
+(()=>{const H=L,KEY='plugins',CMDS=[],EV={},live={},ACT={};let list=[];
+const PERM={ui:['Show its own windows','Показывать свои окна'],menu:['Add actions to the Plugins menu','Добавлять действия в меню плагинов'],helper:['Add Cocoa Helper commands','Добавлять команды Cocoa Helper'],
+ read:['See your layers and selection','Видеть слои и выделение'],insert:['Add new layers to your canvas','Добавлять новые слои на холст'],edit:['Change existing layers (you can always undo)','Менять существующие слои (всегда можно отменить)']};
+const FIELDS=['id','name','version','description','author','code','on','access','perms','off','icon','color','name_ru','description_ru'];
+const store=()=>kvSet(KEY,JSON.stringify(list.map(p=>Object.fromEntries(FIELDS.map(k=>[k,p[k]]))))).catch(()=>{});
+function head(code){const m=String(code).match(/==CocoaCanvas Plugin==([\s\S]*?)==\/CocoaCanvas Plugin==/);if(!m)throw new Error(H('This file is not a CocoaCanvas plugin.','Этот файл не плагин CocoaCanvas.'));
+ const o={};for(const l of m[1].split('\n')){const x=l.match(/@(\w+)\s+(.+)/);if(x)o[x[1]]=x[2].trim()}if(!/^[a-z0-9][a-z0-9._-]{1,60}$/i.test(o.id||''))throw new Error(H('The plugin has no valid @id.','У плагина нет корректного @id.'));
+ o.name=String(o.name||o.id).slice(0,60);o.version=String(o.version||'1').slice(0,20);o.access=/^full$/i.test(o.access||'')?'full':'safe';o.perms=String(o.permissions||'').toLowerCase().split(/[\s,]+/).filter(k=>PERM[k]);delete o.permissions;
+ o.icon=[...String(o.icon||'')].slice(0,2).join('');o.color=/^#[0-9a-f]{6}$/i.test(o.color||'')?o.color:'#555555';for(const k of['name_ru','description','description_ru','author'])if(o[k])o[k]=String(o[k]).slice(0,300);return o}
+const PN=p=>LANG==='ru'&&p.name_ru||p.name,PD=p=>LANG==='ru'&&p.description_ru||p.description||'';
+const esc_=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fail=(p,e,stop)=>{console.error('[plugin '+p.id+']',e);p.err=String(e&&e.message||e).slice(0,300);if(stop){halt(p);p.on=false;store()}toast(H('Plugin problem: ','Проблема с плагином: ')+PN(p)+' — '+p.err.slice(0,80));ui()};
+function halt(p){const lv=live[p.id];if(!lv)return;delete live[p.id];delete ACT[p.id];for(const f of lv.reverse())try{f()}catch(e){console.warn(e)}}
+
+/* --- layers in and out --- */
+const NK=new Set('name x y w h rot fx fy fill fills fop stroke sw sop sa dash dl dg cap join as ae strokes r rc ct op bl efx hid lock clip al lw lvh abs cn text fs ff fw ta lh ls it ud sk list fixW fixH hh runs fit tsc cz cxp cyp children open pc ir pts closed more lar src mask'.split(' ')),TYP=new Set(['frame','rect','ellipse','poly','star','path','text','image','group']);
+const okCol=v=>v===null||typeof v==='string'&&/^#[0-9a-f]{3,8}$/i.test(v)||isG(v)&&Array.isArray(v.s)&&v.s.length<=32&&v.s.every(x=>typeof x.c==='string'&&/^#[0-9a-f]{3,8}$/i.test(x.c));
+function sanN(n,cnt,d=0){if(n&&n.type==='svg'){if(++cnt.n>5000)throw new Error('Too many layers at once (5000 max)');const r=svgToNodes(String(n.svg||'').slice(0,2e6),String(n.name||''));if(!r.length)throw new Error('Empty svg layer');
+  const g=r.length===1?r[0]:mk('group',{children:r});g.name=String(n.name||g.name||'Icon').slice(0,200);const rt=(String(n.svg).match(/<svg\b[^>]*>/i)||[''])[0],at=k=>{const m=rt.match(new RegExp('\\s'+k+'=["\']([^"\']+)'));return m?m[1]:null},vb=(at('viewBox')||'').trim().split(/[\s,]+/).map(Number),aw=parseFloat(at('width')),ah=parseFloat(at('height'));
+  const b=aw>0&&ah>0&&!/%/.test(at('width')+at('height'))?{x:0,y:0,w:aw,h:ah}:vb.length===4&&vb[2]>0?{x:vb[0],y:vb[1],w:vb[2],h:vb[3]}:(aabb(g)||{x:0,y:0,w:1,h:1}),W=+n.w||b.w,Hh=+n.h||b.h;scaleN(g,b,{x:+n.x||0,y:+n.y||0,w:W,h:Hh},1);
+  if(n.color&&/^#[0-9a-f]{3,8}$/i.test(n.color))walk(k=>{if(k.fill&&typeof k.fill==='string')k.fill=n.color;if(k.stroke)k.stroke=n.color},[g]);for(const k of['abs','cn','lw','lvh','op','hid'])if(n[k]!=null)g[k]=n[k];return g}
+ if(!n||typeof n!=='object'||!TYP.has(n.type))throw new Error('Unknown layer type: '+(n&&n.type));if(++cnt.n>5000)throw new Error('Too many layers at once (5000 max)');if(d>40)throw new Error('Layers are nested too deeply');
+ const o=JSON.parse(JSON.stringify(n,(k,v)=>typeof v==='number'&&!isFinite(v)?0:v)),out=mk(o.type);if(o.type==='frame')out.name='';
+ for(const k in o)if(NK.has(k))out[k]=o[k];
+ for(const k of['name','ff','ta','bl','dash','cap','join','as','ae','sa','fit','ct','list'])if(out[k]!=null)out[k]=String(out[k]).slice(0,k==='name'?200:60);
+ if(out.text!=null)out.text=String(out.text).slice(0,20000);for(const k of['x','y','w','h'])out[k]=+out[k]||0;
+ for(const k of['fill','stroke'])if(k in out&&!okCol(out[k]))delete out[k];
+ if(out.fills&&!(Array.isArray(out.fills)&&out.fills.length<=16&&out.fills.every(p=>p&&okCol(p.f))))delete out.fills;
+ if(out.efx&&!(Array.isArray(out.efx)&&out.efx.length<=16))delete out.efx;
+ if(out.type==='image'){const src=String(out.src||'');if(!/^data:image\/(png|jpeg|webp|gif|svg\+xml)[;,]/i.test(src)||src.length>16e6)throw new Error('Images must be data: URLs under 16 MB');const id=nid();ASSETS[id]=src;out.asset=id;if(cnt.tmp)cnt.tmp.push(id)}
+ delete out.src;
+ if(out.type==='frame'||out.type==='group'){out.children=Array.isArray(o.children)?o.children.map(c=>sanN(c,cnt,d+1)):[]}else delete out.children;
+ if(out.type==='path'&&!Array.isArray(out.pts))throw new Error('A path needs pts');
+ if(out.type==='text'){out.fs=clamp(+out.fs||16,1,2000);layoutT(out)}return out}
+function itemNodes(item,tmp){if(!item||typeof item!=='object')throw new Error('insert needs an object');const cnt={n:0,tmp};
+ if(Array.isArray(item.nodes))return item.nodes.map(n=>sanN(n,cnt));
+ if(item.svg!=null){const t=String(item.svg);if(t.length>4e6)throw new Error('SVG too large');const r=svgToNodes(t,item.name||'');if(!r.length)throw new Error('Nothing to insert in that SVG');if(item.name&&r.length===1)r[0].name=String(item.name).slice(0,200);return r}
+ if(item.image!=null)return[sanN({type:'image',src:item.image,w:+item.w||100,h:+item.h||100,name:item.name||L('Image','Изображение'),fit:item.fit,tsc:item.tsc,op:item.op,bl:item.bl},cnt)];
+ if(item.text!=null)return[sanN(Object.assign({type:'text',fill:'#000000'},item),cnt)];throw new Error('insert needs nodes, svg, image or text')}
+function place(top,o={}){o=o||{};const ts=topSel(),one=ts.length===1?ts[0]:null,sb=selBox();let parent=null,after=null;
+ const bb=union(top.map(n=>aabb(n)||{x:n.x,y:n.y,w:n.w,h:n.h}))||{x:0,y:0,w:0,h:0};
+ if(o.place==='new'){const all=union(doc.nodes.filter(n=>!n.hid).map(aabb)),c=vc(),X=all?Math.round(all.x+all.w+100):Math.round(c.x-bb.w/2),Y=all?Math.round(all.y):Math.round(c.y-bb.h/2);top.forEach(n=>moveN(n,X-bb.x,Y-bb.y))}
+ else if(o.fit==='selection'&&sb&&ts.length){const tgt=one&&one.type==='frame'?{x:one.x,y:one.y,w:one.w,h:one.h}:sb;for(const n of top){const b=aabb(n)||n;if(n.type==='group')scaleN(n,b,tgt,Math.sqrt(tgt.w/(b.w||1)*tgt.h/(b.h||1)));else setBox(n,tgt.x,tgt.y,tgt.w,tgt.h)}
+  if(one&&one.type==='frame'){parent=one;top.forEach(n=>n.abs=one.al?true:undefined)}else{const last=ts[ts.length-1];parent=par(last);after=last}}
+ else{const upF=n=>{for(let q=n;q;q=par(q))if(q.type==='frame')return q;return null};parent=one&&one.type==='frame'?one:ts.length?upF(par(ts[0])):(o.into!==false?frameAt(vc()):null);
+  let c=vc();if(parent){const pb=aabb(parent)||parent;if(!inBox(c,pb))c={x:pb.x+pb.w/2,y:pb.y+pb.h/2}}if(o.at&&isFinite(o.at.x)&&isFinite(o.at.y))c={x:+o.at.x,y:+o.at.y};
+  top.forEach(n=>moveN(n,Math.round(c.x-bb.w/2-bb.x),Math.round(c.y-bb.h/2-bb.y)))}
+ const L0=parent?parent.children:doc.nodes;if(after&&L0.includes(after))L0.splice(L0.indexOf(after)+1,0,...top);else L0.push(...top);reindex();
+ if(o.select!==false)sel=top;if(tool!=='move')setTool('move');commit();if(o.place==='new'&&top[0])zoomTo(aabb(top[0])||top[0]);return top.map(n=>n.id)}
+const plain=n=>{const o=JSON.parse(JSON.stringify(n,rep));walk(k=>{if(k.asset){k.image=!!ASSETS[k.asset];delete k.asset}},[o]);return o};
+function hInsert(item,opts){return place(itemNodes(item),opts)}
+function hPreview(item,bg){const tmp=[],ns=itemNodes(item,tmp);try{const go=l=>{for(const n of l){if(n.children)go(n.children);if(n.al&&n.type==='frame')layoutF(n)}};go(ns);const b=union(ns.map(n=>aabb(n)||n));if(!b)return'';const p=Math.max(1,Math.round(Math.max(b.w,b.h)*.04)),bb={x:b.x-p,y:b.y-p,w:b.w+2*p,h:b.h+2*p};return svgStr(ns,bb,1,'')}finally{for(const id of tmp)delete ASSETS[id]}}
+function hUpdate(id,props){const e=IDX.get(String(id));if(!e)throw new Error('No layer with id '+id);if(!props||typeof props!=='object')throw new Error('update needs an object');const n=e.n,t=sanN(Object.assign({type:n.type},props,{children:undefined}),{n:0});
+ for(const k in props){if(!NK.has(k)||k==='children'||k==='src')continue;if(k in t)n[k]=t[k];else delete n[k]}if(n.type==='text')layoutT(n);commit();return true}
+function hRemove(id){const e=IDX.get(String(id));if(!e)return false;detach(e.n);sel=sel.filter(n=>n!==e.n);reindex();commit();return true}
+
+/* --- shared host features --- */
+const okVal=v=>typeof v==='string'&&v.length<120&&!/url\s*\(|expression|javascript:|[;{}<>\\]/i.test(v);
+function hItem(p,lv,label,fn){const a=ACT[p.id]=ACT[p.id]||[];if(a.length>=10)throw new Error('Too many menu items (10 max)');const it={label:String(label).slice(0,60),fn};a.push(it);lv.push(()=>{const i=a.indexOf(it);if(i>=0)a.splice(i,1)});return it}
+function hCmd(p,lv,re,label,run){const c={p,re,label:String(label||'').slice(0,80),run};CMDS.push(c);lv.push(()=>{const i=CMDS.indexOf(c);if(i>=0)CMDS.splice(i,1)})}
+function hOn(p,lv,ev,fn){if(!['selection','change'].includes(ev))throw new Error('Unknown event '+ev);const s=EV[ev]||(EV[ev]=new Set);s.add(fn);lv.push(()=>s.delete(fn))}
+const sKey=(p,k)=>'cv-pl:'+p.id+':'+String(k).slice(0,60);let PST={},pstT=0;const pstSave=()=>{clearTimeout(pstT);pstT=setTimeout(()=>kvSet('plstore',JSON.stringify(PST)).catch(()=>{}),150)};
+const sGet=(p,k)=>{const K=sKey(p,k);return K in PST?JSON.parse(PST[K]):null},sSet=(p,k,v)=>{const s=JSON.stringify(v??null);if(s.length>200000)throw new Error('Stored value too large (200 KB max)');PST[sKey(p,k)]=s;pstSave()};
+const sDrop=p=>{for(const K of Object.keys(PST))if(K.startsWith('cv-pl:'+p.id+':'))delete PST[K];pstSave()};
+let tq=0;const toastT=(p,m)=>{const n=Date.now();if(n-tq<500)return;tq=n;toast(String(m).slice(0,160))};
+{let sg='';const fire=()=>{const g=sel.map(n=>n.id).join();if(g!==sg){sg=g;for(const f of EV.selection||[])try{f()}catch(e){}}};const _r=render;render=function(){const r=_r.apply(this,arguments);fire();return r}}
+{const _c=commit;commit=function(){const r=_c.apply(this,arguments);for(const f of EV.change||[])try{f()}catch(e){}return r}}
+
+/* --- plugin windows: docked panel on desktop, sheet on phone; drawn by the app --- */
+let FORM=null;const svgSrc=v=>{if(!v)return'';if(typeof v==='object'&&v.src&&/^data:image\//.test(v.src))return v.src;const s=String(typeof v==='object'?v.svg||'':v);if(!/^\s*<svg[\s>]/i.test(s))return'';return'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s.includes('xmlns=')?s:s.replace(/<svg/i,'<svg xmlns="http://www.w3.org/2000/svg"'))};
+function hForm(p,lv,spec,onInput,onSubmit){if(FORM)FORM.done(null);if(!spec||!Array.isArray(spec.fields))throw new Error('form needs fields');
+ const F=spec.fields.slice(0,60),w=document.createElement('div');w.className='plw';w.setAttribute('role','dialog');const fid=i=>'pf'+i,opt=f=>(Array.isArray(f.options)?f.options:[]).slice(0,80).map(o=>Array.isArray(o)?o:[o,o]);
+ const fieldH=(f,i)=>{const l=esc_(String(f.label||'').slice(0,80)),k=f.key;switch(f.type){
+  case'heading':return`<div class="pfH">${l}</div>`;case'info':return`<div class="hint pfI" id="${fid(i)}">${esc_(String(f.value||f.text||'').slice(0,600))}</div>`;
+  case'color':return`<label class="pfR"><span>${l}</span><span class="pfC"><input type="color" id="${fid(i)}"><input type="text" class="hex" id="${fid(i)}x" maxlength="7"></span></label>`;
+  case'select':return`<label class="pfR"><span>${l}</span><select id="${fid(i)}">${opt(f).map(([v,t])=>`<option value="${esc_(v)}">${esc_(t)}</option>`).join('')}</select></label>`;
+  case'toggle':return`<label class="pfR"><span>${l}</span><label class="sw2"><input type="checkbox" id="${fid(i)}"><i></i></label></label>`;
+  case'chips':return`${l?`<div class="pfL">${l}</div>`:''}<div class="pfK" id="${fid(i)}">${opt(f).map(([v,t])=>`<button type="button" data-v="${esc_(v)}">${esc_(t)}</button>`).join('')}</div>`;
+  case'range':return`<label class="pfR"><span>${l}</span><span class="pfG"><input type="range" id="${fid(i)}" min="${+f.min||0}" max="${f.max!=null?+f.max:100}" step="${+f.step||1}"><output></output></span></label>`;
+  case'number':return`<label class="pfR"><span>${l}</span><span class="pfN"><input type="text" inputmode="decimal" id="${fid(i)}">${f.unit?`<i>${esc_(f.unit)}</i>`:''}</span></label>`;
+  case'textarea':return`${l?`<div class="pfL">${l}</div>`:''}<textarea id="${fid(i)}" rows="${clamp(+f.rows||4,2,12)}" maxlength="${+f.max||5000}"></textarea>`;
+  case'preview':return`<div class="pfP${f.dark?' dk':''}" id="${fid(i)}" style="height:${clamp(+f.height||140,40,400)}px"><img alt=""></div>`;
+  case'gallery':return`${f.search?`<input type="search" class="pfS" id="${fid(i)}q" placeholder="${esc_(String(f.placeholder||H('Search','Поиск')).slice(0,60))}">`:''}<div class="pfY${f.labels?' lb':''}" id="${fid(i)}" style="--c:${clamp(+f.columns||6,1,10)};--a:${/^\d+(\.\d+)?(\/\d+(\.\d+)?)?$/.test(String(f.aspect||''))?f.aspect:'1'}"></div><div class="hint pfM" id="${fid(i)}m"></div>`;
+  default:return`<label class="pfR"><span>${l}</span><input type="text" id="${fid(i)}" maxlength="${+f.max||500}"></label>`}};
+ const wrap=(f,h)=>`<div class="pfW" data-k="${esc_(f.key||'')}"${(spec.hide||[]).includes(f.key)?' hidden':''}>${h}</div>`;
+ w.innerHTML=`<div class="plwH"><i class="plwI" style="background:${p.color}">${esc_(p.icon||'')}</i><h2>${esc_(String(spec.title||PN(p)).slice(0,80))}</h2><button class="gx plwX" aria-label="${H('Close','Закрыть')}">×</button></div>${spec.text?`<div class="hint">${esc_(String(spec.text).slice(0,500))}</div>`:''}<div class="pfB">${F.map((f,i)=>wrap(f,fieldH(f,i))).join('')}</div>
+  <div class="row"><button class="pfN0">${esc_(String(spec.cancel||H('Close','Закрыть')).slice(0,30))}</button><button class="pfY0 pri">${esc_(String(spec.ok||H('Insert','Вставить')).slice(0,30))}</button></div>`;
+ const el=i=>w.querySelector('#'+fid(i)),VAL={},GAL={};
+ const setF=(f,i,v)=>{const e=el(i);if(!e)return;switch(f.type){case'color':{const h=hex(String(v));if(h){e.value=h;w.querySelector('#'+fid(i)+'x').value=h.slice(1).toUpperCase();VAL[f.key]=h}break}
+  case'toggle':e.checked=!!v;VAL[f.key]=!!v;break;case'chips':VAL[f.key]=String(v);e.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.v===String(v)));break;
+  case'range':e.value=v;e.nextElementSibling.textContent=v+(f.unit||'');e.style.setProperty('--p',(v-(+f.min||0))/((f.max!=null?+f.max:100)-(+f.min||0))*100+'%');VAL[f.key]=+v;break;
+  case'preview':{const s=svgSrc(v);e.firstChild.src=s;e.classList.toggle('empty',!s);break}case'info':e.textContent=String(v??'').slice(0,600);break;
+  case'gallery':{if(v&&typeof v==='object'&&Array.isArray(v.items)){GAL[i]=v.items.slice(0,600);const m=w.querySelector('#'+fid(i)+'m');m.textContent=v.note!=null?String(v.note).slice(0,200):'';
+    e.innerHTML=GAL[i].map((it,j)=>`<button type="button" data-j="${j}"${/^#[0-9a-f]{3,8}$/i.test(it.bg||'')?` style="background:${it.bg}"`:''} title="${esc_(String(it.label||it.id).slice(0,60))}"><img alt="" loading="lazy" src="${esc_(svgSrc(it.svg?it.svg:{src:it.src}))}">${f.labels?`<span>${esc_(String(it.label||'').slice(0,40))}</span>`:''}</button>`).join('');if(v.value!==undefined)VAL[f.key]=v.value}
+   else VAL[f.key]=v;const cur=VAL[f.key];e.querySelectorAll('button').forEach(b=>b.classList.toggle('on',GAL[i]?.[+b.dataset.j]?.id===cur));break}
+  default:e.value=v??'';VAL[f.key]=e.type==='text'&&f.type==='number'?+v:v}};
+ const getAll=()=>{const o={...VAL};F.forEach((f,i)=>{const e=el(i);if(!e||!f.key)return;if(f.type==='number')o[f.key]=numv(e.value,+f.value||0);else if(['text','textarea','select',undefined].includes(f.type)||!f.type)o[f.key]=e.value;if(f.type==='gallery'&&f.search)o[f.key+'_q']=w.querySelector('#'+fid(i)+'q').value});return o};
+ F.forEach((f,i)=>{if(f.value!==undefined||f.type==='gallery'||f.type==='preview')setF(f,i,f.value)});
+ const host=document.body;host.appendChild(w);BC.add('plwin');
+ return new Promise(res=>{let t=0,busy=false,again=false;const run=()=>{if(!onInput)return;if(busy){again=true;return}busy=true;Promise.resolve(onInput(getAll())).then(nv=>{if(nv&&typeof nv==='object'){F.forEach((f,i)=>{if(f.key&&f.key in nv)setF(f,i,nv[f.key])});if(Array.isArray(nv.$hide))w.querySelectorAll('.pfW').forEach(x=>x.hidden=!!x.dataset.k&&nv.$hide.includes(x.dataset.k))}}).catch(e=>console.warn(e)).finally(()=>{busy=false;if(again){again=false;run()}})};
+  const later=ms=>{clearTimeout(t);t=setTimeout(run,ms)};
+  w.addEventListener('input',e=>{const i=F.findIndex((f,j)=>e.target.id===fid(j)||e.target.id===fid(j)+'x'||e.target.id===fid(j)+'q');const f=F[i];if(f){if(f.type==='color'){if(e.target.id.endsWith('x')){const h=hex(e.target.value);if(h){el(i).value=h;VAL[f.key]=h}}else{w.querySelector('#'+fid(i)+'x').value=e.target.value.slice(1).toUpperCase();VAL[f.key]=e.target.value}}else if(f.type==='range')setF(f,i,+e.target.value);else if(f.type==='toggle')VAL[f.key]=e.target.checked}later(e.target.type==='search'?140:50)});
+  w.addEventListener('change',e=>{const i=F.findIndex((f,j)=>e.target.id===fid(j));if(F[i]?.type==='toggle')VAL[F[i].key]=e.target.checked;later(10)});
+  w.addEventListener('click',e=>{const b=e.target.closest('.pfK button');if(b){const i=F.findIndex((f,j)=>b.parentNode.id===fid(j));setF(F[i],i,b.dataset.v);return later(10)}
+   const g=e.target.closest('.pfY button');if(g){const i=F.findIndex((f,j)=>g.parentNode.id===fid(j)),it=GAL[i]?.[+g.dataset.j];if(it){setF(F[i],i,it.id);later(10);if(e.detail>=2&&onSubmit)submit()}}});
+  w.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape')done(null);if(e.key==='Enter'&&e.target.tagName!=='TEXTAREA'&&e.target.type!=='search'){e.preventDefault();submit()}});
+  const done=v=>{if(!FORM||FORM.w!==w)return;FORM=null;w.remove();BC.remove('plwin');res(v)},submit=()=>{const v=getAll();if(onSubmit){Promise.resolve(onSubmit(v)).then(nv=>{if(nv&&typeof nv==='object')F.forEach((f,i)=>{if(f.key&&f.key in nv)setF(f,i,nv[f.key])})}).catch(e=>fail(p,e))}else done(v)};
+  FORM={w,done};lv.push(()=>done(null));
+  w.querySelector('.pfN0').onclick=w.querySelector('.plwX').onclick=()=>done(null);w.querySelector('.pfY0').onclick=submit;later(0)})}
+
+/* --- full access: runs inside the app --- */
+function fullApi(p,lv){const safe=f=>(...a)=>{try{return f(...a)}catch(e){fail(p,e)}};
+ return Object.freeze({apiVersion:1,id:p.id,lang:LANG,t:(en,ru)=>LANG==='ru'&&ru!=null?ru:en,toast:m=>toastT(p,m),insert:hInsert,preview:hPreview,closeForm:()=>FORM?.done(null),update:hUpdate,remove:hRemove,selection:()=>topSel().map(plain),bounds:()=>({selection:selBox(),view:{...vc(),zoom:view.z}}),
+  doc:()=>doc,commit:()=>commit(),addMenuItem:(l,fn)=>{const it=hItem(p,lv,l,safe(fn));return{setLabel:t=>it.label=String(t).slice(0,60)}},helper:{addCommand:(re,fn,label)=>hCmd(p,lv,re,label,fn)},
+  ui:{form:spec=>hForm(p,lv,spec,spec&&spec.onInput,spec&&spec.onSubmit)},on:(ev,fn)=>hOn(p,lv,ev,safe(fn)),storage:{get:k=>sGet(p,k),set:(k,v)=>sSet(p,k,v)},onDisable:f=>lv.push(f)})}
+/* --- sealed: a frame with no internet, no files and no access to the app --- */
+const SBX=`<!doctype html><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' blob:; worker-src blob:"><script>let w=null;onmessage=e=>{if(e.source!==parent)return;const d=e.data;if(d&&d.t==='boot'){w=new Worker(URL.createObjectURL(new Blob([d.src],{type:'text/javascript'})));w.onmessage=x=>parent.postMessage(x.data,'*');w.onerror=x=>{x.preventDefault();parent.postMessage({t:'err',msg:x.message},'*')}}else if(w)w.postMessage(d)}<\/script>`;
+const RT=`(()=>{for(const k of['fetch','XMLHttpRequest','WebSocket','EventSource','importScripts','indexedDB','caches','WebTransport','Worker','SharedWorker','BroadcastChannel'])try{let o=self;while(o){if(Object.getOwnPropertyDescriptor(o,k))delete o[k];o=Object.getPrototypeOf(o)}}catch(e){}
+const post=self.postMessage.bind(self),W={},CB={};let n=0,c=0;const call=(m,...a)=>new Promise((res,rej)=>{const id=++n;W[id]=[res,rej];post({t:'call',id,m,a})}),cb=f=>{if(typeof f!=='function')throw new Error('Expected a function');CB[++c]=f;return c};
+self.onmessage=async e=>{const d=e.data;if(d.t==='ret'){const w=W[d.id];if(!w)return;delete W[d.id];d.err!=null?w[1](new Error(d.err)):w[0](d.v)}else if(d.t==='ping')post({t:'pong'});
+ else if(d.t==='cb'){let v,err;try{v=await CB[d.cb](...(d.a||[]))}catch(x){err=String(x&&x.message||x)}if(d.id)post({t:'cbret',id:d.id,v,err})}
+ else if(d.t==='run'){const cocoa=Object.freeze({apiVersion:1,id:d.id,lang:d.lang,t:(en,ru)=>d.lang==='ru'&&ru!=null?ru:en,toast:m=>call('toast',String(m)),
+  insert:(item,opts)=>call('insert',item,opts),preview:item=>call('preview',item),closeForm:()=>call('closeForm'),update:(id,p)=>call('update',id,p),remove:id=>call('remove',id),selection:()=>call('selection'),bounds:()=>call('bounds'),
+  addMenuItem:(l,f)=>{const h=call('addMenuItem',String(l),cb(f));return{setLabel:t=>h.then(k=>call('setLabel',k,String(t)))}},
+  helper:{addCommand:(re,f,label)=>call('addCommand',re instanceof RegExp?re.source:String(re),re instanceof RegExp?re.flags:'i',label||'',cb(f))},
+  ui:{form:s=>{const o=Object.assign({},s);const fi=o.onInput,fs=o.onSubmit;delete o.onInput;delete o.onSubmit;return call('form',o,fi?cb(fi):0,fs?cb(fs):0)}},
+  on:(ev,f)=>call('on',String(ev),cb(f)),storage:{get:k=>call('sget',String(k)),set:(k,v)=>call('sset',String(k),v)}});
+  try{new Function('cocoa',d.code)(cocoa)}catch(x){post({t:'err',msg:String(x&&x.message||x)})}}}})();`;
+const SB=new Map();addEventListener('message',e=>{const s=SB.get(e.source);if(s)s.msg(e.data)});
+function sandbox(p,lv){const f=document.createElement('iframe');f.sandbox='allow-scripts';f.srcdoc=SBX;f.style.display='none';f.setAttribute('aria-hidden','true');f.tabIndex=-1;
+ let pong=Date.now(),calls=0,sec=0,cbN=0,dead=false;const items={},RET={},send=d=>{if(!dead)f.contentWindow?.postMessage(d,'*')},has=k=>{if(!p.perms.includes(k))throw new Error(`“${PN(p)}” has no permission to ${PERM[k]?PERM[k][0].toLowerCase():k}`)};
+ const fire=(id,a,wait)=>new Promise(res=>{if(!wait){send({t:'cb',cb:id,a});return res()}const k='r'+(++cbN);RET[k]=res;send({t:'cb',cb:id,a,id:k});setTimeout(()=>{if(RET[k]){delete RET[k];res(undefined)}},120000)});
+ const H_={toast:m=>toastT(p,m),preview:it=>hPreview(it),closeForm:()=>{FORM?.done(null)},insert:(it,o)=>(has('insert'),hInsert(it,o)),update:(id,pr)=>(has('edit'),hUpdate(id,pr)),remove:id=>(has('edit'),hRemove(id)),selection:()=>(has('read'),topSel().map(plain)),bounds:()=>(has('read'),{selection:selBox(),view:{...vc(),zoom:view.z}}),
+  addMenuItem:(l,id)=>{has('menu');const k=++cbN;items[k]=hItem(p,lv,l,()=>fire(id,[]));return k},setLabel:(k,t)=>{if(items[k])items[k].label=String(t).slice(0,60)},
+  addCommand:(src,fl,label,id)=>{has('helper');if(String(src).length>500)throw new Error('Command pattern too long');const re=new RegExp(src,String(fl).replace(/[^imsu]/g,''));hCmd(p,lv,re,label,(raw,m)=>fire(id,[raw,m?[...m]:null]))},
+  form:(spec,ia,sa)=>{has('ui');return hForm(p,lv,spec,ia?v=>fire(ia,[v],true):null,sa?v=>fire(sa,[v],true):null)},on:(ev,id)=>{has('read');hOn(p,lv,ev,()=>fire(id,[]))},sget:k=>sGet(p,k),sset:(k,v)=>sSet(p,k,v)};
+ const s={msg:async d=>{if(!d||typeof d!=='object'||dead)return;if(d.t==='pong'){pong=Date.now();return}if(d.t==='err')return fail(p,new Error(d.msg));if(d.t==='cbret'){const r=RET[d.id];if(r){delete RET[d.id];r(d.err?undefined:d.v)}if(d.err)fail(p,new Error(d.err));return}
+  if(d.t!=='call')return;const now=Date.now();if(now-sec>1000){sec=now;calls=0}if(++calls>300)return fail(p,new Error(H('Stopped: it was flooding the app with requests.','Остановлен: слишком много запросов.')),true);
+  let v,err;try{const fn=H_[d.m];if(!fn)throw new Error('Unknown request '+d.m);v=await fn(...(d.a||[]))}catch(x){err=String(x&&x.message||x)}if(err)console.warn('[plugin '+p.id+']',err);send({t:'ret',id:d.id,v,err})}};
+ f.onload=()=>{SB.set(f.contentWindow,s);send({t:'boot',src:RT});send({t:'run',code:p.code,id:p.id,lang:LANG})};document.body.appendChild(f);
+ const hb=setInterval(()=>{send({t:'ping'});if(Date.now()-pong>15000)fail(p,new Error(H('Stopped: it stopped responding.','Остановлен: перестал отвечать.')),true)},3000);
+ lv.push(()=>{dead=true;clearInterval(hb);SB.delete(f.contentWindow);f.remove();for(const k in RET)RET[k]()})}
+function on(p){if(live[p.id])return;const lv=live[p.id]=[];p.err='';try{if(p.access==='full')new Function('cocoa',p.code)(fullApi(p,lv));else sandbox(p,lv)}catch(e){fail(p,e,true)}}
+{const q0=qParse;qParse=function(raw){const s=String(raw||'');if(s.length<=500)for(const c of CMDS){let m=null;try{m=s.match(c.re)}catch(e){}if(m)return{d:PN(c.p)+(c.label?': '+c.label:''),ok:true,fix:[],f:()=>{Promise.resolve().then(()=>c.run(s,m)).catch(e=>fail(c.p,e))}}}return q0(raw)}}
+
+/* --- puzzle button + menu --- */
+const PZ='<svg viewBox="0 0 24 24"><path d="M9 3.5h3a1 1 0 011 1v.6a1.7 1.7 0 103.4 0v-.6a1 1 0 011-1H19a1.5 1.5 0 011.5 1.5v3a1 1 0 01-1 1h-.6a1.7 1.7 0 100 3.4h.6a1 1 0 011 1V19a1.5 1.5 0 01-1.5 1.5h-3a1 1 0 01-1-1v-.6a1.7 1.7 0 10-3.4 0v.6a1 1 0 01-1 1H5A1.5 1.5 0 013.5 19v-3a1 1 0 011-1h.6a1.7 1.7 0 100-3.4h-.6a1 1 0 01-1-1V5A1.5 1.5 0 015 3.5z"/></svg>';
+$('bExport').insertAdjacentHTML('beforebegin',`<button id="bPlug" class="ic" data-tt="Plugins|Плагины" aria-haspopup="menu">${PZ}</button>`);
+const PM=document.createElement('div');PM.id='plMenu';PM.hidden=true;PM.setAttribute('role','menu');document.body.appendChild(PM);
+function pmDraw(){const on=list.filter(p=>p.on);let h='';
+ for(const p of on){const a=ACT[p.id]||[];h+=`<div class="pmG"><i style="background:${p.color}">${esc_(p.icon||'')}</i>${esc_(PN(p))}${p.off?' <svg class="plV" viewBox="0 0 16 16"><path d="M8 .8l1.9 1.4 2.3-.1.7 2.2 1.9 1.3-.8 2.2.8 2.2-1.9 1.3-.7 2.2-2.3-.1L8 15.2l-1.9-1.4-2.3.1-.7-2.2-1.9-1.3.8-2.2-.8-2.2 1.9-1.3.7-2.2 2.3.1z"/><path d="M5.2 8.2l1.9 1.9 3.7-3.8" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div>`+(a.length?a.map((it,i)=>`<button role="menuitem" data-pa="${esc_(p.id)}" data-i="${i}">${esc_(it.label)}</button>`).join(''):`<div class="pmE">${p.err?esc_(p.err):H('Starting…','Запускается…')}</div>`)}
+ if(!on.length)h=`<div class="pmE" style="padding:10px">${list.length?H('All plugins are turned off.','Все плагины выключены.'):H('No plugins yet. Browse the catalogue to add kits, icons and generators.','Плагинов пока нет. Откройте каталог, чтобы добавить наборы, иконки и генераторы.')}</div>`;
+ PM.innerHTML=h+`<hr><button role="menuitem" data-pm="browse">${H('Browse plugins…','Каталог плагинов…')}</button><button role="menuitem" data-pm="manage">${H('Manage plugins…','Управление плагинами…')}<span>${on.length?on.length+' '+H('on','вкл.'):''}</span></button>`}
+function pmOpen(){pmDraw();PM.hidden=false;$('bPlug').classList.add('on');const r=$('bPlug').getBoundingClientRect(),w=PM.offsetWidth;if(!phone()){PM.style.left=clamp(r.right-w,8,innerWidth-w-8)+'px';PM.style.top=r.bottom+6+'px'}else{PM.style.left='';PM.style.top=r.bottom+6+'px'}}
+const pmClose=()=>{PM.hidden=true;$('bPlug')?.classList.remove('on')};
+$('bPlug').addEventListener('click',e=>{e.stopPropagation();if(PM.hidden){closeMenus();pmOpen()}else pmClose()});
+document.addEventListener('pointerdown',e=>{if(!PM.hidden&&!PM.contains(e.target)&&!e.target.closest('#bPlug'))pmClose()},true);
+PM.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;pmClose();if(b.dataset.pm==='browse')return window.plugBrowse();if(b.dataset.pm==='manage')return window.plugOpen();const it=ACT[b.dataset.pa]?.[+b.dataset.i];if(it)Promise.resolve().then(()=>it.fn()).catch(e=>fail(list.find(p=>p.id===b.dataset.pa),e))});
+
+/* --- manage window --- */
+const m=document.createElement('div');m.id='plModal';m.className='modal';m.hidden=true;
+m.innerHTML=`<div class="box"><h2>${H('Plugins','Плагины')}</h2><div class="hint">${H('Plugins run sealed off: no internet, no files, and only the permissions you approve. A plugin marked Full access can do anything, so only install those from people you trust.','Плагины работают в изоляции: без интернета, без доступа к файлам и только с одобренными разрешениями. Плагин с полным доступом может всё, ставьте такие только от тех, кому доверяете.')}</div>
+<div id="plList"></div><div id="plAsk" hidden></div><div class="row plRow"><button id="plBrowse" class="pri">${H('Browse plugins…','Каталог плагинов…')}</button><button id="plAdd">${H('Install from file…','Установить из файла…')}</button><button id="plAll">${H('Turn all off','Выключить все')}</button><span class="sp"></span><button id="plClose">${H('Close','Закрыть')}</button></div><input type="file" id="plFile" accept=".js,text/javascript" hidden></div>`;
+document.body.appendChild(m);
+const ICO=p=>`<i class="plIc" style="background:${p.color||'#555'}">${esc_(p.icon||'')}</i>`;
+const VB=`<svg class="plV" viewBox="0 0 16 16" role="img" aria-label="${H('Official CocoaSuite plugin','Официальный плагин CocoaSuite')}"><path d="M8 .8l1.9 1.4 2.3-.1.7 2.2 1.9 1.3-.8 2.2.8 2.2-1.9 1.3-.7 2.2-2.3-.1L8 15.2l-1.9-1.4-2.3.1-.7-2.2-1.9-1.3.8-2.2-.8-2.2 1.9-1.3.7-2.2 2.3.1z"/><path d="M5.2 8.2l1.9 1.9 3.7-3.8" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const pl=p=>p.access==='full'?H('Can do anything CocoaCanvas can, including going online','Может всё, что и CocoaCanvas, включая выход в интернет'):p.perms.length?p.perms.map(k=>H(...PERM[k])).join(' · '):H('No permissions','Без разрешений');
+function ui(){const el=$('plList');if(!el)return;el.dataset.e=H('No plugins installed yet.','Плагинов пока нет.');el.innerHTML=list.map((p,i)=>`<div class="plI"><label class="sw2"><input type="checkbox" data-i="${i}" ${p.on?'checked':''} aria-label="${H('Enabled','Включён')}"><i></i></label>${ICO(p)}<div><b>${esc_(PN(p))}</b>${p.off?VB:''} <span class="hint">${esc_(p.version)}${p.author?' · '+esc_(p.author):''}</span><span class="plT${p.access==='full'?' full':''}">${p.access==='full'?H('Full access','Полный доступ'):H('Sealed','Изолирован')}</span>${PD(p)?`<div class="hint">${esc_(PD(p))}</div>`:''}<div class="hint">${esc_(pl(p))}</div>${p.err?`<div class="er">${esc_(p.err)}</div>`:''}</div><button data-r="${i}">${H('Remove','Удалить')}</button></div>`).join('');
+ el.querySelectorAll('input[data-i]').forEach(c=>c.onchange=()=>{const p=list[+c.dataset.i];p.on=c.checked;if(p.on)on(p);else{halt(p);p.err=''}store();ui()});
+ el.querySelectorAll('button[data-r]').forEach(b=>b.onclick=()=>{const p=list[+b.dataset.r];if(b.dataset.c!=='1'){b.dataset.c='1';b.textContent=H('Tap again to remove','Нажмите ещё раз');return}halt(p);list.splice(list.indexOf(p),1);sDrop(p);store();ui();toast(H('Plugin removed','Плагин удалён'))})}
+function ask(meta,code,off){const old=list.find(x=>x.id===meta.id),a=$('plAsk'),full=meta.access==='full',nw=old?meta.perms.filter(k=>!old.perms.includes(k)):[],up=old&&(nw.length||(full&&old.access!=='full'));a.hidden=false;
+ a.innerHTML=`<div>${old?H('Update','Обновить'):H('Install','Установить')} <b>${esc_(PN(meta))}</b> ${esc_(meta.version)}${old?` (${H('installed','установлен')}: ${esc_(old.version)})`:''}?</div>${PD(meta)?`<div class="hint">${esc_(PD(meta))}</div>`:''}
+ ${full?`<div class="plW">${H('This plugin asks for full access. It could read and change anything in CocoaCanvas, use the internet and reach your files. Only continue if you trust whoever made it.','Плагин просит полный доступ. Он сможет читать и менять всё в CocoaCanvas, выходить в интернет и добираться до ваших файлов. Продолжайте, только если доверяете автору.')}</div><label><input type="checkbox" id="plOk">${H('I trust this plugin','Я доверяю этому плагину')}</label>`
+ :`<div class="hint">${H('It will run sealed off, without internet or file access. It asks to:','Он будет работать в изоляции, без интернета и доступа к файлам. Он просит:')}</div><ul>${meta.perms.length?meta.perms.map(k=>`<li${nw.includes(k)?' style="color:#D15A2C"':''}>${esc_(H(...PERM[k]))}${nw.includes(k)?' · '+H('new','новое'):''}</li>`).join(''):`<li>${H('Nothing beyond showing short messages','Ничего, кроме коротких сообщений')}</li>`}</ul>`}
+ ${up&&!full?`<div class="hint">${H('This update asks for more than before.','Обновление просит больше, чем раньше.')}</div>`:''}<div class="row"><span class="sp"></span><button id="plNo">${H('Cancel','Отмена')}</button><button id="plYes" class="pri" ${full?'disabled':''}>${old?H('Update','Обновить'):H('Install','Установить')}</button></div>`;
+ if(full)$('plOk').onchange=e=>$('plYes').disabled=!e.target.checked;$('plNo').onclick=()=>{a.hidden=true};$('plYes').onclick=()=>{a.hidden=true;window.plugInstall(code,off)};a.scrollIntoView({block:'nearest'})}
+window.plugInstall=(code,off)=>{const meta=head(code),old=list.find(x=>x.id===meta.id),p=Object.assign({},meta,{code,on:true,err:'',off:!!off});if(old){halt(old);list[list.indexOf(old)]=p}else list.push(p);store();on(p);ui();toast(H(`Installed ${PN(p)}`,`Установлен: ${PN(p)}`));return p};
+$('plAdd').onclick=()=>$('plFile').click();$('plAll').onclick=()=>{for(const p of list){halt(p);p.on=false}store();ui();toast(H('All plugins are off','Все плагины выключены'))};
+$('plFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(f.size>12e6)return toast(H('That file is too big for a plugin.','Файл слишком большой для плагина.'));try{const code=await f.text();ask(head(code),code)}catch(x){toast(x.message||String(x))}};
+
+/* --- catalogue: a GitHub repo with index.json; every file is checked against its listed SHA-256 --- */
+const PLUG_SRC='https://github.com/CocoaSuite/cocoacanvas_plugins';
+function srcNorm(u){u=String(u||'').trim();if(!u)return'';const g=u.match(/^https?:\/\/github\.com\/([\w.-]+)\/([\w.-]+?)(?:\.git)?(?:\/tree\/([\w./-]+))?\/?$/i);if(g)return`https://raw.githubusercontent.com/${g[1]}/${g[2]}/${g[3]||'HEAD'}/`;if(!/^(https?:|file:)/i.test(u))throw new Error(H('That doesn’t look like a link.','Это не похоже на ссылку.'));return u.endsWith('/')?u:u+'/'}
+function fileUrl(base,e){if(!/^[\w-][\w./-]*$/.test(e.path||'')||e.path.includes('..'))throw new Error('Bad file path in the catalogue');const r=String(e.ref||'');if(r&&/^[0-9a-f]{7,40}$/i.test(r)){const mm=base.match(/^(https:\/\/raw\.githubusercontent\.com\/[\w.-]+\/[\w.-]+\/)[^/]+\/(.*)$/);if(mm)return mm[1]+r+'/'+mm[2]+e.path}return base+e.path}
+async function sha(t){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+const vNum=v=>String(v).split('.').map(x=>parseInt(x)||0),vNewer=(a,b)=>{const x=vNum(a),y=vNum(b);for(let i=0;i<Math.max(x.length,y.length);i++){if((x[i]||0)!==(y[i]||0))return(x[i]||0)>(y[i]||0)}return false};
+const pb=document.createElement('div');pb.id='pbModal';pb.className='modal';pb.hidden=true;
+pb.innerHTML=`<div class="box" style="width:min(580px,100%)"><h2>${H('Browse plugins','Каталог плагинов')}</h2><input id="pbQ" type="search" placeholder="${H('Search plugins','Поиск плагинов')}"><div class="hint" id="pbMsg"></div><div id="pbList"></div>
+<div class="row plRow"><button id="pbFile">${H('Install from file…','Установить из файла…')}</button><span class="sp"></span><button id="pbClose">${H('Close','Закрыть')}</button></div></div>`;
+document.body.appendChild(pb);
+let IDX=null;try{IDX=JSON.parse(localStorage.getItem('cv-plidx')||'null');if(IDX&&IDX.src!==PLUG_SRC)IDX=null}catch(e){}
+function pbDraw(){const el=$('pbList'),q=$('pbQ').value.trim().toLowerCase();if(!IDX){el.innerHTML='';return}
+ const ps=IDX.data.plugins.filter(e=>!q||[e.name,e.name_ru,e.description,e.description_ru,e.author,e.id].join(' ').toLowerCase().includes(q));
+ el.innerHTML=ps.length?ps.map(e=>{const i=IDX.data.plugins.indexOf(e),have=list.find(x=>x.id===e.id),full=e.access==='full',st=!have?H('Install','Установить'):vNewer(e.version,have.version)?H('Update','Обновить'):H('Installed','Установлен'),c=/^#[0-9a-f]{6}$/i.test(e.color||'')?e.color:'#555';
+  return`<div class="plI">${ICO({color:c,icon:[...String(e.icon||'')].slice(0,2).join('')})}<div><b>${esc_(PN(e))}</b>${IDX.official?VB:''} <span class="hint">${esc_(e.version)}${e.author?' · '+esc_(e.author):''}</span><span class="plT${full?' full':''}">${full?H('Full access','Полный доступ'):H('Sealed','Изолирован')}</span>${PD(e)?`<div class="hint">${esc_(PD(e))}</div>`:''}<div class="hint">${H('Asks to: ','Просит: ')}${esc_(pl({access:full?'full':'safe',perms:(e.permissions||[]).filter(k=>PERM[k])}))}</div></div><button data-g="${i}" class="${have&&st===H('Installed','Установлен')?'':'pri'}" ${have&&st===H('Installed','Установлен')?'disabled':''}>${st}</button></div>`}).join(''):`<div class="hint">${H('No plugins match.','Ничего не найдено.')}</div>`;
+ el.querySelectorAll('button[data-g]').forEach(b=>b.onclick=()=>pbGet(IDX.data.plugins[+b.dataset.g],b))}
+async function pbLoad(){const msg=t=>$('pbMsg').textContent=t,base=srcNorm(PLUG_SRC);msg(H('Loading the catalogue…','Загружаю каталог…'));
+ try{const r=await fetch(base+'index.json',{cache:'no-cache'});if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();
+  if(d?.schema!==1||!Array.isArray(d.plugins))throw new Error(H('This isn’t a CocoaCanvas plugin catalogue.','Это не каталог плагинов CocoaCanvas.'));d.plugins=d.plugins.filter(e=>e&&/^[a-z0-9][a-z0-9._-]{1,60}$/i.test(e.id||'')&&/^[0-9a-f]{64}$/i.test(e.sha256||'')&&e.path).slice(0,500);
+  IDX={src:PLUG_SRC,base,data:d,official:true,t:Date.now()};let ch=0;for(const q of list){const e=d.plugins.find(e=>e.id===q.id),v=!!e&&(await sha(q.code))===e.sha256.toLowerCase();if(v!==!!q.off){q.off=v;ch=1}}if(ch){store();ui()}
+  try{localStorage.setItem('cv-plidx',JSON.stringify(IDX))}catch(e){}msg(H(`${d.plugins.length} plugins in the CocoaSuite catalogue.`,`Плагинов в каталоге CocoaSuite: ${d.plugins.length}.`));pbDraw()}
+ catch(e){msg((IDX?H('Couldn’t refresh the catalogue, showing the saved copy. ','Не удалось обновить каталог, показана сохранённая копия. '):H('Couldn’t load the catalogue: ','Не удалось загрузить каталог: '))+(e.message||e));pbDraw()}}
+async function pbGet(e,b){const msg=t=>$('pbMsg').textContent=t;b.disabled=true;msg(H('Downloading ','Скачиваю ')+PN(e)+'…');
+ try{const r=await fetch(fileUrl(IDX.base,e),{cache:'no-cache'});if(!r.ok)throw new Error('HTTP '+r.status);const code=await r.text();if(code.length>12e6)throw new Error(H('The file is too big.','Файл слишком большой.'));
+  if((await sha(code))!==e.sha256.toLowerCase())throw new Error(H('The file doesn’t match the catalogue’s checksum, so it may have been changed. Not installed.','Файл не совпадает с контрольной суммой каталога, возможно, его подменили. Не установлен.'));
+  const meta=head(code);if(meta.id!==e.id)throw new Error(H('The file’s id doesn’t match the catalogue.','id файла не совпадает с каталогом.'));msg('');pb.hidden=true;ui();m.hidden=false;ask(meta,code,true)}
+ catch(x){msg(x.message||String(x));b.disabled=false}}
+$('pbQ').oninput=pbDraw;$('pbClose').onclick=()=>{pb.hidden=true};$('pbFile').onclick=()=>{pb.hidden=true;m.hidden=false;$('plFile').click()};
+$('plBrowse').onclick=()=>{m.hidden=true;$('plAsk').hidden=true;$('pbQ').value='';pb.hidden=false;pbDraw();pbLoad()};
+window.plugBrowse=()=>$('plBrowse').click();$('plClose').onclick=()=>{m.hidden=true;$('plAsk').hidden=true};window.plugOpen=()=>{ui();m.hidden=false};
+for(const x of[m,pb])x.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape')x.hidden=true});
+Object.assign(CMD,{plugins:()=>window.plugOpen(),plugbrowse:()=>window.plugBrowse()});
+/* --- start: if the app didn't get through its last start with plugins on, start this time without them --- */
+Promise.all([kvGet(KEY),kvGet('plstore').then(x=>{try{PST=JSON.parse(x||'{}')||{}}catch(e){PST={}}}).catch(()=>{})]).then(([v])=>{try{list=JSON.parse(v||'[]')}catch(e){list=[]}
+ for(const p of list){try{const h=head(p.code);Object.assign(p,{access:h.access,perms:h.perms,icon:h.icon,color:h.color,name_ru:h.name_ru,description_ru:h.description_ru})}catch(e){p.on=false}}
+ let bad=false;try{bad=localStorage.getItem('cv-pl-boot')==='1'||/[?&]noplugins\b/.test(location.search)}catch(e){}
+ if(bad&&list.some(p=>p.on)){for(const p of list)p.on=false;store();setTimeout(()=>toast(H('Plugins were turned off because CocoaCanvas didn’t start properly last time. Turn them back on in Plugins → Manage.','Плагины выключены: в прошлый раз CocoaCanvas не запустился нормально. Включите их в «Плагины → Управление».')),600);return}
+ try{localStorage.setItem('cv-pl-boot','1')}catch(e){}const clr=()=>{try{localStorage.removeItem('cv-pl-boot')}catch(e){}};addEventListener('beforeunload',clr);setTimeout(clr,8000);
+ for(const p of list)if(p.on)on(p)}).catch(()=>{});
+})();
 </script>
 </body>
 </html>
