@@ -302,6 +302,12 @@ body{grid-template-columns:minmax(0,1fr)}#top{min-width:0}
 #ted{color:transparent!important;-webkit-text-fill-color:transparent}#ted::selection{background:rgba(75,156,255,.35)}
 #view.t-pick{cursor:crosshair}
 .gbox{width:min(520px,100%)!important}
+.rnm{position:fixed;z-index:90;height:30px;padding:0 8px;font:13px var(--sans);background:var(--panel);color:var(--fg);border:1.5px solid var(--sel);border-radius:6px;box-shadow:0 6px 20px rgba(0,0,0,.5);outline:none}
+@media (pointer:coarse){
+ body,button,select,input,textarea,label,.ln,.pgl,.seg button,.al button,#ctx button,.mq button,.dd button,.setr>span,.xpg .nm b,.stN,.f>span,.chk,.qok,.qbad,.fpick,#toast,#qIn,.sty span,.qex button,.fmoods button,.stI,.vr,.lr,.mi,.rnm,body.mmenu .dd button{font-size:16px!important}
+ .hint,.pgs,.setr small,.stM2,.stTip,.stE,.qh,.qfx,.qcat,.xpg .nm i,.xpl,.xpf,.xpf button,.nf span,.sec,.setH,.stLab,.xaz>span,.xcs span,.fca,.frow .fs,.frow .fm,.stAsk span,.vr small,.mt,body.mmenu .mt,.empty,.ph>span,.stCur,.qLbl,.cr .hex,.badge,.kbd{font-size:14px!important}
+ .modal h2,.box>h2{font-size:18px!important}
+}
 </style>
 </head>
 <body>
@@ -573,7 +579,7 @@ function spaceSnap(b,T,ax){const th=6/view.z,[p,s,q,r]=ax==='x'?['x','w','y','h'
 
 function cap(e){try{V.setPointerCapture(e.pointerId)}catch(_){}}
 function startMove(e,p,n){drag={m:'move',p0:p,ax:0,ay:0,b0:selBox(),moved:false,n,alt:e.altKey,sh:e.shiftKey}}
-function dupIn(off){const out=[];const ts=[];walk(n=>{if(topSel().includes(n))ts.push(n)});for(const n of ts){const c=reid(n);moveN(c,off,off);const l=sibs(n);l.splice(l.indexOf(n)+1,0,c);out.push(c)}reindex();sel=out;return out}
+function dupIn(off){const out=[];const ts=[];walk(n=>{if(topSel().includes(n))ts.push(n)});for(const n of ts){const c=reid(n);if(off&&n.type==='frame'&&!par(n)){let dx=n.w+40;const hit=x=>doc.nodes.some(m=>m!==n&&m.type==='frame'&&!m.hid&&touch({x:n.x+x,y:n.y,w:n.w,h:n.h},m));while(hit(dx)&&dx<1e6)dx+=n.w+40;moveN(c,dx,0)}else moveN(c,off,off);const l=sibs(n);l.splice(l.indexOf(n)+1,0,c);out.push(c)}reindex();sel=out;return out}
 function reid(n){const c=clone(n);walk(k=>{k.id=nid()},[c]);return c}
 
 let DN={x:0,y:0,th:0},gx=null;
@@ -607,7 +613,7 @@ V.addEventListener('pointerdown',e=>{if(e.target===TED)return;DN={x:e.clientX,y:
  if(!n){const b=selBox();if(b&&sel.length&&!SH&&inBox(p,b))return startMove(e,p,null);
   if(!SH){scope=null;setSel([])}drag={m:'marq',p0:p,ctx,base:[...sel]};return}
  const was=sel.length===1&&sel[0]===n;
- if(SH){toggleSel(n);if(!sel.includes(n))return}else if(!sel.includes(n))setSel([n]);
+ if(SH){toggleSel(n);if(!sel.includes(n))return}else if(!sel.includes(n)){if(e.pointerType!=='mouse'&&sel.some(s=>anc(n,s))){startMove(e,p,null);drag.drill=n;return}setSel([n])}
  startMove(e,p,n);drag.was=was});
 
 V.addEventListener('pointermove',e=>{const p=toW(e);mouse=p;const d=drag;
@@ -637,7 +643,7 @@ V.addEventListener('pointermove',e=>{const p=toW(e);mouse=p;const d=drag;
  case'pt':{const q=w2l(d.n,p),P=ptAt(d.n,d.i).p;if(d.k==='a'){P.x=q.x;P.y=q.y}else{const o=d.k,x=d.k==='o'?'i':'o';P[o+'x']=q.x-P.x;P[o+'y']=q.y-P.y;if(!e.altKey||d.pull){P[x+'x']=-P[o+'x'];P[x+'y']=-P[o+'y']}}d.moved=true;return render()}}});
 
 function endDrag(e){const d=drag;if(!d)return;drag=null;if(d.m==='pan')gxEnd();V.classList.remove('dn');
- if(d.m==='move'){if(d.moved){if(d.alp)alDrop(d,mouse);else reparent();commit()}else{if(d.n&&!e.shiftKey&&!document.body.classList.contains('multi')&&sel.length>1)setSel([d.n])}}
+ if(d.m==='move'){if(d.moved){if(d.alp)alDrop(d,mouse);else reparent();commit()}else if(d.drill)setSel([d.drill]);else{if(d.n&&!e.shiftKey&&!document.body.classList.contains('multi')&&sel.length>1)setSel([d.n])}}
  else if((d.m==='rs'||d.m==='rot')&&d.moved)commit();
  else if(d.m==='new')endNew(d);
  else if(d.m==='pencil')endPencil(d);
@@ -706,7 +712,7 @@ TED.addEventListener('blur',()=>{if(editing){const a=TED.selectionStart,b=TED.se
 TED.addEventListener('keydown',e=>{e.stopPropagation();if((e.ctrlKey||e.metaKey)&&/^[biu]$/i.test(e.key)){e.preventDefault();return textToggle(e.key.toLowerCase())}if(e.key==='Escape'){e.preventDefault();TED.blur()}});
 function endText(){const n=editing;if(!n)return;editing=null;TED.hidden=true;n.text=TED.value;if(!n.text.trim()){detach(n);reindex()}commit()}
 
-V.addEventListener('dblclick',e=>{if(tool!=='move'||pen)return;const tg=document.elementFromPoint(e.clientX,e.clientY);if(!tg)return;const a=tg.closest('[data-h^="a"]');
+V.addEventListener('dblclick',e=>{if(tool!=='move'||pen)return;const tg=document.elementFromPoint(e.clientX,e.clientY);if(!tg)return;{const fl=tg.closest('[data-h="fl"]');if(fl){const f=IDX.get(fl.dataset.f)?.n;if(f){setSel([f]);return renameNode(f,1)}}}const a=tg.closest('[data-h^="a"]');
  if(a&&editPath){const n=IDX.get(editPath).n,r=ptAt(n,+a.dataset.h.slice(1)),P=r.p,Q=r.s.pts,i=r.j;if(P.ix||P.iy||P.ox||P.oy){P.ix=P.iy=P.ox=P.oy=0}else{const N=Q.length,pr=Q[(i-1+N)%N],nx=Q[(i+1)%N],vx=(nx.x-pr.x)/6,vy=(nx.y-pr.y)/6;P.ox=vx;P.oy=vy;P.ix=-vx;P.iy=-vy}normPath(n);return commit()}
  const el=tg.closest('#scene [data-id]');if(!el)return;const n=IDX.get(el.dataset.id).n,s=sel[0];
  if(sel.length===1&&s.type==='bool'&&s===n){scope=s.id;sel=[s];draw();const t2=document.elementFromPoint(e.clientX,e.clientY)?.closest('#scene [data-id]');const k=t2&&pick(t2.dataset.id);return setSel([k&&k!==s?k:s.children[s.children.length-1]])}
@@ -1056,6 +1062,7 @@ document.addEventListener('keydown',e=>{if(inField())return;const k=e.key,K=k.to
  if(m){if('cxv'.includes(K)&&K.length===1)return;if(/^[biu]$/.test(K)&&TX().length){e.preventDefault();return textToggle(K)}if(e.altKey&&K==='m'){e.preventDefault();return useMask()}const c={z:e.shiftKey?'redo':'undo',y:'redo',d:'dup',g:e.shiftKey?'ungroup':'group',a:'all',s:e.shiftKey?'saveas':'save',o:'open',e:e.shiftKey?'export':'flatten',']':e.shiftKey?'front':'fwd','[':e.shiftKey?'back':'bwd','=':'zin','+':'zin','-':'zout','0':'z100'}[K];if(c){e.preventDefault();CMD[c]()}return}
  if(e.shiftKey&&e.code==='Digit1')return zfit();if(e.shiftKey&&e.code==='Digit2')return zoomTo(selBox());if(e.shiftKey&&e.code==='Digit0')return setZoom(1);
  if(k==='?')return openKeys();
+ if(k==='F2'&&sel.length===1){e.preventDefault();return renameNode(sel[0])}
  if(e.shiftKey&&e.code==='KeyA'){e.preventDefault();return e.altKey?CMD.rmal():CMD.autolayout()}
  if(e.shiftKey&&K==='p')return setTool('pencil');
  if(e.shiftKey&&K==='h')return flip(1);if(e.shiftKey&&K==='v')return flip(0);
@@ -1856,8 +1863,10 @@ function ctxItems(){const ts=topSel(),n=ts.length,one=n===1?ts[0]:null,I=[],a=(c
  if(one?.al)a('rmal','Remove auto layout','Убрать автораскладку');else if(one&&(one.type==='frame'||one.type==='group'&&!one.mask))a('autolayout','Add auto layout','Добавить автораскладку');else a('autolayout','Wrap in auto layout','Обернуть в автораскладку');
  if(one&&isCont(one))a('ungroup','Ungroup','Разгруппировать');if(one?.mask)a('unmask','Remove mask','Убрать маску');
  a('samefill','Select same fill','Выделить с той же заливкой');if(one?.type==='text')a('samefont','Select same font','Выделить с тем же шрифтом');hr();a('fliph','Mirror horizontally','Отразить по горизонтали');a('flipv','Mirror vertically','Отразить по вертикали');a('flatten','Flatten','Преобразовать в кривые');hr();a('exlayer','Export','Экспорт');return I}
-function openCtx(x,y,touch,node){if(node!==undefined){if(node&&!sel.includes(node))setSel([node])}else{const ne=document.elementFromPoint(x,y)?.closest?.('#scene [data-id]'),n=ne&&pick(ne.dataset.id,false);if(n&&!sel.includes(n))setSel([n])}
- const c=$('ctx');c.innerHTML=ctxItems().map(i=>i?`<button data-c="${i[0]}">${esc(i[1])}</button>`:'<hr>').join('').replace(/^(<hr>)+|(<hr>)+$/g,'');c.hidden=false;const r=c.getBoundingClientRect();c.style.left=clamp(x,8,innerWidth-r.width-8)+'px';c.style.top=clamp(touch?y-r.height/2:y,8,innerHeight-r.height-8)+'px';if(touch&&navigator.vibrate)try{navigator.vibrate(10)}catch(_){}}
+let ctxBlock=0;addEventListener('pointerup',e=>{if(ctxBlock===Infinity)ctxBlock=Date.now()+300},true);addEventListener('pointercancel',()=>{if(ctxBlock===Infinity)ctxBlock=Date.now()+300},true);
+addEventListener('click',e=>{if(Date.now()<ctxBlock){e.stopImmediatePropagation();e.preventDefault()}},true);
+function openCtx(x,y,touch,node){if(node!==undefined){if(node&&!sel.includes(node))setSel([node])}else{const ne=document.elementFromPoint(x,y)?.closest?.('#scene [data-id]'),n=ne&&pick(ne.dataset.id,false);if(n&&!sel.includes(n)&&!(touch&&sel.some(s=>anc(n,s))))setSel([n]);else if(!n&&touch&&ne){const c=chainOf(ne.dataset.id);if(c[0]&&!c[0].lock&&!sel.includes(c[0]))setSel([c[0]])}}
+ const c=$('ctx');c.innerHTML=ctxItems().map(i=>i?`<button data-c="${i[0]}">${esc(i[1])}</button>`:'<hr>').join('').replace(/^(<hr>)+|(<hr>)+$/g,'');c.hidden=false;const r=c.getBoundingClientRect();let tx=x,ty=y;if(touch){ctxBlock=Infinity;tx=x-r.width/2;ty=y+28+r.height<=innerHeight-8?y+28:y-28-r.height>=8?y-28-r.height:(x>innerWidth/2?(tx=x-r.width-28,y-r.height/2):(tx=x+28,y-r.height/2))}c.style.left=clamp(tx,8,innerWidth-r.width-8)+'px';c.style.top=clamp(ty,8,innerHeight-r.height-8)+'px';if(touch&&navigator.vibrate)try{navigator.vibrate(10)}catch(_){}}
 V.addEventListener('contextmenu',e=>{e.preventDefault();if(Date.now()-ctxT<900)return;abortDrag();lp0=null;openCtx(e.clientX,e.clientY,e.pointerType==='touch')});
 let llT=0;
 LL.addEventListener('contextmenu',e=>{const r=e.target.closest('.lr');if(!r)return;e.preventDefault();clearTimeout(llT);ldrag=null;openCtx(e.clientX,e.clientY,0,IDX.get(r.dataset.id)?.n||null)});
@@ -2218,6 +2227,23 @@ function alClick(d){const ts=topSel(),n=ts[0],A=n?.al;
  if(A){on('[data-ald]',d=>d.ald===A.d);on('[data-ala]',d=>d.ala===`${A.ax||0},${A.ay||0}`);on('[data-alga]',()=>A.ga);on('[data-alsw]',d=>d.alsw===(A.sw||'f'));on('[data-alsh]',d=>d.alsh===(A.sh||'f'))}
  on('[data-rsw]',d=>d.rsw===rsVal(n,'w'));on('[data-rsh]',d=>d.rsh===rsVal(n,'h'));
  on('[data-cnl]',d=>({l:/l/.test(c.h||'l'),r:/r/.test(c.h||''),t:/t/.test(c.v||'t'),b:/b/.test(c.v||''),ch:c.h==='c',cv:c.v==='c'})[d.cnl])}}
+/* ---------- rename on canvas / F2 ---------- */
+function renameNode(n,cv){if(!n)return;const row=LL.querySelector(`.lr[data-id="${n.id}"] .ln`);
+ if(!cv&&row&&row.offsetParent&&row.getBoundingClientRect().width>0&&!phone()){row.scrollIntoView({block:'nearest'});row.dispatchEvent(new MouseEvent('dblclick',{bubbles:true}));return}
+ render();const lab=n.type==='frame'&&!par(n)?UI.querySelector(`[data-h="fl"][data-f="${n.id}"]`):null,vr=V.getBoundingClientRect();let x,y,w;
+ if(lab&&lab.getBoundingClientRect().width){const r=lab.getBoundingClientRect();x=r.left-4;y=r.top-4;w=Math.max(160,r.width+40)}else{const b=aabb(n)||n,[sx,sy]=w2s(b.x,b.y);x=vr.left+sx;y=vr.top+sy-30;w=200}
+ document.querySelector('.rnm')?.remove();const i=document.createElement('input');i.className='rnm';i.type='text';i.value=nm(n);
+ Object.assign(i.style,{left:clamp(x,4,innerWidth-w-4)+'px',top:clamp(y,4,innerHeight-40)+'px',width:w+'px'});document.body.appendChild(i);i.focus();i.select();let done=false;
+ const fin=ok=>{if(done)return;done=true;const v=i.value.trim();i.remove();if(ok&&v!==nm(n)){n.name=v;commit()}else render()};
+ i.addEventListener('keydown',k=>{k.stopPropagation();if(k.key==='Enter')fin(1);if(k.key==='Escape')fin(0)});i.addEventListener('blur',()=>fin(1))}
+
+/* ---------- tooltips: none on touch, none where the button already says it ---------- */
+(()=>{const TOUCH=matchMedia('(pointer:coarse)').matches;let q=0;
+ const clean=()=>{q=0;for(const el of document.querySelectorAll('[title]')){if(el.id==='scene'||el.closest('svg'))continue;const t=el.getAttribute('title');if(!t)continue;
+  const txt=[...el.childNodes].map(x=>x.nodeType===3?x.textContent:x.nodeType===1&&x.tagName!=='svg'&&!x.matches('input,select')?x.textContent:'').join('').replace(/\s+/g,' ').trim();
+  const red=TOUCH||el.tagName==='DIV'&&el.querySelector('button')||txt&&txt.length>1&&(t.toLowerCase().includes(txt.replace(/^[^\p{L}]+/u,'').toLowerCase())||txt.toLowerCase().includes(t.toLowerCase())||/\p{L}{3}/u.test(txt));
+  if(red){if(!el.hasAttribute('aria-label')&&el.matches('button,a,[role],input,select,label'))el.setAttribute('aria-label',t);el.removeAttribute('title')}}};
+ new MutationObserver(()=>{if(!q)q=requestAnimationFrame(clean)}).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['title']});clean()})();
 setTool('move');setLang(LANG);
 kvGet('cur').then(v=>{if(v?.d){try{Object.assign(ASSETS,v.a||{});last=v.d;restoreDoc(last);setTimeout(zfit);return}catch(e){}}last=snap();reindex();render()}).catch(()=>{last=snap();render()});
 </script>
