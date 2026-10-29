@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en" data-l="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CocoaCanvas: design on whatever’s in your hands</title>
+<meta name="description" content="CocoaCanvas is a design tool for your phone, tablet and computer that understands plain language. Runs in your browser. No account, no uploads.">
+<meta name="theme-color" content="#14100D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%202%2052%2060%22%3E%3Cpath%20d%3D%22M48%2010C43.5%205.9%2038.5%204%2032%204C16.5%204%204%2016.5%204%2032C4%2047.5%2016.5%2060%2032%2060C38.5%2060%2043.5%2058.1%2048%2054L40%2044C37.8%2046%2035.3%2047%2032%2047C23.7%2047%2017%2040.3%2017%2032C17%2023.7%2023.7%2017%2032%2017C35.3%2017%2037.8%2018%2040%2020L48%2010Z%22%20fill%3D%22%23D15A2C%22/%3E%3Cpath%20d%3D%22M48%2028L36%2041L27.4736%2043.5576L35.5947%2034.5352L34.4053%2033.4648L26.4678%2042.2832L29%2033L40%2020L48%2028ZM37%2029.9004C35.8402%2029.9004%2034.9004%2030.8402%2034.9004%2032C34.9004%2033.1598%2035.8402%2034.0996%2037%2034.0996C38.1598%2034.0996%2039.0996%2033.1598%2039.0996%2032C39.0996%2030.8402%2038.1597%2029.9004%2037%2029.9004Z%22%20fill%3D%22%23D15A2C%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+ --night:#14100D;--slab:#121212;--panel:#1a1a1a;--line:#2b2522;--paper:#F4EEE6;--paper2:#EAE1D5;
+ --cream:#F6F1EB;--ink:#1E1612;--cocoa:#D15A2C;--caramel:#D15A2C;--mute:#9C8F84;--mute2:#6E6259;
+ --cv:#3d6a9e;--ct:#a8703e;--ca:#3c8a66;
+ --disp:'Unbounded',system-ui,sans-serif;--sans:'Manrope',system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+ --pad:clamp(16px,5vw,72px);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--night);color:var(--cream);font:17px/1.55 var(--sans);overflow-x:hidden}
+a{color:inherit}
+html[data-l=en] [lang=ru],html[data-l=ru] [lang=en]{display:none!important}
+.wrap{max-width:1320px;margin:0 auto;padding:0 var(--pad)}
+.mono{font-family:var(--mono);font-size:12.5px;letter-spacing:.02em}
+
+/* top */
+.top{display:flex;align-items:center;justify-content:space-between;padding-top:22px;padding-bottom:22px}
+.logo{display:block;height:40px;width:auto;margin-left:-4px}
+.logo .m{fill:var(--cocoa)}.logo .w{fill:var(--cream)}
+.top nav{display:flex;align-items:center;gap:26px;font-size:15px}
+.top nav a{text-decoration:none;color:var(--mute)}
+.top nav a:hover{color:var(--cream)}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px}
+.lang button{all:unset;cursor:pointer;font:500 12px var(--mono);padding:4px 9px;border-radius:999px;color:var(--mute)}
+.lang button[aria-pressed=true]{background:var(--cream);color:var(--ink)}
+.lang button:focus-visible{outline:2px solid var(--caramel)}
+
+/* hero */
+.hero{padding-top:clamp(40px,9vh,110px)}
+.kick{display:flex;gap:18px;align-items:center;color:var(--mute);margin-bottom:28px}
+.kick .rec{width:8px;height:8px;border-radius:50%;background:#e2553f;box-shadow:0 0 0 4px rgba(226,85,63,.15)}
+h1{font:700 clamp(40px,7.4vw,112px)/.98 var(--disp);letter-spacing:-.035em;margin:0;max-width:11.5ch}
+html[data-l=ru] h1{font-size:clamp(34px,6.2vw,94px);max-width:13ch}
+h1 em{font-style:normal;color:var(--caramel)}
+.lede{display:grid;grid-template-columns:minmax(0,34rem) auto;gap:40px 64px;align-items:end;margin-top:44px}
+.lede p{margin:0;color:#CFC3B8;font-size:clamp(17px,1.5vw,19px)}
+.lede q{quotes:"“" "”" "‘" "’";color:var(--cream);font-weight:700}
+html[data-l=ru] .lede q{quotes:"«" "»"}
+.cta{display:flex;flex-wrap:wrap;gap:12px 14px;align-items:flex-start}
+.btn{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font:700 16px var(--sans);padding:16px 22px;border-radius:12px;transition:transform .15s,background .15s}
+.btn:active{transform:translateY(1px)}
+.btn.pri{background:var(--cream);color:var(--ink)}
+.btn.pri:hover{background:#fff}
+.btn.sec{border:1.5px solid #3a302a;color:var(--cream)}
+.btn.sec:hover{border-color:var(--mute2);background:#1b1612}
+.btn:focus-visible{outline:2px solid var(--caramel);outline-offset:3px}
+.btn small{display:block;font:400 11.5px var(--mono);color:var(--mute);margin-top:2px}
+.btn .stack{display:flex;flex-direction:column;line-height:1.2}
+.arrow{width:16px;height:16px;flex:none}
+
+/* editor slab */
+.stage{margin-top:clamp(56px,9vh,96px);position:relative}
+.ed{position:relative;background:var(--slab);border:1px solid #262626;border-radius:14px;overflow:hidden;font-family:var(--sans);color:#ececec;box-shadow:0 40px 80px -40px rgba(0,0,0,.8)}
+.ed-top{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid #262626;background:var(--panel);min-height:58px}
+.ed-tag{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:#8f8f8f;flex:none}
+.ed-q{flex:1;min-width:0;background:#252525;border-radius:9px;padding:9px 13px;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.caret{display:inline-block;width:2px;height:1.05em;background:var(--caramel);vertical-align:-2px;margin-left:1px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.ed-ok{font:500 12px var(--mono);color:#9fd8b9;flex:none;opacity:0;transform:translateY(4px);transition:.25s}
+.ed-ok.on{opacity:1;transform:none}
+.stage figcaption{display:flex;justify-content:space-between;gap:20px;margin-top:14px;color:var(--mute2)}
+
+/* talk (paper) */
+.paper{background:var(--paper);color:var(--ink);margin-top:clamp(90px,14vh,160px)}
+.talk{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px;padding-top:clamp(72px,11vh,130px);padding-bottom:clamp(72px,11vh,130px)}
+h2{font:700 clamp(30px,3.9vw,56px)/1.02 var(--disp);letter-spacing:-.03em;margin:0}
+.talk .side p{color:#5A4A3F;max-width:30rem;margin:26px 0 0}
+.talk .side .mono{display:block;color:var(--cocoa);margin-bottom:22px;text-transform:uppercase;letter-spacing:.1em}
+.edl{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink)}
+.edl li{display:grid;grid-template-columns:44px 1fr auto;gap:6px 18px;align-items:baseline;padding:20px 0;border-bottom:1px solid #D6CABB}
+.edl .n{color:#9b8b7d}
+.edl .say{font:500 clamp(18px,1.8vw,24px)/1.25 var(--sans);letter-spacing:-.01em}
+.edl .say:before{content:"“"}.edl .say:after{content:"”"}
+html[data-l=ru] .edl .say:before{content:"«"}html[data-l=ru] .edl .say:after{content:"»"}
+.edl .did{color:var(--cocoa);text-align:right;white-space:nowrap}
+.edl .did:before{content:"→ ";color:#b9a796}
+.note{margin-top:22px;color:#7d6d60;font-size:14.5px}
+
+/* box (dark ledger) */
+.box{padding-top:clamp(80px,12vh,140px);padding-bottom:clamp(40px,6vh,70px)}
+.box header{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:46px}
+.box header p{margin:0;color:var(--mute);max-width:24rem}
+.ledger{display:grid;grid-template-columns:1fr 1fr;column-gap:64px;border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:52px 1fr;gap:4px 16px;padding:26px 0 28px;border-bottom:1px solid var(--line)}
+.row .t{grid-row:span 2;font:500 11px var(--mono);color:var(--night);background:var(--c,#555);border-radius:5px;height:22px;display:grid;place-items:center;margin-top:3px}
+.row h3{margin:0;font:700 19px var(--sans);letter-spacing:-.01em}
+.row p{margin:0;color:var(--mute);font-size:15.5px}
+
+/* promise */
+.promise{padding-top:clamp(70px,10vh,120px);padding-bottom:clamp(70px,10vh,120px)}
+.promise h2{font-size:clamp(34px,5.6vw,84px);max-width:16ch}
+.promise h2 .dim{color:var(--mute2)}
+.facts{display:flex;flex-wrap:wrap;gap:10px 34px;margin-top:34px;color:var(--mute)}
+.facts span:before{content:"";display:inline-block;width:6px;height:6px;background:var(--caramel);border-radius:1px;margin-right:10px;vertical-align:2px}
+
+/* end */
+.end{border-top:1px solid var(--line);padding-top:60px;padding-bottom:40px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:40px}
+.end h2{font-size:clamp(28px,3.4vw,46px)}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;padding-top:26px;padding-bottom:34px;color:var(--mute2);border-top:1px solid var(--line);margin-top:40px}
+.foot a{color:var(--mute);text-decoration:none}.foot a:hover{color:var(--cream)}
+
+@media (max-width:900px){
+ .lede{grid-template-columns:1fr}
+ .talk{grid-template-columns:1fr;gap:40px}
+ .ledger{grid-template-columns:1fr}
+ .box header{flex-direction:column;align-items:flex-start}
+ .top nav .hide-s{display:none}
+}
+@media (max-width:620px){
+ body{font-size:16px}
+ .logo{height:32px}
+ .ed-top{flex-wrap:wrap;gap:10px}
+ .ed-q{flex-basis:100%;order:3;font-size:14px}
+ .ed-ok{margin-left:auto}
+ .edl li{grid-template-columns:34px 1fr}
+ .edl .did{grid-column:2;text-align:left;white-space:normal}
+ .stage figcaption{flex-direction:column;gap:4px}
+ .btn{width:100%;justify-content:center}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* canvas demo */
+.cv{display:grid;grid-template-columns:190px minmax(0,1fr);min-height:clamp(340px,44vw,470px)}
+.lys{border-right:1px solid #262626;background:var(--panel);padding:12px 8px;display:flex;flex-direction:column;gap:2px;color:#bdbdbd}
+.lys .h{font:500 10.5px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:#7a7a7a;padding:0 8px 8px}
+.ly{display:flex;align-items:center;gap:8px;height:28px;padding:0 8px;border-radius:6px;font-size:13px;white-space:nowrap;overflow:hidden;transition:background .25s}
+.ly i{font:500 11px var(--mono);color:#7a7a7a;width:12px;text-align:center;font-style:normal}
+.ly.k{padding-left:24px}.ly[hidden]{display:none}.ly.on{background:#2d3a4d;color:#fff}
+.ly.new{animation:lyin .45s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes lyin{0%{opacity:0;transform:translateX(-10px)}100%{opacity:1;transform:none}}
+.board{position:relative;background:#1f1f1f;display:grid;place-items:center;padding:34px 20px 66px;overflow:hidden}
+.board:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#2c2c2c 1px,transparent 1px);background-size:18px 18px;opacity:.6}
+.art{position:relative;width:min(300px,62%);aspect-ratio:4/5;background:#F6F1EB;box-shadow:0 18px 40px -18px rgba(0,0,0,.7)}
+.art-l{position:absolute;left:0;top:-20px;font:500 11px var(--mono);color:#8f8f8f}
+.o{position:absolute;transition:all .55s cubic-bezier(.3,1.3,.5,1)}
+.card{left:9%;top:8%;right:9%;height:56%;background:#d9d9d9;border-radius:3px}
+.card.r{border-radius:22px}.card.g{background:linear-gradient(135deg,#D15A2C,#8e4ec6)}
+.ttl{left:15%;top:16%;font:700 clamp(22px,3.1vw,38px)/.95 var(--disp);letter-spacing:-.03em;color:#1E1612}
+.sub{left:15%;top:52%;font:500 clamp(10px,1vw,12.5px) var(--mono);color:#5A4A3F}
+.ttl.w,.sub.w{color:#fff}
+.dot{left:62%;top:66%;width:20%;aspect-ratio:1;border-radius:50%;background:#0090ff;transform:scale(0);opacity:0}
+.dot.in{transform:none;opacity:1}.dot.big{transform:scale(1.55) translate(-12%,-10%)}
+.foot2{left:9%;bottom:7%;font:500 clamp(9px,.9vw,11px) var(--mono);color:#9C8F84}
+.sel:after{content:"";position:absolute;inset:-4px;border:1.5px solid #4b9cff;border-radius:inherit;pointer-events:none}
+.sel:before{content:"";position:absolute;inset:-7px;pointer-events:none;background:
+ linear-gradient(#fff,#fff) 0 0/7px 7px no-repeat,linear-gradient(#fff,#fff) 100% 0/7px 7px no-repeat,linear-gradient(#fff,#fff) 0 100%/7px 7px no-repeat,linear-gradient(#fff,#fff) 100% 100%/7px 7px no-repeat;
+ filter:drop-shadow(0 0 0 #4b9cff) drop-shadow(0 0 1px #4b9cff)}
+.dock{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;gap:4px;background:var(--panel);border:1px solid #2a2a2a;border-radius:12px;padding:4px}
+.dock span{width:26px;height:24px;border-radius:7px;display:grid;place-items:center}.dock span.on{background:#f2f2f2}
+.dock svg{width:14px;height:14px;fill:none;stroke:#cfcfcf;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.dock .on svg{stroke:#111}
+.dev{display:flex;gap:8px;align-items:center;color:var(--mute2)}
+.dev b{font-weight:500;color:var(--mute)}
+@media (max-width:620px){
+ .cv{grid-template-columns:1fr}.lys{display:none}
+ .art{width:min(260px,78%)}
+}
+</style>
+</head>
+<body>
+
+<header class="wrap top">
+ <a href="./" aria-label="CocoaCanvas"><svg class="logo" viewBox="3 3 178 58" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CocoaCanvas"><path d="M48 10C43.5 5.9 38.5 4 32 4C16.5 4 4 16.5 4 32C4 47.5 16.5 60 32 60C38.5 60 43.5 58.1 48 54L40 44C37.8 46 35.3 47 32 47C23.7 47 17 40.3 17 32C17 23.7 23.7 17 32 17C35.3 17 37.8 18 40 20L48 10Z" class="m"/><path d="M48 28L36 41L27.4736 43.5576L35.5947 34.5352L34.4053 33.4648L26.4678 42.2832L29 33L40 20L48 28ZM37 29.9004C35.8402 29.9004 34.9004 30.8402 34.9004 32C34.9004 33.1598 35.8402 34.0996 37 34.0996C38.1598 34.0996 39.0996 33.1598 39.0996 32C39.0996 30.8402 38.1597 29.9004 37 29.9004Z" class="m"/><path d="M60.49 41.3C59.05 41.3 57.8167 40.9867 56.79 40.36C55.7633 39.7267 54.9733 38.8467 54.42 37.72C53.8733 36.5933 53.6 35.2867 53.6 33.8C53.6 32.3133 53.8733 31.0067 54.42 29.88C54.9733 28.7533 55.7633 27.8767 56.79 27.25C57.8167 26.6167 59.05 26.3 60.49 26.3C62.15 26.3 63.5333 26.7167 64.64 27.55C65.7467 28.3767 66.5233 29.4933 66.97 30.9L64.54 31.57C64.26 30.63 63.7833 29.8967 63.11 29.37C62.4367 28.8367 61.5633 28.57 60.49 28.57C59.5233 28.57 58.7167 28.7867 58.07 29.22C57.43 29.6533 56.9467 30.2633 56.62 31.05C56.3 31.83 56.1367 32.7467 56.13 33.8C56.13 34.8533 56.29 35.7733 56.61 36.56C56.9367 37.34 57.4233 37.9467 58.07 38.38C58.7167 38.8133 59.5233 39.03 60.49 39.03C61.5633 39.03 62.4367 38.7633 63.11 38.23C63.7833 37.6967 64.26 36.9633 64.54 36.03L66.97 36.7C66.5233 38.1067 65.7467 39.2267 64.64 40.06C63.5333 40.8867 62.15 41.3 60.49 41.3ZM73.3356 41.3C72.2556 41.3 71.3123 41.0567 70.5056 40.57C69.699 40.0833 69.0723 39.4133 68.6256 38.56C68.1856 37.7 67.9656 36.7133 67.9656 35.6C67.9656 34.4667 68.1923 33.4733 68.6456 32.62C69.099 31.7667 69.729 31.1 70.5356 30.62C71.3423 30.14 72.2756 29.9 73.3356 29.9C74.4223 29.9 75.369 30.1433 76.1756 30.63C76.9823 31.1167 77.609 31.79 78.0556 32.65C78.5023 33.5033 78.7256 34.4867 78.7256 35.6C78.7256 36.72 78.499 37.71 78.0456 38.57C77.599 39.4233 76.9723 40.0933 76.1656 40.58C75.359 41.06 74.4156 41.3 73.3356 41.3ZM73.3356 39.04C74.2956 39.04 75.009 38.72 75.4756 38.08C75.9423 37.44 76.1756 36.6133 76.1756 35.6C76.1756 34.5533 75.939 33.72 75.4656 33.1C74.9923 32.4733 74.2823 32.16 73.3356 32.16C72.689 32.16 72.1556 32.3067 71.7356 32.6C71.3223 32.8867 71.0156 33.29 70.8156 33.81C70.6156 34.3233 70.5156 34.92 70.5156 35.6C70.5156 36.6467 70.7523 37.4833 71.2256 38.11C71.7056 38.73 72.409 39.04 73.3356 39.04ZM85.0189 41.3C83.9056 41.3 82.9556 41.0533 82.1689 40.56C81.3822 40.06 80.7789 39.38 80.3589 38.52C79.9456 37.66 79.7356 36.6867 79.7289 35.6C79.7356 34.4933 79.9522 33.5133 80.3789 32.66C80.8122 31.8 81.4256 31.1267 82.2189 30.64C83.0122 30.1467 83.9556 29.9 85.0489 29.9C86.2756 29.9 87.3122 30.21 88.1589 30.83C89.0122 31.4433 89.5689 32.2833 89.8289 33.35L87.4289 34C87.2422 33.42 86.9322 32.97 86.4989 32.65C86.0656 32.3233 85.5722 32.16 85.0189 32.16C84.3922 32.16 83.8756 32.31 83.4689 32.61C83.0622 32.9033 82.7622 33.31 82.5689 33.83C82.3756 34.35 82.2789 34.94 82.2789 35.6C82.2789 36.6267 82.5089 37.4567 82.9689 38.09C83.4289 38.7233 84.1122 39.04 85.0189 39.04C85.6589 39.04 86.1622 38.8933 86.5289 38.6C86.9022 38.3067 87.1822 37.8833 87.3689 37.33L89.8289 37.88C89.4956 38.98 88.9122 39.8267 88.0789 40.42C87.2456 41.0067 86.2256 41.3 85.0189 41.3ZM95.7098 41.3C94.6298 41.3 93.6865 41.0567 92.8798 40.57C92.0732 40.0833 91.4465 39.4133 90.9998 38.56C90.5598 37.7 90.3398 36.7133 90.3398 35.6C90.3398 34.4667 90.5665 33.4733 91.0198 32.62C91.4732 31.7667 92.1032 31.1 92.9098 30.62C93.7165 30.14 94.6498 29.9 95.7098 29.9C96.7965 29.9 97.7432 30.1433 98.5498 30.63C99.3565 31.1167 99.9832 31.79 100.43 32.65C100.877 33.5033 101.1 34.4867 101.1 35.6C101.1 36.72 100.873 37.71 100.42 38.57C99.9732 39.4233 99.3465 40.0933 98.5398 40.58C97.7332 41.06 96.7898 41.3 95.7098 41.3ZM95.7098 39.04C96.6698 39.04 97.3832 38.72 97.8498 38.08C98.3165 37.44 98.5498 36.6133 98.5498 35.6C98.5498 34.5533 98.3132 33.72 97.8398 33.1C97.3665 32.4733 96.6565 32.16 95.7098 32.16C95.0632 32.16 94.5298 32.3067 94.1098 32.6C93.6965 32.8867 93.3898 33.29 93.1898 33.81C92.9898 34.3233 92.8898 34.92 92.8898 35.6C92.8898 36.6467 93.1265 37.4833 93.5998 38.11C94.0798 38.73 94.7832 39.04 95.7098 39.04ZM105.723 41.3C104.943 41.3 104.283 41.1533 103.743 40.86C103.203 40.56 102.793 40.1633 102.513 39.67C102.24 39.1767 102.103 38.6333 102.103 38.04C102.103 37.52 102.19 37.0533 102.363 36.64C102.536 36.22 102.803 35.86 103.163 35.56C103.523 35.2533 103.99 35.0033 104.563 34.81C104.996 34.67 105.503 34.5433 106.083 34.43C106.67 34.3167 107.303 34.2133 107.983 34.12C108.67 34.02 109.386 33.9133 110.133 33.8L109.273 34.29C109.28 33.5433 109.113 32.9933 108.773 32.64C108.433 32.2867 107.86 32.11 107.053 32.11C106.566 32.11 106.096 32.2233 105.643 32.45C105.19 32.6767 104.873 33.0667 104.693 33.62L102.493 32.93C102.76 32.0167 103.266 31.2833 104.013 30.73C104.766 30.1767 105.78 29.9 107.053 29.9C108.013 29.9 108.856 30.0567 109.583 30.37C110.316 30.6833 110.86 31.1967 111.213 31.91C111.406 32.29 111.523 32.68 111.563 33.08C111.603 33.4733 111.623 33.9033 111.623 34.37V41H109.513V38.66L109.863 39.04C109.376 39.82 108.806 40.3933 108.153 40.76C107.506 41.12 106.696 41.3 105.723 41.3ZM106.203 39.38C106.75 39.38 107.216 39.2833 107.603 39.09C107.99 38.8967 108.296 38.66 108.523 38.38C108.756 38.1 108.913 37.8367 108.993 37.59C109.12 37.2833 109.19 36.9333 109.203 36.54C109.223 36.14 109.233 35.8167 109.233 35.57L109.973 35.79C109.246 35.9033 108.623 36.0033 108.103 36.09C107.583 36.1767 107.136 36.26 106.763 36.34C106.39 36.4133 106.06 36.4967 105.773 36.59C105.493 36.69 105.256 36.8067 105.063 36.94C104.87 37.0733 104.72 37.2267 104.613 37.4C104.513 37.5733 104.463 37.7767 104.463 38.01C104.463 38.2767 104.53 38.5133 104.663 38.72C104.796 38.92 104.99 39.08 105.243 39.2C105.503 39.32 105.823 39.38 106.203 39.38Z" class="w"/><path d="M119.717 41.3C118.277 41.3 117.043 40.9867 116.017 40.36C114.99 39.7267 114.2 38.8467 113.647 37.72C113.1 36.5933 112.827 35.2867 112.827 33.8C112.827 32.3133 113.1 31.0067 113.647 29.88C114.2 28.7533 114.99 27.8767 116.017 27.25C117.043 26.6167 118.277 26.3 119.717 26.3C121.377 26.3 122.76 26.7167 123.867 27.55C124.973 28.3767 125.75 29.4933 126.197 30.9L123.767 31.57C123.487 30.63 123.01 29.8967 122.337 29.37C121.663 28.8367 120.79 28.57 119.717 28.57C118.75 28.57 117.943 28.7867 117.297 29.22C116.657 29.6533 116.173 30.2633 115.847 31.05C115.527 31.83 115.363 32.7467 115.357 33.8C115.357 34.8533 115.517 35.7733 115.837 36.56C116.163 37.34 116.65 37.9467 117.297 38.38C117.943 38.8133 118.75 39.03 119.717 39.03C120.79 39.03 121.663 38.7633 122.337 38.23C123.01 37.6967 123.487 36.9633 123.767 36.03L126.197 36.7C125.75 38.1067 124.973 39.2267 123.867 40.06C122.76 40.8867 121.377 41.3 119.717 41.3ZM130.812 41.3C130.032 41.3 129.372 41.1533 128.832 40.86C128.292 40.56 127.882 40.1633 127.602 39.67C127.329 39.1767 127.192 38.6333 127.192 38.04C127.192 37.52 127.279 37.0533 127.452 36.64C127.626 36.22 127.892 35.86 128.252 35.56C128.612 35.2533 129.079 35.0033 129.652 34.81C130.086 34.67 130.592 34.5433 131.172 34.43C131.759 34.3167 132.392 34.2133 133.072 34.12C133.759 34.02 134.476 33.9133 135.222 33.8L134.362 34.29C134.369 33.5433 134.202 32.9933 133.862 32.64C133.522 32.2867 132.949 32.11 132.142 32.11C131.656 32.11 131.186 32.2233 130.732 32.45C130.279 32.6767 129.962 33.0667 129.782 33.62L127.582 32.93C127.849 32.0167 128.356 31.2833 129.102 30.73C129.856 30.1767 130.869 29.9 132.142 29.9C133.102 29.9 133.946 30.0567 134.672 30.37C135.406 30.6833 135.949 31.1967 136.302 31.91C136.496 32.29 136.612 32.68 136.652 33.08C136.692 33.4733 136.712 33.9033 136.712 34.37V41H134.602V38.66L134.952 39.04C134.466 39.82 133.896 40.3933 133.242 40.76C132.596 41.12 131.786 41.3 130.812 41.3ZM131.292 39.38C131.839 39.38 132.306 39.2833 132.692 39.09C133.079 38.8967 133.386 38.66 133.612 38.38C133.846 38.1 134.002 37.8367 134.082 37.59C134.209 37.2833 134.279 36.9333 134.292 36.54C134.312 36.14 134.322 35.8167 134.322 35.57L135.062 35.79C134.336 35.9033 133.712 36.0033 133.192 36.09C132.672 36.1767 132.226 36.26 131.852 36.34C131.479 36.4133 131.149 36.4967 130.862 36.59C130.582 36.69 130.346 36.8067 130.152 36.94C129.959 37.0733 129.809 37.2267 129.702 37.4C129.602 37.5733 129.552 37.7767 129.552 38.01C129.552 38.2767 129.619 38.5133 129.752 38.72C129.886 38.92 130.079 39.08 130.332 39.2C130.592 39.32 130.912 39.38 131.292 39.38ZM146.186 41V35.8C146.186 35.46 146.162 35.0833 146.116 34.67C146.069 34.2567 145.959 33.86 145.786 33.48C145.619 33.0933 145.366 32.7767 145.026 32.53C144.692 32.2833 144.239 32.16 143.666 32.16C143.359 32.16 143.056 32.21 142.756 32.31C142.456 32.41 142.182 32.5833 141.936 32.83C141.696 33.07 141.502 33.4033 141.356 33.83C141.209 34.25 141.136 34.79 141.136 35.45L139.706 34.84C139.706 33.92 139.882 33.0867 140.236 32.34C140.596 31.5933 141.122 31 141.816 30.56C142.509 30.1133 143.362 29.89 144.376 29.89C145.176 29.89 145.836 30.0233 146.356 30.29C146.876 30.5567 147.289 30.8967 147.596 31.31C147.902 31.7233 148.129 32.1633 148.276 32.63C148.422 33.0967 148.516 33.54 148.556 33.96C148.602 34.3733 148.626 34.71 148.626 34.97V41H146.186ZM138.696 41V30.2H140.846V33.55H141.136V41H138.696ZM153.555 41L149.635 30.2H152.045L154.765 38.03L157.475 30.2H159.895L155.975 41H153.555ZM163.504 41.3C162.724 41.3 162.064 41.1533 161.524 40.86C160.984 40.56 160.574 40.1633 160.294 39.67C160.021 39.1767 159.884 38.6333 159.884 38.04C159.884 37.52 159.971 37.0533 160.144 36.64C160.318 36.22 160.584 35.86 160.944 35.56C161.304 35.2533 161.771 35.0033 162.344 34.81C162.778 34.67 163.284 34.5433 163.864 34.43C164.451 34.3167 165.084 34.2133 165.764 34.12C166.451 34.02 167.168 33.9133 167.914 33.8L167.054 34.29C167.061 33.5433 166.894 32.9933 166.554 32.64C166.214 32.2867 165.641 32.11 164.834 32.11C164.348 32.11 163.878 32.2233 163.424 32.45C162.971 32.6767 162.654 33.0667 162.474 33.62L160.274 32.93C160.541 32.0167 161.048 31.2833 161.794 30.73C162.548 30.1767 163.561 29.9 164.834 29.9C165.794 29.9 166.638 30.0567 167.364 30.37C168.098 30.6833 168.641 31.1967 168.994 31.91C169.188 32.29 169.304 32.68 169.344 33.08C169.384 33.4733 169.404 33.9033 169.404 34.37V41H167.294V38.66L167.644 39.04C167.158 39.82 166.588 40.3933 165.934 40.76C165.288 41.12 164.478 41.3 163.504 41.3ZM163.984 39.38C164.531 39.38 164.998 39.2833 165.384 39.09C165.771 38.8967 166.078 38.66 166.304 38.38C166.538 38.1 166.694 37.8367 166.774 37.59C166.901 37.2833 166.971 36.9333 166.984 36.54C167.004 36.14 167.014 35.8167 167.014 35.57L167.754 35.79C167.028 35.9033 166.404 36.0033 165.884 36.09C165.364 36.1767 164.918 36.26 164.544 36.34C164.171 36.4133 163.841 36.4967 163.554 36.59C163.274 36.69 163.038 36.8067 162.844 36.94C162.651 37.0733 162.501 37.2267 162.394 37.4C162.294 37.5733 162.244 37.7767 162.244 38.01C162.244 38.2767 162.311 38.5133 162.444 38.72C162.578 38.92 162.771 39.08 163.024 39.2C163.284 39.32 163.604 39.38 163.984 39.38ZM175.578 41.3C174.244 41.3 173.161 41 172.328 40.4C171.494 39.8 170.988 38.9567 170.808 37.87L173.268 37.49C173.394 38.0233 173.674 38.4433 174.108 38.75C174.541 39.0567 175.088 39.21 175.748 39.21C176.328 39.21 176.774 39.0967 177.088 38.87C177.408 38.6367 177.568 38.32 177.568 37.92C177.568 37.6733 177.508 37.4767 177.388 37.33C177.274 37.1767 177.021 37.03 176.628 36.89C176.234 36.75 175.631 36.5733 174.818 36.36C173.911 36.12 173.191 35.8633 172.658 35.59C172.124 35.31 171.741 34.98 171.508 34.6C171.274 34.22 171.158 33.76 171.158 33.22C171.158 32.5467 171.334 31.96 171.688 31.46C172.041 30.96 172.534 30.5767 173.168 30.31C173.801 30.0367 174.548 29.9 175.408 29.9C176.248 29.9 176.991 30.03 177.638 30.29C178.291 30.55 178.818 30.92 179.218 31.4C179.618 31.88 179.864 32.4433 179.958 33.09L177.498 33.53C177.438 33.07 177.228 32.7067 176.868 32.44C176.514 32.1733 176.041 32.0233 175.448 31.99C174.881 31.9567 174.424 32.0433 174.078 32.25C173.731 32.45 173.558 32.7333 173.558 33.1C173.558 33.3067 173.628 33.4833 173.768 33.63C173.908 33.7767 174.188 33.9233 174.608 34.07C175.034 34.2167 175.668 34.3967 176.508 34.61C177.368 34.83 178.054 35.0833 178.568 35.37C179.088 35.65 179.461 35.9867 179.688 36.38C179.921 36.7733 180.038 37.25 180.038 37.81C180.038 38.8967 179.641 39.75 178.848 40.37C178.061 40.99 176.971 41.3 175.578 41.3Z" class="m"/></svg></a>
+ <nav>
+  <a class="hide-s" href="#talk"><span lang="en">How it works</span><span lang="ru">Как это работает</span></a>
+  <a class="hide-s" href="#box"><span lang="en">Features</span><span lang="ru">Что умеет</span></a>
+  <div class="lang" role="group" aria-label="Language"><button data-set="en" aria-pressed="true">EN</button><button data-set="ru" aria-pressed="false">RU</button></div>
+ </nav>
+</header>
+
+<main>
+<section class="wrap hero">
+ <h1><span lang="en">Design on whatever’s <em>in your hands.</em></span><span lang="ru">Дизайн на том, что <em>под рукой.</em></span></h1>
+ <div class="lede">
+  <p><span lang="en">Frames, vectors, type and effects on your phone, tablet or computer. Type <q>add a blue circle</q> and it’s there. Everything stays on your device: no account, no uploads.</span><span lang="ru">Фреймы, векторы, текст и эффекты на телефоне, планшете или компьютере. Напиши <q>добавь синий круг</q>, и он уже на месте. Всё остаётся на твоём устройстве: без аккаунта и без загрузки в облако.</span></p>
+  <div class="cta">
+   <a class="btn pri" href="editor.html"><span lang="en">Use in browser</span><span lang="ru">Открыть в браузере</span><svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+   <a class="btn sec" href="CocoaCanvas-standalone.html" download><span lang="en">Get standalone</span><span lang="ru">Офлайн-версия</span></a>
+  </div>
+ </div>
+
+ <figure class="stage" style="margin-left:0;margin-right:0;margin-bottom:0">
+  <div class="ed" aria-hidden="true">
+   <div class="ed-top"><span class="ed-tag">Helper</span><span class="ed-q"><span id="typed"></span><i class="caret"></i></span><span class="ed-ok" id="ok"></span></div>
+   <div class="cv">
+    <div class="lys"><span class="h"><span lang="en">Layers</span><span lang="ru">Слои</span></span>
+     <span class="ly"><i>#</i><span lang="en">Poster</span><span lang="ru">Постер</span></span>
+     <span class="ly k" id="l-dot" hidden><i>○</i><span lang="en">Circle</span><span lang="ru">Круг</span></span>
+     <span class="ly k" id="l-ttl"><i>T</i>Night Market</span>
+     <span class="ly k" id="l-sub"><i>T</i>Fri · 7 pm</span>
+     <span class="ly k" id="l-card"><i>▢</i><span lang="en">Card</span><span lang="ru">Карточка</span></span>
+    </div>
+    <div class="board">
+     <div class="art"><span class="art-l"><span lang="en">Poster</span><span lang="ru">Постер</span></span>
+      <div class="o card" id="card"></div>
+      <div class="o ttl" id="ttl">Night<br>Market</div>
+      <div class="o sub" id="sub">Fri · 7 pm · Old pier</div>
+      <div class="o dot" id="dot"></div>
+      <div class="o foot2">cocoa suite · 2026</div>
+     </div>
+     <div class="dock"><span class="on"><svg viewBox="0 0 24 24"><path d="M5 3l6 17 2.5-7.5L21 10z"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M8 3v18M16 3v18M3 8h18M3 16h18"/></svg></span><span><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="1"/></svg></span><span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18z"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg></span></div>
+    </div>
+   </div>
+  </div>
+  <figcaption class="mono"><span lang="en">The Helper reads plain English and Russian. It shows what will change before it changes it.</span><span lang="ru">Помощник понимает русский и английский и показывает, что изменится, до того как менять.</span><span class="dev"><span lang="en"><b>Phone</b> · <b>Tablet</b> · <b>Computer</b></span><span lang="ru"><b>Телефон</b> · <b>Планшет</b> · <b>Компьютер</b></span></span></figcaption>
+ </figure>
+</section>
+
+<section class="paper" id="talk">
+ <div class="wrap talk">
+  <div class="side">
+   <span class="mono"><span lang="en">Change list</span><span lang="ru">Список правок</span></span>
+   <h2><span lang="en">Say what you want, not where the button is.</span><span lang="ru">Говори, что нужно, а не где кнопка.</span></h2>
+   <p><span lang="en">No panels to hunt through on a small screen. CocoaCanvas works out which layers you mean, makes the change, and one tap undoes it if it guessed wrong.</span><span lang="ru">Не надо искать нужную панель на маленьком экране. CocoaCanvas сам поймёт, о каких слоях речь, внесёт правку, а если ошибся, её можно отменить в одно касание.</span></p>
+  </div>
+  <div>
+   <ol class="edl"><li><span class="n mono">001</span><span class="say"><span lang="en">add a blue circle</span><span lang="ru">добавь синий круг</span></span><span class="did mono"><span lang="en">Add blue circle</span><span lang="ru">Добавить синий круг</span></span></li><li><span class="n mono">002</span><span class="say"><span lang="en">all text white</span><span lang="ru">весь текст белым</span></span><span class="did mono"><span lang="en">Color 3 layers white</span><span lang="ru">Цвет 3 слоёв: белый</span></span></li><li><span class="n mono">003</span><span class="say"><span lang="en">round the corners to 24</span><span lang="ru">скругли углы до 24</span></span><span class="did mono"><span lang="en">Corner radius 24</span><span lang="ru">Скругление 24</span></span></li><li><span class="n mono">004</span><span class="say"><span lang="en">make it 2x bigger</span><span lang="ru">сделай в два раза больше</span></span><span class="did mono"><span lang="en">Scale to 200%</span><span lang="ru">Масштаб 200%</span></span></li><li><span class="n mono">005</span><span class="say"><span lang="en">gradient orange to purple</span><span lang="ru">градиент от оранжевого к фиолетовому</span></span><span class="did mono"><span lang="en">Linear gradient · 2 colors</span><span lang="ru">Линейный градиент · 2 цвета</span></span></li><li><span class="n mono">006</span><span class="say"><span lang="en">put the text on the circle</span><span lang="ru">пусти текст по кругу</span></span><span class="did mono"><span lang="en">Text on path</span><span lang="ru">Текст по контуру</span></span></li></ol>
+   <p class="note"><span lang="en">On a keyboard, press / and start typing.</span><span lang="ru">С клавиатурой просто нажми / и печатай.</span></p>
+  </div>
+ </div>
+</section>
+
+<section class="wrap box" id="box">
+ <header>
+  <h2><span lang="en">What’s on the canvas</span><span lang="ru">Что на холсте</span></h2>
+  <p><span lang="en">The tools you reach for in a big design app, sized to fit a pocket.</span><span lang="ru">Всё, за чем тянешься в большом редакторе, только помещается в карман.</span></p>
+ </header>
+ <div class="ledger"><div class="row" style="--c:var(--caramel)"><span class="t">FR</span><h3><span lang="en">Frames for every screen</span><span lang="ru">Фреймы под любой экран</span></h3><p><span lang="en">Phone, tablet, post, story, slide. Pick a size and start, or draw your own.</span><span lang="ru">Телефон, планшет, пост, сторис, слайд. Выбери размер или нарисуй свой.</span></p></div><div class="row" style="--c:var(--cv)"><span class="t">VE</span><h3><span lang="en">Pen, pencil and shapes</span><span lang="ru">Перо, карандаш и фигуры</span></h3><p><span lang="en">Draw curves, sketch by hand, combine shapes with union, subtract and intersect.</span><span lang="ru">Рисуй кривые, набрасывай от руки, объединяй и вычитай фигуры.</span></p></div><div class="row" style="--c:#cfc3b8"><span class="t">Aa</span><h3><span lang="en">Real typography</span><span lang="ru">Нормальная типографика</span></h3><p><span lang="en">Bold one word, underline another. Lists, letter spacing, text on a path, your own fonts.</span><span lang="ru">Выдели одно слово жирным, другое подчеркни. Списки, межбуквенный интервал, текст по контуру, свои шрифты.</span></p></div><div class="row" style="--c:#b49be0"><span class="t">FX</span><h3><span lang="en">Shadows, blurs, styles</span><span lang="ru">Тени, размытие, стили</span></h3><p><span lang="en">Drop and inner shadows, background blur. Save a color or a look once, reuse it everywhere.</span><span lang="ru">Внешние и внутренние тени, размытие фона. Сохрани цвет или стиль один раз и используй везде.</span></p></div><div class="row" style="--c:#5fb58a"><span class="t">↔</span><h3><span lang="en">Made for fingers</span><span lang="ru">Удобно пальцами</span></h3><p><span lang="en">Pinch to zoom, long-press for options. On iPad the Pencil draws while your fingers move the canvas.</span><span lang="ru">Щипок для масштаба, долгое нажатие для меню. На iPad рисует Pencil, а пальцы двигают холст.</span></p></div><div class="row" style="--c:var(--ct)"><span class="t">EX</span><h3><span lang="en">Out in any format</span><span lang="ru">Любой формат на выходе</span></h3><p><span lang="en">PNG, JPG, WebP, SVG or PDF. Bring in SVG and PSD files with their layers intact.</span><span lang="ru">PNG, JPG, WebP, SVG или PDF. SVG и PSD открываются со всеми слоями.</span></p></div><div class="row" style="--c:#9C8F84"><span class="t">VH</span><h3><span lang="en">Version history</span><span lang="ru">История версий</span></h3><p><span lang="en">A snapshot every ten minutes. Go back to this morning in one tap.</span><span lang="ru">Снимок каждые десять минут. Вернуться к утренней версии можно в одно касание.</span></p></div><div class="row" style="--c:var(--cocoa)"><span class="t">CS</span><h3><span lang="en">Part of the suite</span><span lang="ru">Часть набора</span></h3><p><span lang="en">Send layers to Cocoa Motion to animate, or a clean PNG to CocoaCut for your video.</span><span lang="ru">Отправь слои в Cocoa Motion для анимации или чистый PNG в CocoaCut для видео.</span></p></div></div>
+</section>
+
+<section class="wrap promise">
+ <h2><span lang="en">Your designs never leave your device. <span class="dim">Not even to us.</span></span><span lang="ru">Твои макеты не покидают устройство. <span class="dim">Даже до нас не доходят.</span></span></h2>
+ <div class="facts mono"><span lang="en">No sign-up</span><span lang="ru">Без регистрации</span><span lang="en">Phone, tablet, computer</span><span lang="ru">Телефон, планшет, компьютер</span><span lang="en">One file, no install</span><span lang="ru">Один файл, без установки</span><span lang="en">English &amp; Russian</span><span lang="ru">Русский и английский</span></div>
+</section>
+
+<section class="wrap">
+ <div class="end">
+  <h2><span lang="en">Got something to design?</span><span lang="ru">Есть что нарисовать?</span></h2>
+  <div class="cta">
+   <a class="btn pri" href="editor.html"><span lang="en">Use in browser</span><span lang="ru">Открыть в браузере</span><svg class="arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h9M8.5 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+   <a class="btn sec" href="CocoaCanvas-standalone.html" download><span lang="en">Get standalone</span><span lang="ru">Офлайн-версия</span></a>
+  </div>
+ </div>
+ <footer class="foot mono">
+  <span><span lang="en">CocoaCanvas is part of Cocoa Suite.</span><span lang="ru">CocoaCanvas входит в Cocoa Suite.</span></span>
+  <a href="https://github.com/CocoaSuite">github.com/CocoaSuite</a>
+ </footer>
+</section>
+</main>
+
+<script>
+(()=>{
+const H=document.documentElement,B=[...document.querySelectorAll('.lang button')];
+function setL(l){H.dataset.l=l;H.lang=l;B.forEach(b=>b.setAttribute('aria-pressed',b.dataset.set===l));try{localStorage.setItem('cc-site-l',l)}catch(e){}}
+let l0='en';try{l0=localStorage.getItem('cc-site-l')||((navigator.language||'').startsWith('ru')?'ru':'en')}catch(e){}
+setL(l0);B.forEach(b=>b.onclick=()=>setL(b.dataset.set));
+
+const $=id=>document.getElementById(id),card=$('card'),ttl=$('ttl'),sub=$('sub'),dot=$('dot'),typed=$('typed'),ok=$('ok');
+const L={card:$('l-card'),ttl:$('l-ttl'),sub:$('l-sub'),dot:$('l-dot')},O={card,ttl,sub,dot};
+const pick=(...k)=>{for(const n in O){O[n].classList.toggle('sel',k.includes(n));L[n].classList.toggle('on',k.includes(n))}};
+const steps=[
+ {en:'add a blue circle',ru:'добавь синий круг',okEn:'✓ Add blue circle',okRu:'✓ Синий круг добавлен',go:()=>{L.dot.hidden=false;L.dot.classList.add('new');dot.classList.add('in');pick('dot')}},
+ {en:'make it 2x bigger',ru:'сделай в два раза больше',okEn:'✓ Scale to 200% · Circle',okRu:'✓ Масштаб 200% · Круг',go:()=>dot.classList.add('big')},
+ {en:'round the card corners to 24',ru:'скругли углы карточки до 24',okEn:'✓ Corner radius 24 · Card',okRu:'✓ Скругление 24 · Карточка',go:()=>{pick('card');card.classList.add('r')}},
+ {en:'gradient orange to purple',ru:'градиент от оранжевого к фиолетовому',okEn:'✓ Linear gradient · Card',okRu:'✓ Линейный градиент · Карточка',go:()=>card.classList.add('g')},
+ {en:'all text white',ru:'весь текст белым',okEn:'✓ Color 2 layers white',okRu:'✓ Цвет 2 слоёв: белый',go:()=>{pick('ttl','sub');ttl.classList.add('w');sub.classList.add('w')}}
+];
+const reset=()=>{pick();L.dot.hidden=true;L.dot.classList.remove('new');dot.classList.remove('in','big');card.classList.remove('r','g');ttl.classList.remove('w');sub.classList.remove('w')};
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+if(matchMedia('(prefers-reduced-motion: reduce)').matches){const st=steps[0];typed.textContent=st[H.dataset.l];ok.textContent=st[H.dataset.l==='ru'?'okRu':'okEn'];ok.classList.add('on');steps.forEach(x=>x.go());pick();return}
+(async function loop(){
+ for(;;){for(const st of steps){const ru=H.dataset.l==='ru',t=st[ru?'ru':'en'];ok.classList.remove('on');
+   for(let i=typed.textContent.length;i>0;i--){typed.textContent=typed.textContent.slice(0,i-1);await wait(14)}
+   await wait(350);
+   for(let i=1;i<=t.length;i++){typed.textContent=t.slice(0,i);await wait(38+Math.random()*55)}
+   await wait(420);st.go();ok.textContent=st[ru?'okRu':'okEn'];ok.classList.add('on');await wait(2300)}
+  await wait(900);reset();await wait(500)}
+})();
+})();
+</script>
+</body>
+</html>
