@@ -407,6 +407,17 @@ details.wnV{background:none;padding:0}details.wnV summary{list-style:none;displa
 #start{transition:opacity .32s ease}#start .stB{transition:transform .38s cubic-bezier(.22,.8,.24,1),opacity .32s ease}
 #start.stIn,#start.stOut{opacity:0}#start.stOut{pointer-events:none}#start.stIn .stB,#start.stOut .stB{transform:translateY(14px) scale(.98)}
 @media (prefers-reduced-motion:reduce){#start,#start .stB{transition:none}}
+
+/* layering: dialogs above panels, toolbar and plugin windows; toasts above dialogs */
+.modal{z-index:75}#toast{z-index:86}
+.modal .box{max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto;overscroll-behavior:contain}
+.setr{flex-wrap:wrap}.setr>span{flex:1 1 180px;min-width:0}
+@media (max-width:520px){.setr .seg{flex:1 1 100%;min-width:0}.setr .seg button{padding:7px 4px}}
+@media (min-width:721px) and (max-width:1100px),(min-width:721px) and (pointer:coarse){.plw{bottom:84px;top:12px}}
+/* helper: minimise to a button, expand on tap */
+.qMin{flex:none}#hSlot{transition:flex-basis .32s cubic-bezier(.22,.8,.24,1),min-width .32s cubic-bezier(.22,.8,.24,1)}
+#hSlot.min{flex:0 0 34px;min-width:34px}#hSlot.min .qw{padding:0;justify-content:center;width:34px;cursor:pointer}#hSlot.min .qw>:not(.qPod){display:none}#hSlot.min #qOut{display:none}
+#hSlot.min .qw .qPod{height:18px}
 </style>
 </head>
 <body>
@@ -652,7 +663,7 @@ function usedA(l){const o={};walk(n=>{if(n.asset&&ASSETS[n.asset])o[n.asset]=ASS
 let asT;function autosave(){clearTimeout(asT);asT=setTimeout(()=>{kvSet('cur',{d:last,a:usedA(doc.nodes)}).catch(()=>{});recSave().catch(()=>{});if(Date.now()-lastVer>6e5)saveVersion('',1).catch(()=>{})},500)}
 
 let rq=0;function render(){if(rq)return;rq=requestAnimationFrame(draw)}
-function draw(){cancelAnimationFrame(rq);rq=0;anyBB=false;walk(n=>{if(!anyBB&&!n.hid&&n.efx?.some(f=>f.t==='bb'&&!f.off))anyBB=true;if(n.type!=='text')return;if(!FST[n.ff]&&GF.some(g=>g[0]===n.ff))ensureFont(n.ff);layoutT(n);const pn=n.tp&&IDX.get(n.tp)?.n,b=pn&&aabb(pn);if(b){const m=n.fs;Object.assign(n,{x:b.x-m,y:b.y-m,w:b.w+2*m,h:b.h+2*m,rot:0})}});try{alRun()}catch(e){console.error(e)}W.innerHTML=renderKids(doc.nodes,1);viewUpd();layRender();insp();const pn=$('pname');pn.placeholder=L('Untitled','Без названия');if(document.activeElement!==pn)pn.value=doc.name||''}
+function draw(){cancelAnimationFrame(rq);rq=0;anyBB=false;walk(n=>{if(!anyBB&&!n.hid&&n.efx?.some(f=>f.t==='bb'&&!f.off))anyBB=true;if(n.type!=='text')return;if(!FST[n.ff]&&GF.some(g=>g[0]===n.ff))ensureFont(n.ff);layoutT(n);const pn=n.tp&&IDX.get(n.tp)?.n,b=pn&&aabb(pn);if(b){const m=n.fs;Object.assign(n,{x:b.x-m,y:b.y-m,w:b.w+2*m,h:b.h+2*m,rot:0})}});try{alRun()}catch(e){console.error(e)}W.innerHTML=renderKids(doc.nodes,1);viewUpd();layRender();insp();const pn=$('pname');pn.placeholder=L('Untitled','Без названия');if(document.activeElement!==pn&&pn.value!==(doc.name||'')){pn.value=doc.name||'';window.hCenter?.()}}
 function viewUpd(){const v=gx?gx.v0:view;W.setAttribute('transform',`translate(${v.x} ${v.y}) scale(${v.z})`);drawUI();$('zLbl').textContent=Math.round(view.z*100)+'%';if(editing)posTed()}
 
 function setTool(t){if(pen&&t!=='pen')endPen();if(distort)endDistort();if(editPath)exitPath();tool=t;document.querySelectorAll('#tbar [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t));V.className=t==='hand'?'t-pan':t==='text'?'t-text':t==='move'?'':'t-draw';render()}
@@ -1553,8 +1564,14 @@ function qParse(raw){const parts=qSplit(raw);
  return qParse1(raw)}
 const POD=`<svg class="qPod" aria-hidden="true" viewBox="3 3 46 58" xmlns="http://www.w3.org/2000/svg"><path d="M48 10C43.5 5.9 38.5 4 32 4C16.5 4 4 16.5 4 32C4 47.5 16.5 60 32 60C38.5 60 43.5 58.1 48 54L40 44C37.8 46 35.3 47 32 47C23.7 47 17 40.3 17 32C17 23.7 23.7 17 32 17C35.3 17 37.8 18 40 20L48 10Z" fill="#D15A2C"/><path d="M48 28L36 41L27.4736 43.5576L35.5947 34.5352L34.4053 33.4648L26.4678 42.2832L29 33L40 20L48 28ZM37 29.9004C35.8402 29.9004 34.9004 30.8402 34.9004 32C34.9004 33.1598 35.8402 34.0996 37 34.0996C38.1598 34.0996 39.0996 33.1598 39.0996 32C39.0996 30.8402 38.1597 29.9004 37 29.9004Z" fill="#D15A2C"/></svg>`;
 (()=>{const bar=document.createElement('div');bar.id='qBar';
- bar.innerHTML=`<div class="qw">${POD}<span class="qLbl">Cocoa Helper</span><input id="qIn" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" aria-label="Cocoa Helper"><button id="qGo" class="ic" aria-label="Run"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button></div><div id="qOut" hidden></div>`;
+ bar.innerHTML=`<div class="qw">${POD}<span class="qLbl">Cocoa Helper</span><input id="qIn" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" aria-label="Cocoa Helper"><button id="qGo" class="ic" aria-label="Run"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button><button class="ic qMin" id="qMin" aria-label="Minimise"><svg viewBox="0 0 24 24"><path d="M6 12h12"/></svg></button></div><div id="qOut" hidden></div>`;
  $('hSlot').appendChild(bar);const inp=$('qIn'),out=$('qOut'),hist=[];let hi=-1,deb=0;
+ {const HS=$('hSlot'),gt=()=>{try{return localStorage.getItem('cv-hmin')==='1'}catch(e){return false}},st=v=>{try{localStorage.setItem('cv-hmin',v?'1':'0')}catch(e){}};
+  const setMin=v=>{HS.classList.toggle('min',v);st(v);const q=$('qMin');if(q)q.setAttribute('aria-label',v?L('Expand','Развернуть'):L('Minimise','Свернуть'));bar.querySelector('.qw').title=v?'Cocoa Helper':'';setTimeout(()=>window.hCenter?.(),340)};
+  window.hMin=setMin;if(gt())setMin(true);
+  $('qMin').addEventListener('click',e=>{e.stopPropagation();out.hidden=true;inp.blur();setMin(true)});
+  bar.querySelector('.qw').addEventListener('click',e=>{if(!HS.classList.contains('min'))return;e.stopPropagation();setMin(false);setTimeout(()=>inp.focus(),60)});
+  inp.addEventListener('focus',()=>{if(HS.classList.contains('min'))setMin(false)})}
  const show=h=>{out.innerHTML=h;out.hidden=!h};
  const ex=()=>`<div class="qh">${L('Try one of these:','Попробуйте:')}</div><div class="qex">${(LANG==='ru'?['добавь синий круг','новый фрейм iPhone','весь текст белым','поверни на 45','дублируй 3 раза','выровняй по центру','скругление 16','экспорт png 2x']:['add a blue circle','new iPhone frame','all text white','rotate 45','duplicate 3 times','align center','corner radius 16','export png 2x']).map(x=>`<button data-run="${esc(x)}">${esc(x)}</button>`).join('')}<button data-run="help">${L('All commands…','Все команды…')}</button></div>`;
  const NEED=()=>L('Select something first, or name what to change, like “all circles”.','Сначала выделите что-нибудь или назовите, что изменить, например «все круги».');
@@ -2492,7 +2509,7 @@ function sandbox(p,lv){const f=document.createElement('iframe');f.sandbox='allow
   if(d.t!=='call')return;const now=Date.now();if(now-sec>1000){sec=now;calls=0}if(++calls>300)return fail(p,new Error(H('Stopped: it was flooding the app with requests.','Остановлен: слишком много запросов.')),true);
   let v,err;try{const fn=H_[d.m];if(!fn)throw new Error('Unknown request '+d.m);v=await fn(...(d.a||[]))}catch(x){err=String(x&&x.message||x)}if(err)console.warn('[plugin '+p.id+']',err);send({t:'ret',id:d.id,v,err})}};
  f.onload=()=>{SB.set(f.contentWindow,s);send({t:'boot',src:RT});send({t:'run',code:p.code,id:p.id,lang:LANG})};document.body.appendChild(f);
- const hb=setInterval(()=>{send({t:'ping'});if(Date.now()-pong>15000)fail(p,new Error(H('Stopped: it stopped responding.','Остановлен: перестал отвечать.')),true)},3000);
+ let slow=false;const hb=setInterval(()=>{send({t:'ping'});const late=Date.now()-pong>15000;if(late&&!slow){slow=true;toast(H(`${PN(p)} is busy or not responding. It keeps running; turn it off in Plugins → Manage if it stays stuck.`,`${PN(p)} занят или не отвечает. Он продолжает работать; выключите его в «Плагины → Управление», если он завис.`))}else if(!late)slow=false},3000);
  lv.push(()=>{dead=true;clearInterval(hb);SB.delete(f.contentWindow);f.remove();for(const k in RET)RET[k]()})}
 function on(p){if(live[p.id])return;const lv=live[p.id]=[];p.err='';try{if(p.access==='full')new Function('cocoa',p.code)(fullApi(p,lv));else sandbox(p,lv)}catch(e){fail(p,e,true)}}
 {const q0=qParse;qParse=function(raw){const s=String(raw||'');if(s.length<=500)for(const c of CMDS){let m=null;try{m=s.match(c.re)}catch(e){}if(m)return{d:PN(c.p)+(c.label?': '+c.label:''),ok:true,fix:[],f:()=>{Promise.resolve().then(()=>c.run(s,m)).catch(e=>fail(c.p,e))}}}return q0(raw)}}
@@ -2574,6 +2591,13 @@ Promise.all([kvGet(KEY),kvGet('plstore').then(x=>{try{PST=JSON.parse(x||'{}')||{
  try{localStorage.setItem('cv-pl-boot',String(n+1))}catch(e){}const clr=()=>{try{localStorage.removeItem('cv-pl-boot')}catch(e){}};for(const ev of['pagehide','beforeunload'])addEventListener(ev,clr);document.addEventListener('visibilitychange',()=>{if(document.hidden)clr()});setTimeout(clr,3000);
  plBoot=1;for(const p of list)if(p.on)on(p);plBoot=0}).catch(()=>{});
 })();
+/* ---------- desktop: keep Cocoa Helper centred in the window ---------- */
+(()=>{const T=$('top'),HS=$('hSlot'),SP=[...T.querySelectorAll(':scope>.sp')],DQ=matchMedia('(min-width:1101px) and (pointer:fine)');if(SP.length<2)return;
+ const PN=$('pname'),MC=document.createElement('canvas').getContext('2d');function c(){PN.style.flex='';if(DQ.matches){MC.font=getComputedStyle(PN).font;PN.style.flex=`0 0 ${Math.max(90,Math.min(240,MC.measureText(PN.value||PN.placeholder).width+26))}px`}SP[0].style.flex='';SP[1].style.flex='';if(!HS.classList.contains('min'))HS.style.flex='';if(!DQ.matches||getComputedStyle(HS).display==='none')return;
+  const t=T.getBoundingClientRect(),a=SP[0].getBoundingClientRect(),b=SP[1].getBoundingClientRect(),mid=t.left+t.width/2,half=Math.min(mid-a.left,b.right-mid)-10;
+  const mn=HS.classList.contains('min');let w=mn?34:Math.min(520,2*half);if(!mn&&w<260)return;if(!mn)HS.style.flex=`0 0 ${w}px`;
+  const free=a.width+b.width+HS.getBoundingClientRect().width-w;SP[0].style.flex=`0 0 ${Math.max(0,Math.min(free,mid-w/2-a.left))}px`;SP[1].style.flex='1 1 0'}
+ window.hCenter=()=>requestAnimationFrame(c);new ResizeObserver(()=>hCenter()).observe(T);DQ.addEventListener?.('change',hCenter);$('pname')?.addEventListener('input',hCenter);hCenter()})();
 /* ---------- sliders: on touch screens drag anywhere along a slider to change it from where it is; never a panel swipe ---------- */
 window.SLDR=false;(()=>{const CO=matchMedia('(pointer:coarse)');let D=null;
  const find=(t,x,y)=>{for(let el=t,i=0;el&&el!==document.body&&i<4;el=el.parentElement,i++){if(el.matches?.('input[type=range]'))return el;for(const r of el.querySelectorAll?.('input[type=range]')||[]){const b=r.getBoundingClientRect();if(b.width&&x>=b.left-4&&x<=b.right+4&&y>=b.top-10&&y<=b.bottom+10)return r}}return null};
