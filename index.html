@@ -6,6 +6,8 @@
 <title>CocoaCanvas: design on whatever’s in your hands</title>
 <meta name="description" content="CocoaCanvas is a design tool for your phone, tablet and computer that understands plain language. Runs in your browser. No account, no uploads.">
 <meta name="theme-color" content="#14100D">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%202%2052%2060%22%3E%3Cpath%20d%3D%22M48%2010C43.5%205.9%2038.5%204%2032%204C16.5%204%204%2016.5%204%2032C4%2047.5%2016.5%2060%2032%2060C38.5%2060%2043.5%2058.1%2048%2054L40%2044C37.8%2046%2035.3%2047%2032%2047C23.7%2047%2017%2040.3%2017%2032C17%2023.7%2023.7%2017%2032%2017C35.3%2017%2037.8%2018%2040%2020L48%2010Z%22%20fill%3D%22%23D15A2C%22/%3E%3Cpath%20d%3D%22M48%2028L36%2041L27.4736%2043.5576L35.5947%2034.5352L34.4053%2033.4648L26.4678%2042.2832L29%2033L40%2020L48%2028ZM37%2029.9004C35.8402%2029.9004%2034.9004%2030.8402%2034.9004%2032C34.9004%2033.1598%2035.8402%2034.0996%2037%2034.0996C38.1598%2034.0996%2039.0996%2033.1598%2039.0996%2032C39.0996%2030.8402%2038.1597%2029.9004%2037%2029.9004Z%22%20fill%3D%22%23D15A2C%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -290,5 +292,6 @@ if(matchMedia('(prefers-reduced-motion: reduce)').matches){const st=steps[0];typ
 })();
 })();
 </script>
+<script>if('serviceWorker'in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{})</script>
 </body>
 </html>
