@@ -336,13 +336,15 @@ body{grid-template-columns:minmax(0,1fr)}#top{min-width:0}
 #plAsk{border:1px solid #D15A2C;border-radius:9px;padding:10px;display:flex;flex-direction:column;gap:8px}#plAsk ul{margin:0;padding-left:18px;color:var(--mute);font-size:12px;line-height:1.6}#plAsk label{display:flex;gap:6px;align-items:center;font-size:12px}
 .plRow{flex-wrap:wrap}#pbQ{width:100%;box-sizing:border-box}
 body.plwin #insp{visibility:hidden}
+#plModal .box,#pbModal .box{max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto}#plModal .box>*,#pbModal .box>*{flex:none}#plModal #plList,#pbModal #pbList{flex:1 1 auto;min-height:90px;max-height:none}#plAsk{max-height:55%;max-height:55dvh;overflow:auto;overscroll-behavior:contain}#plAsk>.row{position:sticky;bottom:-10px;margin:0 -10px -10px;padding:8px 10px 10px;background:var(--panel)}
 @media (max-width:720px){
  #plMenu{left:8px!important;right:8px;width:auto}
  .plw{left:0;right:0;top:auto;bottom:0;width:auto;max-height:72vh;border-radius:20px 20px 0 0;padding:10px 16px calc(14px + env(safe-area-inset-bottom))}
  .plw::before{content:'';display:block;width:44px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 2px;flex:none}
  .plw .row button{flex:1;padding:11px}.pfR{grid-template-columns:minmax(0,1fr) 170px}
- #plModal,#pbModal{place-items:end stretch;padding:0}#plModal .box,#pbModal .box{width:100%!important;border-radius:22px 22px 0 0;max-height:88vh;overflow:auto;padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+ #plModal,#pbModal{place-items:end stretch;padding:0}#plModal .box,#pbModal .box{width:100%!important;border-radius:22px 22px 0 0;max-height:88vh;max-height:88dvh;overflow:auto;padding-bottom:calc(18px + env(safe-area-inset-bottom))}
  body.plwin #fabD,body.plwin #fabX,body.plwin #dock{display:none}
+ #plAsk{max-height:46dvh}#plModal:has(#plAsk:not([hidden])) .box>.hint{display:none}
 }
 #wnModal{z-index:90}.wnBox{width:min(460px,100%)!important;max-height:min(86vh,720px);overflow:hidden!important}
 .wnH{display:flex;gap:12px;align-items:center}.wnH h2{font-size:17px;margin:0 0 2px}.wnL{width:44px;height:44px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);display:grid;place-items:center;flex:none}.wnL svg{width:24px;height:30px}
