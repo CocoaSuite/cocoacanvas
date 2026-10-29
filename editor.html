@@ -120,7 +120,8 @@ input[type=range]::-moz-range-track{background:transparent}input[type=range]::-m
 .frow{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:9px 12px;text-align:left;white-space:nowrap;flex:none}.frow.on{border-color:var(--pri)}.frow .fn{font-size:19px;overflow:hidden;text-overflow:ellipsis}.frow .fs{color:var(--mute);font-size:15px;overflow:hidden;text-overflow:ellipsis}
 .frow .fm{font:11px var(--sans);color:var(--mute);margin-left:auto}
 #insp>*{flex-shrink:0}
-#gModal{z-index:75}
+#gModal{z-index:75}#fModal,#xModal{z-index:60}
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 .wh{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:6px;align-items:center}
 .lar{display:grid;place-items:center;width:28px;height:28px;padding:0}.lar svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
 .seg.ct button{font-size:12px;padding:5px 0}
@@ -188,7 +189,7 @@ body{grid-template-columns:minmax(0,1fr)}#top{min-width:0}
  body.lopen #lay{transform:none}
  #inspW{position:fixed;left:0;right:0;bottom:0;height:min(58vh,520px);z-index:35;border:1px solid var(--line);border-bottom:0;border-radius:18px 18px 0 0;transform:translateY(105%);transition:transform .2s,height .2s;box-shadow:0 -12px 40px rgba(0,0,0,.5)}
  body.iopen #inspW{transform:none}body.ifull #inspW{height:calc(100% - 60px - env(safe-area-inset-top))}
- #grab{display:block;height:26px;flex:none;cursor:grab;touch-action:none;background:var(--panel)}#grab::after{content:'';display:block;width:40px;height:5px;border-radius:3px;background:#4a4a4a;margin:10px auto 0}
+ #grab{display:block;height:44px;margin-bottom:-12px;position:relative;z-index:1;flex:none;cursor:grab;touch-action:none;background:var(--panel)}#grab::after{content:'';display:block;width:44px;height:5px;border-radius:3px;background:#5a5a5a;margin:12px auto 0}
  #insp{padding-bottom:calc(20px + env(safe-area-inset-bottom))}
  #tbar{position:absolute;left:8px;right:8px;bottom:calc(14px + env(safe-area-inset-bottom));border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:5;flex-wrap:wrap;justify-content:space-around;gap:2px;padding:6px}
  #tbar .ic{width:42px;height:42px;flex:none}#tbar .vs{display:none}
@@ -1516,6 +1517,7 @@ V.addEventListener('pointermove',e=>{if(e.pointerType!=='touch'||!PT.has(e.point
  if(G&&PT.size>=2){e.stopImmediatePropagation();const[a,b]=[...PT.values()],r=V.getBoundingClientRect(),d=Math.hypot(a.x-b.x,a.y-b.y),c={x:(a.x+b.x)/2-r.left,y:(a.y+b.y)/2-r.top},z=clamp(G.v.z*d/G.d,.02,256),wx=(G.c.x-G.v.x)/G.v.z,wy=(G.c.y-G.v.y)/G.v.z;view.z=z;view.x=c.x-wx*z;view.y=c.y-wy*z;viewUpd()}},{capture:true});
 const ptEnd=e=>{if(e.pointerType!=='touch')return;clearTimeout(lpT);PT.delete(e.pointerId);
  if(G){e.stopImmediatePropagation();if(PT.size<2)G=null;tapT=0;return}
+ if(e.type==='pointerup'&&lp0&&BC.contains('iopen')&&phone()&&!document.elementFromPoint(e.clientX,e.clientY)?.closest?.('#scene [data-id],#ui [data-h]'))BC.remove('iopen','ifull');
  if(e.type==='pointerup'&&lp0){const now=Date.now();if(tapP&&now-tapT<320&&Math.hypot(e.clientX-tapP.x,e.clientY-tapP.y)<24){tapT=0;synthT=now;const x=e.clientX,y=e.clientY;setTimeout(()=>V.dispatchEvent(new MouseEvent('dblclick',{clientX:x,clientY:y,bubbles:true})))}else{tapT=now;tapP={x:e.clientX,y:e.clientY}}}lp0=null};
 V.addEventListener('pointerup',ptEnd,{capture:true});V.addEventListener('pointercancel',ptEnd,{capture:true});
 V.addEventListener('dblclick',e=>{if(e.isTrusted&&Date.now()-synthT<700)e.stopImmediatePropagation()},{capture:true});
@@ -1536,6 +1538,8 @@ LL.addEventListener('contextmenu',e=>{const r=e.target.closest('.lr');if(!r)retu
 LL.addEventListener('pointerdown',e=>{if(e.pointerType!=='touch')return;const r=e.target.closest('.lr');if(!r)return;const x=e.clientX,y=e.clientY;clearTimeout(llT);llT=setTimeout(()=>{if(ldrag?.on)return;ldrag=null;openCtx(x,y,1,IDX.get(r.dataset.id)?.n||null)},550)});
 ['pointerup','pointercancel','pointermove'].forEach(t=>LL.addEventListener(t,e=>{if(t!=='pointermove'||ldrag?.on)clearTimeout(llT)}));
 window.addEventListener('scroll',()=>{$('ctx').hidden=true},true);
+document.addEventListener('contextmenu',e=>{if(coarse()&&!e.target.closest?.('input,textarea'))e.preventDefault()});
+document.addEventListener('selectstart',e=>{if(!e.target.closest?.('input,textarea,[contenteditable]'))e.preventDefault()});
 
 /* ---------- install / shortcut ---------- */
 let BIP=null;
