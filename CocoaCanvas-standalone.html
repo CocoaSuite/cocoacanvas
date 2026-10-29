@@ -488,7 +488,12 @@ function mk(t,o={}){const b={id:nid(),type:t,name:'',x:0,y:0,w:0,h:0};
   path:{pts:[],closed:false,fill:null,stroke:'#000000',sw:2},line:{type:'path',pts:[],closed:false,fill:null,stroke:'#000000',sw:2},
   text:{text:'',fs:24,ff:'Sans',fw:400,ta:'left',lh:1.2,fill:'#000000',fixW:false},image:{},group:{children:[],open:false},bool:{children:[],open:false,op:'union'}};
  return Object.assign(b,D[t],o)}
-function addNode(n,p){if(!p&&(n.type==='text'||n.type==='path')){if(n.fill==='#000000')n.fill='#ffffff';if(n.stroke==='#000000')n.stroke='#ffffff'}(p?p.children:doc.nodes).push(n);reindex();return n}
+const TSX=new Set(['id','type','name','x','y','w','h','text','runs','tp','to','dq','rot','fx','fy','hid','lock','children','hh','fixW','fixH','open','_keep']);
+const tCopy=n=>{const o={};for(const k in n)if(!TSX.has(k))o[k]=clone(n[k]);return o};let TSIG=new Map();
+function mkT(o={}){const n=mk('text'),st=lastTS();if(st){Object.assign(n,st);n._keep=1}return Object.assign(n,o)}
+function lastTS(){const n=doc.lt&&IDX.get(doc.lt)?.n;return n&&n.type==='text'?tCopy(n):null}
+function trackTS(){walk(n=>{if(n.type!=='text')return;const g=JSON.stringify(tCopy(n));if(TSIG.has(n.id)&&TSIG.get(n.id)!==g)doc.lt=n.id;TSIG.set(n.id,g)})}
+function addNode(n,p){const kp=n._keep;delete n._keep;if(!p&&!kp&&(n.type==='text'||n.type==='path')){if(n.fill==='#000000')n.fill='#ffffff';if(n.stroke==='#000000')n.stroke='#ffffff'}(p?p.children:doc.nodes).push(n);reindex();return n}
 function frameAt(p,ex){let t=null;for(const f of doc.nodes)if(f.type==='frame'&&!f.hid&&f!==ex&&inBox(p,f))t=f;return t}
 const nm=n=>n.name||(n.type==='text'?String(n.text).split('\n')[0].slice(0,40)||L('Text','Текст'):{rect:L('Rectangle','Прямоугольник'),ellipse:L('Ellipse','Эллипс'),poly:L('Polygon','Многоугольник'),star:L('Star','Звезда'),path:n.pts?.length===2&&!n.closed?L('Line','Линия'):L('Vector','Вектор'),image:L('Image','Изображение'),group:n.mask?L('Mask group','Группа с маской'):L('Group','Группа'),frame:L('Frame','Фрейм'),bool:BN()[n.op]}[n.type]);
 const BN=()=>({union:L('Union','Объединение'),subtract:L('Subtract','Вычитание'),intersect:L('Intersect','Пересечение'),exclude:L('Exclude','Исключение')});
@@ -503,7 +508,7 @@ function toggleSel(n){if(sel.includes(n))sel=sel.filter(x=>x!==n);else{sel=sel.f
 
 let H=[],F=[],last='';
 const snap=()=>JSON.stringify(doc,rep);
-function commit(){prune();reindex();const s=snap();if(s===last)return render();H.push(last);if(H.length>200)H.shift();F=[];last=s;autosave();render()}
+function commit(){prune();reindex();try{trackTS()}catch(_){}const s=snap();if(s===last)return render();H.push(last);if(H.length>200)H.shift();F=[];last=s;autosave();render()}
 function restoreDoc(s){doc=JSON.parse(s);walk(n=>{if(Array.isArray(n.fx)){n.efx=n.fx;delete n.fx}});frameNo=0;walk(n=>{if(n.type==='frame')frameNo++});reindex();editPath=null;render()}
 function undo(){if(editing||!H.length)return;F.push(last);last=H.pop();restoreDoc(last);autosave()}
 function redo(){if(editing||!F.length)return;H.push(last);last=F.pop();restoreDoc(last);autosave()}
@@ -641,10 +646,10 @@ function doNew(p,e){const d=drag;let x0=d.p0.x,y0=d.p0.y,dx=p.x-x0,dy=p.y-y0;if(
   if(!d.n){d.n=addNode(mk('line'),frameAt(d.p0));sel=[d.n]}Object.assign(d.n,pathFrom(P,false));return render()}
  if(e.shiftKey){const s=Math.max(Math.abs(dx),Math.abs(dy));dx=Math.sign(dx||1)*s;dy=Math.sign(dy||1)*s}
  const x=Math.round(Math.min(x0,x0+dx)),y=Math.round(Math.min(y0,y0+dy)),w=Math.max(1,Math.round(Math.abs(dx))),h=Math.max(1,Math.round(Math.abs(dy)));
- if(!d.n){d.n=addNode(mk(d.t),frameAt(d.p0));sel=[d.n]}
+ if(!d.n){d.n=addNode(d.t==='text'?mkT():mk(d.t),frameAt(d.p0));sel=[d.n]}
  if(d.t==='text')Object.assign(d.n,{x,y,w,fixW:true});else Object.assign(d.n,{x,y,w,h});render()}
 function endNew(d){let n=d.n;const x=Math.round(d.p0.x),y=Math.round(d.p0.y);
- if(!n){n=addNode(mk(d.t),frameAt(d.p0));if(d.t==='line')Object.assign(n,pathFrom([{x,y,ix:0,iy:0,ox:0,oy:0},{x:x+100,y,ix:0,iy:0,ox:0,oy:0}],false));else if(d.t==='text')Object.assign(n,{x,y});else Object.assign(n,{x,y,w:100,h:100})}
+ if(!n){n=addNode(d.t==='text'?mkT():mk(d.t),frameAt(d.p0));if(d.t==='line')Object.assign(n,pathFrom([{x,y,ix:0,iy:0,ox:0,oy:0},{x:x+100,y,ix:0,iy:0,ox:0,oy:0}],false));else if(d.t==='text')Object.assign(n,{x,y});else Object.assign(n,{x,y,w:100,h:100})}
  if(n.type==='frame'&&!par(n)){const inside=doc.nodes.filter(k=>k!==n&&!(k.type==='frame'&&k.children.length)&&(b=>b&&b.x>=n.x&&b.y>=n.y&&b.x+b.w<=n.x+n.w&&b.y+b.h<=n.y+n.h)(aabb(k)));inside.forEach(k=>{detach(k);n.children.push(k)});reindex()}
  sel=[n];setTool('move');if(n.type==='text')editText(n,true);else commit()}
 
@@ -662,7 +667,7 @@ function splitSeg(n,gi,p){const r=ptAt(n,gi),q=w2l(n,p),P=r.s.pts,i=r.j,a=P[i],b
  if(cv){a.ox=a1.x-a.x;a.oy=a1.y-a.y;b.ix=c1.x-b.x;b.iy=c1.y-b.y}P.splice(i+1,0,np);return gi+1}
 function exitPath(){if(!editPath)return;editPath=null;actPt=-1;render()}
 
-function editText(n,isNew,at){trange=null;editing=n;TED.hidden=false;TED.value=n.text;render();posTed();TED.focus();if(at){const o=caretAt(n,at);try{TED.setSelectionRange(o,o)}catch(_){}}else if(!isNew)TED.select();if(matchMedia('(pointer:coarse)').matches){setTimeout(revealSel,350);setTimeout(revealSel,800)}}
+function editText(n,isNew,at){trange=null;editing=n;doc.lt=n.id;TED.hidden=false;TED.value=n.text;render();posTed();TED.focus();if(at){const o=caretAt(n,at);try{TED.setSelectionRange(o,o)}catch(_){}}else if(!isNew)TED.select();if(matchMedia('(pointer:coarse)').matches){setTimeout(revealSel,350);setTimeout(revealSel,800)}}
 function posTed(){const n=editing;if(!n)return;layoutT(n);const z=view.z,[x,y]=w2s(n.x,n.y),s=TED.style;
  const Lt=n._L;s.left=x+'px';s.top=y+'px';s.font=`${n.it?'italic ':''}${n.fw||400} ${n.fs*z}px/${n.fs*(n.lh||1.2)*z}px ${ffCss(n.ff)}`;s.letterSpacing=(n.ls||0)*z+'px';s.paddingLeft=(Lt?.lines[0]?.ind||0)*z+'px';s.textAlign=n.ta||'left';
  s.width=(n.w*z+(n.fixW?0:2))+'px';s.height=Math.max((Lt?Lt.lines.length*Lt.lh:n.h)*z,n.fs*z)+'px';s.transform=n.rot?`rotate(${n.rot}deg)`:'';s.opacity=n.op??1;TED.classList.toggle('fw',!!n.fixW)}
@@ -1174,7 +1179,7 @@ function qAdd(k,o){const c=vc(),s=topSel(),fr=s.length===1&&s[0].type==='frame'?
  if(k==='frame'){const p=o.pre!=null?PRE[o.pre]:null;const n=placeFrame(o.w||(p?p[1]:800),o.h||(p?p[2]:600),p?p[0]:'');if(o.col)n.fill=o.col.c;return commit()}
  const ct=fr&&!inBox(c,fr)?{x:fr.x+fr.w/2,y:fr.y+fr.h/2}:c;let n;
  if(k==='path'){const w=o.w||200,x=Math.round(ct.x-w/2),y=Math.round(ct.y);n=addNode(mk('line'),fr);Object.assign(n,pathFrom([{x,y,ix:0,iy:0,ox:0,oy:0},{x:x+w,y,ix:0,iy:0,ox:0,oy:0}],false));if(o.col?.c)n.stroke=o.col.c}
- else if(k==='text'){n=addNode(mk('text',{text:o.txt||L('Text','Текст')}),fr);if(o.w)n.fs=o.w;layoutT(n);n.x=Math.round(ct.x-n.w/2);n.y=Math.round(ct.y-n.h/2);if(o.col?.c)n.fill=o.col.c}
+ else if(k==='text'){n=addNode(mkT({text:o.txt||L('Text','Текст')}),fr);if(o.w)n.fs=o.w;layoutT(n);n.x=Math.round(ct.x-n.w/2);n.y=Math.round(ct.y-n.h/2);if(o.col?.c)n.fill=o.col.c}
  else{const w=o.w||(o.sq?100:k==='rect'?160:120),h=o.h||(o.sq||k==='ellipse'?w:100);n=addNode(mk(k,{x:Math.round(ct.x-w/2),y:Math.round(ct.y-h/2),w,h}),fr);if(o.col)n.fill=o.col.c}
  sel=[n];commit()}
 function qDup(tl,k){const out=[];for(const n of tl){const b=aabb(n);if(!b)continue;const l=sibs(n);let at=l.indexOf(n);for(let i=1;i<=k;i++){const c=reid(n);moveN(c,(b.w+20)*i,0);l.splice(++at,0,c);out.push(c)}}reindex();sel=out;commit()}
