@@ -685,7 +685,7 @@ const BN=()=>({union:L('Union','Объединение'),subtract:L('Subtract','
 
 function chainOf(id){const c=[];for(let e=IDX.get(id);e;e=e.p?IDX.get(e.p.id):null)c.unshift(e.n);return c}
 function pick(id,deep){const c=chainOf(id);if(!c.length)return null;let i;
- if(deep)i=c.length-1;else{const si=scope?c.findIndex(n=>n.id===scope):-1;i=si>=0?Math.min(si+1,c.length-1):0;if(i===0&&c[0].type==='frame'&&c.length>1)i=1}
+ if(deep)i=c.length-1;else{const si=scope?c.findIndex(n=>n.id===scope):-1;if(si>=0)i=Math.min(si+1,c.length-1);else{i=0;while(c[i].sec&&i<c.length-1)i++;if(c[i].type==='frame'&&i<c.length-1)i++}}
  return c.slice(0,i+1).some(n=>n.lock)?null:c[i]}
 
 function setSel(a){sel=a.filter(Boolean);if(trange&&!(sel.length===1&&sel[0].id===trange.id))trange=null;for(const n of sel)for(let p=par(n);p;p=par(p))p.open=true;if(scope){const s=IDX.get(scope)?.n;if(!s||!sel.every(n=>anc(n,s)))scope=null}actPt=-1;render()}
@@ -707,7 +707,8 @@ let asT;function autosave(){clearTimeout(asT);asT=setTimeout(()=>{kvSet('cur',{d
 let rq=0;function render(){if(rq)return;rq=requestAnimationFrame(draw)}
 const TLC=new WeakMap(),TLX=(k,v)=>k==='x'||k==='y'||k==='rot'||k==='fill'||k==='fills'||k==='stroke'||k==='strokes'||k==='efx'||k==='op'||k==='name'||k==='lock'||k==='hid'||k==='bl'||k==='cn'||k==='abs'?undefined:v;var FONTV=0;
 /* scene: only replace the top-level layers whose markup changed, so WebKit repaints a small area instead of the whole design */
-function sceneSet(){sceneSet0();if(XHIDE)xfHide()}
+function sceneSet(){sceneSet0();if(XHIDE)xfHide();else if(!drag)spriteClean()}
+function spriteClean(d){if(d){if(d.xq)cancelAnimationFrame(d.xq);if(d.fq)cancelAnimationFrame(d.fq);d.xs?.c?.remove();d.sp?.c?.remove();for(const el of d.fe||[])el.style.visibility=''}XHIDE=null;for(const c of V.querySelectorAll(':scope>canvas:not(#snapC)'))c.remove();for(const el of W.children)if(el.style.visibility==='hidden')el.style.visibility=''}
 function sceneSet0(){const bump=()=>{DRAWN++;if(drag&&drag.m==='move')drag.dax=[drag.ax||0,drag.ay||0]};if(anyBB){W.__p=null;W.innerHTML=renderKids(doc.nodes,1);return bump()}
  const P=doc.nodes.map(c=>svgOf(c,1)),O=W.__p,E=W.__e;
  const full=()=>{W.innerHTML=P.join('');const els=[];let i=0;const ch=W.children;for(const s of P){els.push(s?ch[i++]:null)}W.__p=P;W.__e=els;bump()};
@@ -2138,7 +2139,7 @@ window.addEventListener('pointerup',e=>{if(gy==null)return;const d=e.clientY-gy;
 Object.assign(CMD,{laycol:()=>BC.toggle('lcol'),inspcol:()=>BC.toggle('icol'),multi:()=>{BC.toggle('multi');if(BC.contains('multi'))toast(L('Tap layers to add or remove them. Tap Done when finished.','Нажимайте на слои, чтобы добавлять или убирать их. Затем нажмите «Готово».'));drawUI()},done:()=>{if(BC.contains('multi')&&!distort&&!pen&&!editPath){BC.remove('multi');return drawUI()}if(distort)endDistort();else if(pen)endPen();else if(editPath)exitPath()},edittext:()=>{const n=topSel()[0];if(n?.type==='text')editText(n)}});
 
 const PT=new Map();let MT=null;let ctxT=0,G=null,penSeen=false,lpT=0,lp0=null,tapT=0,tapP=null,synthT=0;
-function abortDrag(){clearTimeout(lpT);const d=drag;if(!d)return;drag=null;V.classList.remove('dn');
+function abortDrag(){clearTimeout(lpT);const d=drag;if(!d)return;drag=null;spriteClean(d);V.classList.remove('dn');
  if(d.m==='penh'&&pen){pen.pts.pop();if(!pen.pts.length)pen=null}else if(!/pan|marq|pencil/.test(d.m)&&(d.moved||(d.m==='new'&&d.n)))restoreDoc(last);render()}
 V.addEventListener('pointerdown',e=>{if(e.pointerType==='pen')penSeen=true;if(e.pointerType!=='touch')return;if(e.isPrimary){PT.clear();G=null;MT=null;gxEnd()}
  PT.set(e.pointerId,{x:e.clientX,y:e.clientY});
