@@ -854,7 +854,7 @@ async function snapMake(){if(!SNAP.on||SNAP.busy||gx||drag||(typeof PT!=='undefi
 SNAP.on=matchMedia('(pointer:coarse)').matches;
 /* touch drags: once ready, the dragged layers ride on a bitmap so the rest of the design never repaints */
 async function dragSprite(d){if(!SNAP||!SNAP.on||d.sp)return;d.sp={};try{const ts=topSel(),bb=union(ts.map(aabb));if(!bb)return;const z=view.z,pad=Math.ceil(48/Math.max(z,.05)),X=bb.x-pad,Y=bb.y-pad,Wd=bb.w+pad*2,Hd=bb.h+pad*2,sw=Wd*z,sh=Hd*z;if(sw*sh>4e6)return;
-  const ax0=d.ax,ay0=d.ay,html=d.fe.map(el=>{const c=el.cloneNode(true);c.removeAttribute('transform');return c.outerHTML}).join(''),fc=await fontCSS(ts);if(drag!==d)return;
+  const ax0=d.ax,ay0=d.ay,html=d.fe.map(el=>{const c=el.cloneNode(true);c.removeAttribute('transform');return c.outerHTML}).join(''),fc=await fontCSS(ts);if(drag!==d||/<image\b/.test(html))return;
   const svg=`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${sw}" height="${sh}" viewBox="0 0 ${sw} ${sh}">${fc}<g transform="scale(${z}) translate(${-X+(ax0-d.fb[0])} ${-Y+(ay0-d.fb[1])})">${html}</g></svg>`;
   const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'})),im=new Image();im.src=url;try{await im.decode()}finally{setTimeout(()=>URL.revokeObjectURL(url),100)}if(drag!==d)return;
   const sc=Math.min(devicePixelRatio||1,2),c=document.createElement('canvas');c.width=Math.round(sw*sc);c.height=Math.round(sh*sc);let bm=null;try{bm=await createImageBitmap(im,{resizeWidth:c.width,resizeHeight:c.height})}catch(_){}if(drag!==d)return;c.getContext('2d').drawImage(bm||im,0,0,c.width,c.height);bm?.close?.();
