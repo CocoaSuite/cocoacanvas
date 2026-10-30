@@ -2666,6 +2666,7 @@ function openSettings(){closeMenus();const inst=standalone(),sw=(id,on)=>`<label
   <div class="setH">${L('General','Общие')}</div>
   <div class="setr"><span>${L('Language','Язык')}</span>${seg('lang',[['en','English'],['ru','Русский']],LANG)}</div>
   <div class="setr"><span>${L('Show start screen','Показывать стартовый экран')}<small>${L('Recent projects and tips when the app opens','Недавние проекты и советы при запуске')}</small></span>${sw('setStart',!nostart())}</div>
+  <div class="setr"><span>${L('Welcome tour','Приветствие')}<small>${L('Replay the hello screen and tutorial','Показать приветствие и обучение ещё раз')}</small></span><button data-set="hello">${L('Show','Показать')}</button></div>
   <div class="setr"><span>${L('Colour picker','Палитра')}</span>${seg('picker',[['b',L('Built-in','Встроенная')],['s',L('System','Системная')]],pickMode())}</div>
   <div class="setH">${L('Canvas','Холст')}</div>
   <div class="setr"><span>${L('Rotation snapping','Привязка поворота')}<small>${L('Snaps to every 15° when rotating with a finger or pen. With a mouse, hold Shift.','Притягивает к каждым 15° при повороте пальцем или пером. Мышью удерживайте Shift.')}</small></span>${seg('rsnap',[['0',L('Off','Выкл')],['2',L('Light','Слабая')],['4',L('Medium','Средняя')],['8',L('Strong','Сильная')]],String(rSnap()))}</div>
@@ -2682,7 +2683,7 @@ function openSettings(){closeMenus();const inst=standalone(),sw=(id,on)=>`<label
  B.onchange=e=>{const t=e.target;if(t.id==='setStart')try{localStorage.setItem('cv-nostart',t.checked?'0':'1')}catch(_){}if(t.id==='setFS')toggleFS();if(t.id==='setFlick')try{localStorage.setItem('cv-flick',t.checked?'1':'0')}catch(_){}};
  B.onclick=e=>{const b=e.target.closest('[data-set]');if(!b)return;const k=b.dataset.set,v=b.dataset.v;
   if(k==='lang'){setLang(v);return openSettings()}if(k==='rsnap'){try{localStorage.setItem('cv-rsnap',v)}catch(_){}B.querySelectorAll('[data-set=rsnap]').forEach(x=>x.classList.toggle('on',x.dataset.v===v));return}if(k==='picker'){setPickMode(v);B.querySelectorAll('[data-set=picker]').forEach(x=>x.classList.toggle('on',x.dataset.v===v));return}
-  if(k==='install')return doInstall();if(k==='storage')return openStorage();if(k==='vhist')return openVersions();if(k==='keys')return openKeys()}}
+  if(k==='hello'){closeG();return setTimeout(()=>window.onboard&&window.onboard(),200)}if(k==='install')return doInstall();if(k==='storage')return openStorage();if(k==='vhist')return openVersions();if(k==='keys')return openKeys()}}
 Object.assign(CMD,{settings:openSettings,fullscreen:toggleFS});
 /* ---------- auto layout & constraints ---------- */
 const alPar=n=>{const p=par(n);return p&&p.type==='frame'&&p.al?p:null};
@@ -3225,8 +3226,8 @@ window.ONB=(()=>{const get=k=>{try{return localStorage.getItem(k)}catch(e){retur
   M.hidden=false;put('cv-seen',cur);dots(false);setTimeout(()=>$('wnOk')?.focus(),0)}
  const hide=()=>{M.hidden=true};M.addEventListener('click',e=>{if(e.target===M||e.target.closest('#wnOk'))hide()});M.addEventListener('change',e=>{if(e.target.id==='wnOff')put('cv-wn-off',e.target.checked?'1':'0')});M.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Escape')hide()});
  Object.assign(CMD,{whatsnew:show,hello:()=>window.onboard&&window.onboard()});
- const help=document.querySelector('[data-ru="Справка"]')?.nextElementSibling?.querySelector('[data-c="keys"]');if(help)help.insertAdjacentHTML('afterend',`<button data-c="whatsnew" data-ru="Что нового" data-en="What’s new">${L('What’s new','Что нового')}</button>`+`<button data-c="hello" data-ru="Показать приветствие" data-en="Show welcome tour">${L('Show welcome tour','Показать приветствие')}</button>`);
- const mq=document.querySelector('.mq [data-c="settings"]');if(mq)mq.insertAdjacentHTML('afterend',`<button data-c="whatsnew"><svg viewBox="0 0 24 24">${WNI.helper}</svg><span data-ru="Что нового" data-en="What’s new">${L('What’s new','Что нового')}</span></button>`+`<button data-c="hello"><svg viewBox="0 0 24 24">${WNI.helper}</svg><span data-ru="Показать приветствие" data-en="Show welcome tour">${L('Show welcome tour','Показать приветствие')}</span></button>`);
+ const help=document.querySelector('[data-ru="Справка"]')?.nextElementSibling?.querySelector('[data-c="keys"]');if(help)help.insertAdjacentHTML('afterend',`<button data-c="whatsnew" data-ru="Что нового" data-en="What’s new">${L('What’s new','Что нового')}</button>`);
+ const mq=document.querySelector('.mq [data-c="settings"]');if(mq)mq.insertAdjacentHTML('afterend',`<button data-c="whatsnew"><svg viewBox="0 0 24 24">${WNI.helper}</svg><span data-ru="Что нового" data-en="What’s new">${L('What’s new','Что нового')}</span></button>`);
  const seen=get('cv-seen');if(seen!==cur){dots(true);
   Promise.all([kvGet('cur').catch(()=>null),kvGet('recent').catch(()=>null)]).then(([c,r])=>{const old=!!seen||(r&&r.length)||(c&&c.d&&c.d.length>40);if(!old){put('cv-seen',cur);dots(false);return}if(get('cv-wn-off')!=='1')setTimeout(show,900)})}})();
 </script>
