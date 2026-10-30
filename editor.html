@@ -773,7 +773,7 @@ V.addEventListener('pointerdown',e=>{if(e.target===TED)return;DN={x:e.clientX,y:
   if(k.startsWith('cr')){const n=topSel()[0];if(n)drag={m:'cr',i:+k.slice(2),n,t0:Date.now(),touch:e.pointerType==='touch',alt:e.altKey,moved:false};return}
   if(k==='pc'||k==='ir'){const n=topSel()[0];if(n)drag={m:k,n,moved:false};return}
   if(k==='rot')return startRot(p);
-  if(/^[aios]\d/.test(k)){const n=IDX.get(editPath).n;let i=+k.slice(1),t=k[0];if(t==='s'){i=splitSeg(n,i,p);t='a'}else if(t==='a'&&e.altKey){const P=ptAt(n,i).p;P.ox=P.oy=P.ix=P.iy=0;t='o'}actPt=i;drag={m:'pt',k:t,i,n,pull:t==='o'&&e.altKey,moved:k[0]==='s'};return render()}
+  if(/^[aios]\d/.test(k)){const n=IDX.get(editPath).n;let i=+k.slice(1),t=k[0];if(t==='s'){i=splitSeg(n,i,p,e.ctrlKey||e.metaKey);t='a'}else if(t==='a'&&e.altKey){const P=ptAt(n,i).p;P.ox=P.oy=P.ix=P.iy=0;t='o'}actPt=i;drag={m:'pt',k:t,i,n,pull:t==='o'&&e.altKey,moved:k[0]==='s'};return render()}
   if(/^q\d$/.test(k)){const n=IDX.get(distort).n;drag={m:'dq',i:+k[1],n,o:clone(n.dq)};return}
   return startRs(k)}
  if(tool==='pen')return penDown(p);
@@ -906,15 +906,17 @@ function restore(d){d.ts.forEach((n,i)=>{for(const k in n)delete n[k];Object.ass
 function doRs(p,e){const d=drag;d.moved=true;restore(d);const{hx,hy}=d,lk=!!(d.one?d.o[0].lar:d.ts.every(n=>n.lar)),isT=d.ts.every(n=>n.type==='text'),sh=!isT&&e.pointerType&&e.pointerType!=='mouse'&&hx&&hy?true:e.shiftKey!==lk;
  if(d.one){const n=d.one,o=d.o[0],c={x:o.x+o.w/2,y:o.y+o.h/2},t=(o.rot||0)*Math.PI/180,cs=Math.cos(t),sn=Math.sin(t),qx=p.x-c.x,qy=p.y-c.y,lx=qx*cs+qy*sn,ly=-qx*sn+qy*cs,ax=-hx*o.w/2,ay=-hy*o.h/2;
   let w=o.w,h=o.h;if(hx)w=Math.max(1,(lx-ax)*hx);if(hy)h=Math.max(1,(ly-ay)*hy);
+  const cen=e.altKey;if(cen){if(hx)w=Math.max(1,2*lx*hx);if(hy)h=Math.max(1,2*ly*hy)}
   if(sh&&o.w&&o.h){const k=hx&&hy?Math.max(w/o.w,h/o.h):hx?w/o.w:h/o.h;w=o.w*k;h=o.h*k}
   if(!o.rot){w=Math.round(w);h=Math.round(h)}
-  const ncx=hx?ax+hx*w/2:(sh&&hy?0:0),ncy=hy?ay+hy*h/2:0,wx=c.x+ncx*cs-ncy*sn,wy=c.y+ncx*sn+ncy*cs;
+  const ncx=hx&&!cen?ax+hx*w/2:0,ncy=hy&&!cen?ay+hy*h/2:0,wx=c.x+ncx*cs-ncy*sn,wy=c.y+ncx*sn+ncy*cs;
   let x=wx-w/2,y=wy-h/2;if(!o.rot){x=Math.round(x);y=Math.round(y)}if(n.type==='frame')frameResize(n,x,y,w,h,1);else{if(alPar(n)){if(hx&&n.lw==='fill')delete n.lw;if(hy&&n.lvh==='fill')delete n.lvh}setBox(n,x,y,w,h)}}
  else{const fb=d.fb;let tb={...fb};
   if(hx>0)tb.w=Math.max(1,p.x-fb.x);if(hx<0){tb.w=Math.max(1,fb.x+fb.w-p.x);tb.x=fb.x+fb.w-tb.w}
   if(hy>0)tb.h=Math.max(1,p.y-fb.y);if(hy<0){tb.h=Math.max(1,fb.y+fb.h-p.y);tb.y=fb.y+fb.h-tb.h}
   let k=hx&&hy?Math.sqrt(tb.w/fb.w*tb.h/fb.h):hx?tb.w/fb.w:tb.h/fb.h;
   if(sh||!hx||!hy){const s=hx&&hy?Math.max(tb.w/fb.w,tb.h/fb.h):k;if(sh){k=s;const nw=fb.w*s,nh=fb.h*s;if(hx<0)tb.x=fb.x+fb.w-nw;if(hy<0)tb.y=fb.y+fb.h-nh;if(!hx)tb.x=fb.x+(fb.w-nw)/2;if(!hy)tb.y=fb.y+(fb.h-nh)/2;tb.w=nw;tb.h=nh}}
+  if(e.altKey){const cx=fb.x+fb.w/2,cy=fb.y+fb.h/2;if(hx)tb.w=Math.max(1,2*hx*(p.x-cx));if(hy)tb.h=Math.max(1,2*hy*(p.y-cy));if(sh||!hx||!hy){const s=hx&&hy?Math.max(tb.w/fb.w,tb.h/fb.h):hx?tb.w/fb.w:tb.h/fb.h;if(sh){tb.w=fb.w*s;tb.h=fb.h*s}k=s}else k=Math.sqrt(tb.w/fb.w*tb.h/fb.h);tb.x=cx-tb.w/2;tb.y=cy-tb.h/2}
   d.ts.forEach(n=>scaleN(n,fb,tb,k))}
  if(d.xs)return xfFrame(d);render()}
 
@@ -937,11 +939,13 @@ function penDown(p){if(!pen)pen={pts:[],par:frameAt(p)};const P=pen.pts;
 function endPen(){const P=pen;pen=null;if(P&&P.pts.length>=2){const n=addNode(mk('path'),P.par);Object.assign(n,pathFrom(P.pts,!!P.closed));sel=[n];commit();setTool('move')}else render()}
 function enterPath(n){if(n.dq&&/path|rect|ellipse|poly|star/.test(n.type)){const S=deformSubs(n);n.type='path';n.pts=S[0].pts;n.closed=S[0].closed;if(S.length>1)n.more=S.slice(1);delete n.dq;delete n.r;normPath(n);commit()}if(/^(rect|ellipse|poly|star)$/.test(n.type)){toPath(n);commit()}if(n.type!=='path')return;editPath=n.id;sel=[n];actPt=-1;render()}
 function toPath(n){n.pts=shapePts(n);n.closed=true;n.type='path';delete n.r;delete n.rc;delete n.pc;delete n.ir;delete n.fx;delete n.fy}
-function splitSeg(n,gi,p){const r=ptAt(n,gi),q=w2l(n,p),P=r.s.pts,i=r.j,a=P[i],b=P[(i+1)%P.length],L2=(u,v,t)=>({x:u.x+(v.x-u.x)*t,y:u.y+(v.y-u.y)*t});
+function splitSeg(n,gi,p,crv){const r=ptAt(n,gi),q=w2l(n,p),P=r.s.pts,i=r.j,a=P[i],b=P[(i+1)%P.length],L2=(u,v,t)=>({x:u.x+(v.x-u.x)*t,y:u.y+(v.y-u.y)*t});
  const p0=a,p1={x:a.x+a.ox,y:a.y+a.oy},p2={x:b.x+b.ix,y:b.y+b.iy},p3=b;let bt=.5,bd=1/0;
  for(let j=1;j<100;j++){const t=j/100,m=L2(L2(L2(p0,p1,t),L2(p1,p2,t),t),L2(L2(p1,p2,t),L2(p2,p3,t),t),t),d=Math.hypot(m.x-q.x,m.y-q.y);if(d<bd){bd=d;bt=t}}
  const t=bt,a1=L2(p0,p1,t),b1=L2(p1,p2,t),c1=L2(p2,p3,t),a2=L2(a1,b1,t),b2=L2(b1,c1,t),m=L2(a2,b2,t),cv=a.ox||a.oy||b.ix||b.iy;
  const np={x:m.x,y:m.y,ix:cv?a2.x-m.x:0,iy:cv?a2.y-m.y:0,ox:cv?b2.x-m.x:0,oy:cv?b2.y-m.y:0};
+ /* Ctrl/Cmd on a straight segment: the new point gets smooth handles along the segment, so dragging it bends a curve */
+ if(crv&&!cv){const dx=b.x-a.x,dy=b.y-a.y,l=Math.hypot(dx,dy)||1,k=Math.min(Math.hypot(m.x-a.x,m.y-a.y),Math.hypot(b.x-m.x,b.y-m.y))/2/l;np.ix=-dx*k;np.iy=-dy*k;np.ox=dx*k;np.oy=dy*k}
  if(cv){a.ox=a1.x-a.x;a.oy=a1.y-a.y;b.ix=c1.x-b.x;b.iy=c1.y-b.y}P.splice(i+1,0,np);return gi+1}
 function exitPath(){if(!editPath)return;editPath=null;actPt=-1;render()}
 
@@ -1879,7 +1883,7 @@ async function gAct(a,v){if(a==='ok')return gRes?.($('gName').value.trim());if(a
 const MOD=/Mac|iP/.test(navigator.platform)?'⌘':'Ctrl';
 function openKeys(){const K=[[L('Tools','Инструменты'),[['V',L('Move','Выбор')],['H, Space',L('Hand (pan)','Рука')],['F, A',L('Frame','Фрейм')],['R',L('Rectangle','Прямоугольник')],['O',L('Ellipse','Эллипс')],['L',L('Line','Линия')],['P',L('Pen','Перо')],['Shift P',L('Pencil','Карандаш')],['T',L('Text','Текст')],['/','Cocoa Helper'],['?',L('This list','Этот список')]]],
  [L('Edit','Правка'),[[MOD+' Z',L('Undo','Отменить')],[MOD+' Shift Z, '+MOD+' Y',L('Redo','Повторить')],[MOD+' C / X / V',L('Copy / cut / paste','Копировать / вырезать / вставить')],[MOD+' D',L('Duplicate','Дублировать')],['Delete',L('Delete','Удалить')],[MOD+' A',L('Select all','Выделить всё')],[L('Alt + drag','Alt + перетаскивание'),L('Duplicate while moving','Копия при перемещении')],[L('Arrows','Стрелки'),L('Nudge (Shift: 8 px)','Сдвиг (Shift: 8 px)')]]],
- [L('Object','Объект'),[[MOD+' G',L('Group','Сгруппировать')],[MOD+' Shift G',L('Ungroup','Разгруппировать')],[MOD+' Alt M',L('Use as mask','Маска')],[MOD+' E',L('Flatten','В кривые')],[MOD+' ] / [',L('Forward / backward','Выше / ниже')],[MOD+' Shift ] / [',L('Front / back','Наверх / вниз')],['Shift H / V',L('Flip','Отразить')],['Shift A',L('Add auto layout','Добавить автораскладку')],['Alt Shift A',L('Remove auto layout','Убрать автораскладку')],['Enter',L('Edit points, text or enter group','Точки, текст или вход в группу')],['Shift Enter',L('Select parent','Выделить родителя')],['Esc',L('Done / deselect','Готово / снять выделение')]]],
+ [L('Object','Объект'),[[MOD+' G',L('Group','Сгруппировать')],[MOD+' Shift G',L('Ungroup','Разгруппировать')],[MOD+' Alt M',L('Use as mask','Маска')],[MOD+' E',L('Flatten','В кривые')],[MOD+' ] / [',L('Forward / backward','Выше / ниже')],[MOD+' Shift ] / [',L('Front / back','Наверх / вниз')],['Shift H / V',L('Flip','Отразить')],['Shift A',L('Add auto layout','Добавить автораскладку')],['Alt Shift A',L('Remove auto layout','Убрать автораскладку')],['Enter',L('Edit points, text or enter group','Точки, текст или вход в группу')],['Shift Enter',L('Select parent','Выделить родителя')],['Alt + drag handle',L('Resize from the centre','Масштаб от центра')],['Ctrl + click segment',L('Add a curved point (Edit points)','Добавить точку с кривой (точки)')],['Esc',L('Done / deselect','Готово / снять выделение')]]],
  [L('Text','Текст'),[[MOD+' B',L('Bold','Жирный')],[MOD+' I',L('Italic','Курсив')],[MOD+' U',L('Underline','Подчёркнутый')],[L('Select letters, then style them','Выделите буквы и меняйте их стиль'),'']]],
  [L('View','Вид'),[[MOD+' + / −',L('Zoom in / out','Приблизить / отдалить')],[MOD+L(' + wheel',' + колесо'),L('Zoom','Масштаб')],['Shift 1',L('Zoom to fit','Показать всё')],['Shift 2',L('Zoom to selection','Показать выделенное')],['Shift 0, '+MOD+' 0','100%']]],
  [L('File','Файл'),[[MOD+' S',L('Save','Сохранить')],[MOD+' Shift S',L('Save as','Сохранить как')],[MOD+' O',L('Open','Открыть')],[MOD+' Shift E',L('Export','Экспорт')]]]];
