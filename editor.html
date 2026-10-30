@@ -853,7 +853,7 @@ async function snapMake(){if(!SNAP.on||SNAP.busy||gx||drag||(typeof PT!=='undefi
   c.style.width=W2+'px';c.style.height=H2+'px';c.style.left=-mx+'px';c.style.top=-my+'px';SNAP.mx=mx;SNAP.my=my;SNAP.key=k;SNAP.v={...view};SNAP.dr=DRAWN;SNAP.vw=vw;SNAP.vh=vh;SNAP.ok=true;lodSync()}catch(e){SNAP.ok=false}finally{SNAP.busy=false}}
 SNAP.on=matchMedia('(pointer:coarse)').matches;
 /* touch drags: once ready, the dragged layers ride on a bitmap so the rest of the design never repaints */
-async function dragSprite(d){if(!SNAP||!SNAP.on||d.sp)return;d.sp={};try{const ts=topSel(),bb=union(ts.map(aabb));if(!bb)return;const z=view.z,pad=Math.ceil(48/Math.max(z,.05)),X=bb.x-pad,Y=bb.y-pad,Wd=bb.w+pad*2,Hd=bb.h+pad*2,sw=Wd*z,sh=Hd*z;if(sw*sh>4e6)return;
+async function dragSprite(d){if(!SNAP||!SNAP.on||d.sp)return;d.sp={};try{const ts=topSel(),bb=union(ts.map(aabb));if(!bb||xfOcc(ts))return;const z=view.z,pad=Math.ceil(48/Math.max(z,.05)),X=bb.x-pad,Y=bb.y-pad,Wd=bb.w+pad*2,Hd=bb.h+pad*2,sw=Wd*z,sh=Hd*z;if(sw*sh>4e6)return;
   const ax0=d.ax,ay0=d.ay,html=d.fe.map(el=>{const c=el.cloneNode(true);c.removeAttribute('transform');return c.outerHTML}).join(''),fc=await fontCSS(ts);if(drag!==d||/<image\b/.test(html))return;
   const svg=`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${sw}" height="${sh}" viewBox="0 0 ${sw} ${sh}">${fc}<g transform="scale(${z}) translate(${-X+(ax0-d.fb[0])} ${-Y+(ay0-d.fb[1])})">${html}</g></svg>`;
   const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'})),im=new Image();im.src=url;try{await im.decode()}finally{setTimeout(()=>URL.revokeObjectURL(url),100)}if(drag!==d)return;
@@ -865,7 +865,9 @@ function dragUI(d){const z=view.z,U=uiG();if(!d.ug||d.ug.sv!==U.sv){drawUI();d.u
  U.S.setAttribute('transform',`translate(${(d.ax-d.ug.ax)*z} ${(d.ay-d.ug.ay)*z})`);const gs=guideSVG();if(U.g!==gs){U.g=gs;U.G.innerHTML=gs}}
 /* touch rotate/resize: the layers ride on a bitmap that is rotated/stretched, the real layers update when the finger lifts */
 var XHIDE=null;
-function xfOK(d){if(!SNAP?.on)return false;const all=[];walk(n=>all.push(n),d.ts);if(d.m==='rot')return!all.some(n=>n.type==='frame');
+/* a pre-drawn picture of the selection sits above the whole canvas, so only use it when nothing on screen is painted above the selection */
+function xfOcc(ts){const ids=new Set();walk(n=>ids.add(n.id),ts);const z=view.z,vx=-view.x/z,vy=-view.y/z,vw=V.clientWidth/z,vh=V.clientHeight/z;let seen=0,occ=false;walk(n=>{if(occ)return;if(ids.has(n.id)){seen=1;return}if(!seen||n.hid||n.type==='group')return;let b=null;try{b=aabb(n)}catch(_){}if(b&&b.x<vx+vw&&b.x+b.w>vx&&b.y<vy+vh&&b.y+b.h>vy)occ=true});return occ}
+function xfOK(d){if(!SNAP?.on||xfOcc(d.ts))return false;const all=[];walk(n=>all.push(n),d.ts);if(d.m==='rot')return!all.some(n=>n.type==='frame');
  return d.ts.every(n=>!n.rot)&&!all.some(n=>n.type==='text'||n.al||(n.type==='frame'&&n.children?.length)||n.dq)}
 function xfStart(d){if(d.xs||!xfOK(d))return;d.xs={};const ts=d.ts,els=ts.map(n=>W.querySelector(`[data-id="${n.id}"]`));if(!els.length||els.some(x=>!x))return;
  const html=els.map(el=>{const c=el.cloneNode(true);c.removeAttribute('transform');c.style.visibility='';return inlB(c.outerHTML)}).join(''),ob=union(ts.map(aabb));if(!ob)return;const z=view.z,ext=d.m==='rot'?Math.hypot(ob.w,ob.h)/2:0,pad=Math.ceil(48/Math.max(z,.05)),X=ob.x-pad,Y=ob.y-pad,Wd=ob.w+pad*2,Hd=ob.h+pad*2,sw=Wd*z,sh=Hd*z;if(sw*sh>4e6)return;
