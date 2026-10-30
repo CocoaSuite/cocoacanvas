@@ -625,11 +625,15 @@ function outline(n,w){if(n.dq)return poly(n.dq.map(([x,y])=>l2w(n,x,y)),` stroke
  return poly(corners(n),` stroke-width="${w}"`)}
 
 function drawUI(){if(!gx)return drawUI0();const cv=view;view=gx.v0;try{drawUI0()}finally{view=cv}}
-var UIX={ng:false};function guideSVG(){let s='';const z=view.z;
+var UIX={ng:false};
+/* the overlay is three groups so a change in one never repaints the others */
+function uiG(){if(UI.__g&&UI.contains(UI.__g.L))return UI.__g;UI.innerHTML='';const NS='http://www.w3.org/2000/svg',mk_=id=>{const g=document.createElementNS(NS,'g');g.id=id;UI.appendChild(g);return g};UI.__g={L:mk_('uiL'),S:mk_('uiS'),G:mk_('uiG'),l:null,s:null,g:null};return UI.__g}
+function uiSet(l,s_,g){const U=uiG();if(U.l!==l){U.l=l;U.L.innerHTML=l}U.S.removeAttribute('transform');U.sv=(U.sv||0)+1;if(U.s!==s_){U.s=s_;U.S.innerHTML=s_}if(U.g!==g){U.g=g;U.G.innerHTML=g}}function guideSVG(){let s='';const z=view.z;
  if(drag?.g)for(const g of drag.g){if(g.seg){for(const[u,v]of g.s){const[a,b]=g.seg==='x'?[w2s(u,g.c),w2s(v,g.c)]:[w2s(g.c,u),w2s(g.c,v)],o=g.seg==='x'?[0,-4,0,4]:[-4,0,4,0];s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="var(--guide)"/>`+[a,b].map(P=>`<line x1="${P[0]+o[0]}" y1="${P[1]+o[1]}" x2="${P[0]+o[2]}" y2="${P[1]+o[3]}" stroke="var(--guide)"/>`).join('');const lb=String(Math.round(g.gap)),lw=lb.length*6.5+8,mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;s+=`<g class="badge"><rect x="${mx-lw/2}" y="${my-8}" width="${lw}" height="16" rx="3" style="fill:var(--guide)"/><text x="${mx}" y="${my+4}" text-anchor="middle">${lb}</text></g>`}continue}const[a,b]=g.x!=null?[w2s(g.x,g.a),w2s(g.x,g.b)]:[w2s(g.a,g.y),w2s(g.b,g.y)];s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="var(--guide)"/>`}
  return s}
 function drawUI0(){let s='';const z=view.z,hs=matchMedia('(pointer:coarse)').matches?8:4;
  {const FL=[];const scan=(l,inS)=>{for(const f of l)if(f.type==='frame'&&!f.hid){FL.push(f);if(f.sec)scan(f.children,1)}};scan(doc.nodes,0);for(const f of FL){const[x,y]=w2s(f.x,f.y);if(f.sec){const mx=Math.max(0,(f.w*z-24)/7|0);let t=nm(f);if(t.length>mx)t=mx>2?t.slice(0,mx-1)+'…':'';if(!t)continue;const tw=t.length*7+18;s+=`<g class="secL${sel.includes(f)?' on':''}" data-h="fl" data-f="${f.id}"><rect data-h="fl" data-f="${f.id}" x="${x+8}" y="${y+8}" width="${tw}" height="22" rx="7"/><text data-h="fl" data-f="${f.id}" x="${x+17}" y="${y+23}">${esc(t)}</text></g>`;continue}const mx=Math.max(0,f.w*z/6.4|0);let t=nm(f);if(t.length>mx)t=mx>2?t.slice(0,mx-1)+'…':'';s+=`<text class="fl${sel.includes(f)?' on':''}" data-h="fl" data-f="${f.id}" x="${x}" y="${y-6}">${esc(t)}</text>`}}
+ const sLab=s;s='';
  if(hover&&!sel.includes(hover)&&IDX.has(hover.id)&&!drag)s+=outline(hover,2);
  const ts=topSel();
  if(editPath){const n=IDX.get(editPath)?.n;if(n){s+=outline(n,1);const sp=(x,y)=>w2s(...l2w(n,x,y)).join(' ');let g0=0;for(const S of subs(n)){const Q=S.pts;for(let i=0;i<Q.length-(S.closed?0:1);i++){const a=Q[i],c=Q[(i+1)%Q.length];s+=`<path class="sg" data-h="s${g0+i}" d="M${sp(a.x,a.y)} C${sp(a.x+a.ox,a.y+a.oy)} ${sp(c.x+c.ix,c.y+c.iy)} ${sp(c.x,c.y)}"/>`}g0+=Q.length}subs(n).flatMap(S=>S.pts).forEach((p,i)=>{const A=w2s(...l2w(n,p.x,p.y));for(const k of['i','o']){const hx=p[k+'x'],hy=p[k+'y'];if(!hx&&!hy)continue;const H=w2s(...l2w(n,p.x+hx,p.y+hy));s+=`<line x1="${A[0]}" y1="${A[1]}" x2="${H[0]}" y2="${H[1]}" stroke="var(--sel)"/>${hs>4?`<circle data-h="${k}${i}" cx="${H[0]}" cy="${H[1]}" r="20" fill="transparent"/>`:''}<circle class="hd" data-h="${k}${i}" cx="${H[0]}" cy="${H[1]}" r="${hs}"/>`}
@@ -653,14 +657,14 @@ function drawUI0(){let s='';const z=view.z,hs=matchMedia('(pointer:coarse)').mat
    if(one&&isG(one.fill)&&!distort&&one.type!=='image')s+=gradUI(one,hs);
    const xs=P.map(p=>p[0]),ys=P.map(p=>p[1]),bt=`${r2(b.w)} × ${r2(b.h)}`,bw=bt.length*6.4+12,bx=(Math.min(...xs)+Math.max(...xs))/2;
    s+=`<g class="badge"><rect x="${bx-bw/2}" y="${Math.max(...ys)+8}" width="${bw}" height="18" rx="3"/><text x="${bx}" y="${Math.max(...ys)+21}" text-anchor="middle">${bt}</text></g>`}}
- if(!UIX.ng)s+=guideSVG();
+ const sGd=UIX.ng?'':guideSVG();
  if(drag?.m==='marq'&&drag.r){const[a,b]=w2s(drag.r.x,drag.r.y);s+=`<rect x="${a}" y="${b}" width="${drag.r.w*z}" height="${drag.r.h*z}" fill="rgba(75,156,255,.08)" stroke="var(--sel)"/>`}
  if(pen&&pen.pts.length){const P=pen.pts,f=(x,y)=>w2s(x,y).join(' ');let d='M'+f(P[0].x,P[0].y);for(let i=1;i<P.length;i++){const a=P[i-1],c=P[i];d+=` C${f(a.x+a.ox,a.y+a.oy)} ${f(c.x+c.ix,c.y+c.iy)} ${f(c.x,c.y)}`}
   const l=P[P.length-1];if(drag?.m!=='penh')d+=` C${f(l.x+l.ox,l.y+l.oy)} ${f(mouse.x,mouse.y)} ${f(mouse.x,mouse.y)}`;s+=`<path d="${d}" fill="none" stroke="var(--sel)" stroke-width="1.5"/>`;
   P.forEach((p,i)=>{const A=w2s(p.x,p.y);if(p.ox||p.oy){const o=w2s(p.x+p.ox,p.y+p.oy),q=w2s(p.x+p.ix,p.y+p.iy);s+=`<line x1="${q[0]}" y1="${q[1]}" x2="${o[0]}" y2="${o[1]}" stroke="var(--sel)"/><circle cx="${o[0]}" cy="${o[1]}" r="3" class="hd"/><circle cx="${q[0]}" cy="${q[1]}" r="3" class="hd"/>`}s+=`<rect class="hd" x="${A[0]-hs}" y="${A[1]-hs}" width="${hs*2}" height="${hs*2}"${i===0&&P.length>2?' style="fill:var(--sel)"':''}/>`})}
  if(drag?.m==='pencil')s+=`<polyline points="${drag.pts.map(p=>w2s(p.x,p.y).join(',')).join(' ')}" fill="none" stroke="var(--sel)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
  s+=alUI();
- UI.innerHTML=s;document.body.classList.toggle('hassel',!!sel.length&&!editing&&!editPath&&!pen);const bd=$('bDone');if(bd)bd.hidden=!(pen||editPath||distort||document.body.classList.contains('multi'))}
+ uiSet(sLab,s,sGd);document.body.classList.toggle('hassel',!!sel.length&&!editing&&!editPath&&!pen);const bd=$('bDone');if(bd)bd.hidden=!(pen||editPath||distort||document.body.classList.contains('multi'))}
 
 let frameNo=0;
 function mk(t,o={}){const b={id:nid(),type:t,name:'',x:0,y:0,w:0,h:0};
@@ -703,7 +707,8 @@ let asT;function autosave(){clearTimeout(asT);asT=setTimeout(()=>{kvSet('cur',{d
 let rq=0;function render(){if(rq)return;rq=requestAnimationFrame(draw)}
 const TLC=new WeakMap(),TLX=(k,v)=>k==='x'||k==='y'||k==='rot'||k==='fill'||k==='fills'||k==='stroke'||k==='strokes'||k==='efx'||k==='op'||k==='name'||k==='lock'||k==='hid'||k==='bl'||k==='cn'||k==='abs'?undefined:v;var FONTV=0;
 /* scene: only replace the top-level layers whose markup changed, so WebKit repaints a small area instead of the whole design */
-function sceneSet(){const bump=()=>{DRAWN++;if(drag&&drag.m==='move')drag.dax=[drag.ax||0,drag.ay||0]};if(anyBB){W.__p=null;W.innerHTML=renderKids(doc.nodes,1);return bump()}
+function sceneSet(){sceneSet0();if(XHIDE)xfHide()}
+function sceneSet0(){const bump=()=>{DRAWN++;if(drag&&drag.m==='move')drag.dax=[drag.ax||0,drag.ay||0]};if(anyBB){W.__p=null;W.innerHTML=renderKids(doc.nodes,1);return bump()}
  const P=doc.nodes.map(c=>svgOf(c,1)),O=W.__p,E=W.__e;
  const full=()=>{W.innerHTML=P.join('');const els=[];let i=0;const ch=W.children;for(const s of P){els.push(s?ch[i++]:null)}W.__p=P;W.__e=els;bump()};
  if(!O||!E||O.length!==P.length||W.childElementCount!==E.filter(Boolean).length)return full();
@@ -788,7 +793,7 @@ V.addEventListener('pointermove',e=>{const p=toW(e);mouse=p;const d=drag;
  case'pc':{const n=d.n,q=w2l(n,p),a=Math.atan2((q.y-n.h/2)/(n.h||1),(q.x-n.w/2)/(n.w||1))+Math.PI/2,th=((a%(2*Math.PI))+2*Math.PI)%(2*Math.PI),st=n.type==='star';let k=Math.round(2*Math.PI/Math.max(.05,th)*(st?1:1));k=clamp(k,3,60);d.moved=true;if(k!==n.pc){n.pc=k;try{navigator.vibrate?.(4)}catch(_){}}return render()}
  case'ir':{const n=d.n,q=w2l(n,p),r=Math.hypot((q.x-n.w/2)/(n.w/2||1),(q.y-n.h/2)/(n.h/2||1));n.ir=Math.round(clamp(r,.05,1)*100)/100;d.moved=true;return render()}
  case'rs':return doRs(p,e);
- case'rot':{d.moved=true;restore(d);let a=(Math.atan2(p.y-d.c.y,p.x-d.c.x)-d.a0)*180/Math.PI;const b=d.one?d.o[0].rot||0:0;if(e.shiftKey)a=Math.round((b+a)/15)*15-b;else if(e.pointerType!=='mouse'){const th=rSnap(),t=b+a,q=Math.round(t/15)*15;if(th&&Math.abs(t-q)<th){a=q-b;if(d.sn!==q){d.sn=q;try{navigator.vibrate?.(6)}catch(_){}}}else d.sn=null}d.ts.forEach(n=>rotN(n,d.c,a));return render()}
+ case'rot':{d.moved=true;restore(d);let a=(Math.atan2(p.y-d.c.y,p.x-d.c.x)-d.a0)*180/Math.PI;const b=d.one?d.o[0].rot||0:0;if(e.shiftKey)a=Math.round((b+a)/15)*15-b;else if(e.pointerType!=='mouse'){const th=rSnap(),t=b+a,q=Math.round(t/15)*15;if(th&&Math.abs(t-q)<th){a=q-b;if(d.sn!==q){d.sn=q;try{navigator.vibrate?.(6)}catch(_){}}}else d.sn=null}d.ts.forEach(n=>rotN(n,d.c,a));d.ang=a;return d.xs?xfFrame(d):render()}
  case'marq':{const r={x:Math.min(d.p0.x,p.x),y:Math.min(d.p0.y,p.y),w:Math.abs(p.x-d.p0.x),h:Math.abs(p.y-d.p0.y)};d.r=r;
   const cand=d.ctx?d.ctx.children:scope&&IDX.get(scope)?IDX.get(scope).n.children:doc.nodes;const hs=cand.filter(n=>{if(n.hid||n.lock)return false;const b=aabb(n);return b&&touch(b,r)});
   sel=[...new Set([...d.base,...hs])];return render()}
@@ -840,12 +845,28 @@ async function dragSprite(d){if(!SNAP||!SNAP.on||d.sp)return;d.sp={};try{const t
   const[sx,sy]=w2s(X,Y);c.style.cssText=`position:absolute;left:${sx}px;top:${sy}px;width:${sw}px;height:${sh}px;pointer-events:none;will-change:transform;transform:translate(${(d.ax-ax0)*z}px,${(d.ay-ay0)*z}px)`;
   V.insertBefore(c,$('notes'));for(const el of d.fe)el.style.visibility='hidden';d.sp={c,ax0,ay0,z}}catch(e){d.sp={}}}
 function dragSpriteEnd(d){const sp=d?.sp;if(!sp?.c)return;requestAnimationFrame(()=>requestAnimationFrame(()=>sp.c.remove()))}
-function dragUI(d){const z=view.z;if(!d.ug||!UI.contains(d.ug.sel)){UIX.ng=true;try{drawUI()}finally{UIX.ng=false}const NS='http://www.w3.org/2000/svg',sg=document.createElementNS(NS,'g'),gg=document.createElementNS(NS,'g');
-  for(const el of[...UI.children]){const c=el.getAttribute('class')||'';if(/\b(fl|secL)\b/.test(c))continue;sg.appendChild(el)}UI.appendChild(sg);UI.appendChild(gg);d.ug={sel:sg,gd:gg,ax:d.ax,ay:d.ay,gs:''}}
- const u=d.ug;u.sel.setAttribute('transform',`translate(${(d.ax-u.ax)*z} ${(d.ay-u.ay)*z})`);const gs=guideSVG();if(gs!==u.gs){u.gs=gs;u.gd.innerHTML=gs}}
+function dragUI(d){const z=view.z,U=uiG();if(!d.ug||d.ug.sv!==U.sv){drawUI();d.ug={ax:d.ax,ay:d.ay,sv:U.sv}}
+ U.S.setAttribute('transform',`translate(${(d.ax-d.ug.ax)*z} ${(d.ay-d.ug.ay)*z})`);const gs=guideSVG();if(U.g!==gs){U.g=gs;U.G.innerHTML=gs}}
+/* touch rotate/resize: the layers ride on a bitmap that is rotated/stretched, the real layers update when the finger lifts */
+var XHIDE=null;
+function xfOK(d){if(!SNAP?.on)return false;const all=[];walk(n=>all.push(n),d.ts);if(d.m==='rot')return!all.some(n=>n.type==='frame');
+ return d.ts.every(n=>!n.rot)&&!all.some(n=>n.type==='text'||n.al||(n.type==='frame'&&n.children?.length)||n.dq)}
+function xfStart(d){if(d.xs||!xfOK(d))return;d.xs={};const ts=d.ts,els=ts.map(n=>W.querySelector(`[data-id="${n.id}"]`));if(!els.length||els.some(x=>!x))return;
+ const html=els.map(el=>{const c=el.cloneNode(true);c.removeAttribute('transform');c.style.visibility='';return c.outerHTML}).join(''),ob=union(ts.map(aabb));if(!ob)return;const z=view.z,ext=d.m==='rot'?Math.hypot(ob.w,ob.h)/2:0,pad=Math.ceil(48/Math.max(z,.05)),X=ob.x-pad,Y=ob.y-pad,Wd=ob.w+pad*2,Hd=ob.h+pad*2,sw=Wd*z,sh=Hd*z;if(sw*sh>4e6)return;
+ (async()=>{try{const fc=await fontCSS(ts);if(drag!==d)return;const svg=`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${sw}" height="${sh}" viewBox="0 0 ${sw} ${sh}">${fc}<g transform="scale(${z}) translate(${-X} ${-Y})">${html}</g></svg>`;
+  const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'})),im=new Image();im.src=url;try{await im.decode()}finally{setTimeout(()=>URL.revokeObjectURL(url),100)}if(drag!==d)return;
+  const sc=Math.min(devicePixelRatio||1,2),c=document.createElement('canvas');c.width=Math.round(sw*sc);c.height=Math.round(sh*sc);let bm=null;try{bm=await createImageBitmap(im,{resizeWidth:c.width,resizeHeight:c.height})}catch(_){}if(drag!==d)return;c.getContext('2d').drawImage(bm||im,0,0,c.width,c.height);bm?.close?.();
+  const[sx,sy]=w2s(X,Y);c.style.cssText=`position:absolute;left:${sx}px;top:${sy}px;width:${sw}px;height:${sh}px;pointer-events:none;will-change:transform`;V.insertBefore(c,$('notes'));
+  d.xs={c,X,Y,z,ob};XHIDE=new Set(ts.map(n=>n.id));xfHide();xfFrame(d)}catch(e){d.xs={}}})()}
+function xfHide(){if(!XHIDE)return;for(const id of XHIDE){const el=W.querySelector(`[data-id="${id}"]`);if(el)el.style.visibility='hidden'}}
+function xfFrame(d){const x=d.xs;if(!x?.c)return render();if(d.xq)return;d.xq=requestAnimationFrame(()=>{d.xq=0;if(drag!==d)return;const z=x.z;
+  if(d.m==='rot'){x.c.style.transformOrigin=`${(d.c.x-x.X)*z}px ${(d.c.y-x.Y)*z}px`;x.c.style.transform=`rotate(${d.ang||0}deg)`}
+  else{const nb=union(d.ts.map(aabb))||x.ob,ob=x.ob;x.c.style.transformOrigin=`${(ob.x-x.X)*z}px ${(ob.y-x.Y)*z}px`;x.c.style.transform=`translate(${(nb.x-ob.x)*z}px,${(nb.y-ob.y)*z}px) scale(${nb.w/(ob.w||1)},${nb.h/(ob.h||1)})`}
+  drawUI();if(!d.fi||performance.now()-d.fi>150){d.fi=performance.now();try{insp()}catch(_){}}})}
+function xfEnd(d){const x=d?.xs;XHIDE=null;if(d?.xq)cancelAnimationFrame(d.xq);if(!x?.c)return;for(const n of d.ts){const el=W.querySelector(`[data-id="${n.id}"]`);if(el)el.style.visibility=''}requestAnimationFrame(()=>requestAnimationFrame(()=>x.c.remove()))}
 var DRAWN=0;function fastMove(d){if(d.fm===false)return false;if(d.fmN!==DRAWN||!d.fe){const ts=topSel(),els=ts.map(n=>W.querySelector(`[data-id="${n.id}"]`));if(!els.length||els.some(x=>!x)){d.fm=false;return false}if(d.sp?.c){d.sp.c.remove();d.sp=null}d.fe=els;d.fb=d.dax||[0,0];d.fmN=DRAWN;if(SNAP?.on&&!d.alp)dragSprite(d)}
  const tx=d.ax-d.fb[0],ty=d.ay-d.fb[1];if(!d.fq){d.fq=requestAnimationFrame(()=>{d.fq=0;if(drag!==d)return;const X=d.ax-d.fb[0],Y=d.ay-d.fb[1];if(d.sp?.c)d.sp.c.style.transform=`translate(${(d.ax-d.sp.ax0)*d.sp.z}px,${(d.ay-d.sp.ay0)*d.sp.z}px)`;else for(const el of d.fe)el.setAttribute('transform',`translate(${X} ${Y})`);dragUI(d);if(!d.fi||performance.now()-d.fi>120){d.fi=performance.now();try{insp()}catch(_){}}})}return true}
-function endDrag(e){const d=drag;if(!d)return;drag=null;if(d.sp?.c){for(const el of d.fe||[]){el.style.visibility='';el.setAttribute('transform',`translate(${d.ax-d.fb[0]} ${d.ay-d.fb[1]})`)}dragSpriteEnd(d)}if(d.m==='pan')gxEnd();V.classList.remove('dn');
+function endDrag(e){const d=drag;if(!d)return;drag=null;if(d.xs)xfEnd(d);if(d.sp?.c){for(const el of d.fe||[]){el.style.visibility='';el.setAttribute('transform',`translate(${d.ax-d.fb[0]} ${d.ay-d.fb[1]})`)}dragSpriteEnd(d)}if(d.m==='pan')gxEnd();V.classList.remove('dn');
  if(d.m==='move'){if(d.moved&&flickDel(d,e))return;if(d.moved){if(d.alp)alDrop(d,mouse);else reparent();commit()}else if(d.drill)setSel([d.drill]);else{if(d.n&&!e.shiftKey&&!document.body.classList.contains('multi')&&sel.length>1)setSel([d.n])}}
  else if((d.m==='rs'||d.m==='rot'||d.m==='pc'||d.m==='ir')&&d.moved)commit();
  else if(d.m==='new')endNew(d);
@@ -861,8 +882,8 @@ V.addEventListener('pointerleave',()=>{if(hover&&!drag){hover=null;drawUI()}});
 
 function reparent(){for(const n of topSel()){const p=par(n);if(p&&(p.type!=='frame'||par(p)))continue;const b=aabb(n);if(!b)continue;const t=frameAt({x:b.x+b.w/2,y:b.y+b.h/2},n);if(t&&anc(t,n))continue;if(t!==p){detach(n);if(t?.al)alInsert(t,[n],{x:b.x+b.w/2,y:b.y+b.h/2});else(t?t.children:doc.nodes).push(n);reindex()}}}
 
-function startRs(k){const[hx,hy]=k.split(',').map(Number),ts=topSel();if(ts.length===1&&ts[0].type==='text'&&hy&&!ts[0].fixH){ts[0].fixW=true;ts[0].fixH=true;ts[0].hh=ts[0].h}drag={m:'rs',hx,hy,ts,one:ts.length===1&&!isGrp(ts[0])&&!ts[0].dq?ts[0]:null,o:ts.map(clone),fb:selBox(),moved:false}}
-function startRot(p){const ts=topSel(),one=ts.length===1&&!isGrp(ts[0])?ts[0]:null,b=one||selBox(),c={x:b.x+b.w/2,y:b.y+b.h/2};drag={m:'rot',ts,one,c,a0:Math.atan2(p.y-c.y,p.x-c.x),o:ts.map(clone),moved:false}}
+function startRs(k){const[hx,hy]=k.split(',').map(Number),ts=topSel();if(ts.length===1&&ts[0].type==='text'&&hy&&!ts[0].fixH){ts[0].fixW=true;ts[0].fixH=true;ts[0].hh=ts[0].h}drag={m:'rs',hx,hy,ts,one:ts.length===1&&!isGrp(ts[0])&&!ts[0].dq?ts[0]:null,o:ts.map(clone),fb:selBox(),moved:false};xfStart(drag)}
+function startRot(p){const ts=topSel(),one=ts.length===1&&!isGrp(ts[0])?ts[0]:null,b=one||selBox(),c={x:b.x+b.w/2,y:b.y+b.h/2};drag={m:'rot',ts,one,c,a0:Math.atan2(p.y-c.y,p.x-c.x),o:ts.map(clone),moved:false};xfStart(drag)}
 function restore(d){d.ts.forEach((n,i)=>{for(const k in n)delete n[k];Object.assign(n,clone(d.o[i]))});reindex()}
 function doRs(p,e){const d=drag;d.moved=true;restore(d);const{hx,hy}=d,lk=!!(d.one?d.o[0].lar:d.ts.every(n=>n.lar)),isT=d.ts.every(n=>n.type==='text'),sh=!isT&&e.pointerType&&e.pointerType!=='mouse'&&hx&&hy?true:e.shiftKey!==lk;
  if(d.one){const n=d.one,o=d.o[0],c={x:o.x+o.w/2,y:o.y+o.h/2},t=(o.rot||0)*Math.PI/180,cs=Math.cos(t),sn=Math.sin(t),qx=p.x-c.x,qy=p.y-c.y,lx=qx*cs+qy*sn,ly=-qx*sn+qy*cs,ax=-hx*o.w/2,ay=-hy*o.h/2;
@@ -877,7 +898,7 @@ function doRs(p,e){const d=drag;d.moved=true;restore(d);const{hx,hy}=d,lk=!!(d.o
   let k=hx&&hy?Math.sqrt(tb.w/fb.w*tb.h/fb.h):hx?tb.w/fb.w:tb.h/fb.h;
   if(sh||!hx||!hy){const s=hx&&hy?Math.max(tb.w/fb.w,tb.h/fb.h):k;if(sh){k=s;const nw=fb.w*s,nh=fb.h*s;if(hx<0)tb.x=fb.x+fb.w-nw;if(hy<0)tb.y=fb.y+fb.h-nh;if(!hx)tb.x=fb.x+(fb.w-nw)/2;if(!hy)tb.y=fb.y+(fb.h-nh)/2;tb.w=nw;tb.h=nh}}
   d.ts.forEach(n=>scaleN(n,fb,tb,k))}
- render()}
+ if(d.xs)return xfFrame(d);render()}
 
 function doNew(p,e){const d=drag;let x0=d.p0.x,y0=d.p0.y,dx=p.x-x0,dy=p.y-y0;if(!d.n&&Math.hypot(dx,dy)*view.z<3)return;
  if(d.t==='line'){if(e.shiftKey){const a=Math.round(Math.atan2(dy,dx)/(Math.PI/4))*Math.PI/4,l=Math.hypot(dx,dy);dx=Math.cos(a)*l;dy=Math.sin(a)*l}
