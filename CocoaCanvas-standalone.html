@@ -300,7 +300,8 @@ body{grid-template-columns:minmax(0,1fr)}#top{min-width:0}
 #trHint button{padding:1px 8px;font-size:12px;margin-left:4px}
 .kt{display:grid;grid-template-columns:1fr auto;gap:5px 16px;max-height:62vh;overflow:auto;align-items:center}.kt h3{grid-column:1/-1;margin:10px 0 0;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute);font-weight:600}.kt kbd{font:12px var(--mono);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:1px 6px;white-space:nowrap}
 .vl{display:flex;flex-direction:column;gap:4px;max-height:50vh;overflow:auto}.vr{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--line);border-radius:6px}.vr div{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}.vr small{display:block;color:var(--mute)}
-#ted{color:transparent!important;-webkit-text-fill-color:transparent}#ted::selection{background:rgba(75,156,255,.35)}
+#ted{color:transparent!important;-webkit-text-fill-color:transparent;caret-color:transparent!important}#ted::selection{background:transparent;color:transparent}
+#tedC{position:absolute;pointer-events:none;transform-origin:center;z-index:2}#tedC i{position:absolute;background:rgba(75,156,255,.32)}#tedC b{position:absolute;width:2px;margin-left:-1px;background:var(--sel);animation:tcB 1.06s steps(1) infinite}#tedC.mv b{animation:none}@keyframes tcB{50%{opacity:0}}
 #view.t-pick{cursor:crosshair}
 .gbox{width:min(520px,100%)!important}
 .rnm{position:fixed;z-index:90;height:30px;padding:0 8px;font:13px var(--sans);background:var(--panel);color:var(--fg);border:1.5px solid var(--sel);border-radius:6px;box-shadow:0 6px 20px rgba(0,0,0,.5);outline:none}
@@ -485,7 +486,7 @@ details.wnV{background:none;padding:0}details.wnV summary{list-style:none;displa
 <main id="mid">
  <aside id="lay"><div class="ph"><span data-ru="Слои">Layers</span><button data-c="img" data-ru="+ Фото">+ Image</button><button class="ic tb" data-c="laycol" data-tt="Hide panel|Скрыть панель"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button></div><input id="laySearch" type="search" autocomplete="off" spellcheck="false"><div id="layList"></div></aside>
  <section id="stage">
-  <div id="view"><svg id="scene" xmlns="http://www.w3.org/2000/svg"><g id="world"></g></svg><div id="notes"></div><svg id="ui"></svg><textarea id="ted" hidden spellcheck="false"></textarea></div>
+  <div id="view"><svg id="scene" xmlns="http://www.w3.org/2000/svg"><g id="world"></g></svg><div id="notes"></div><svg id="ui"></svg><div id="tedC" hidden></div><textarea id="ted" hidden spellcheck="false"></textarea></div>
   <button id="fabL" class="fab" data-tt="Layers|Слои"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></button><button id="fabX" class="fab" data-c="del" data-tt="Delete|Удалить"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button><button id="fabD" class="fab" data-tt="Design|Дизайн"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button><button id="bDone" class="pri" data-c="done" data-ru="Готово" hidden>Done</button>
   <div id="tbar">
    <button id="dkL" class="ic dk" data-tt="Layers|Слои"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></button>
@@ -939,14 +940,32 @@ function splitSeg(n,gi,p){const r=ptAt(n,gi),q=w2l(n,p),P=r.s.pts,i=r.j,a=P[i],b
  if(cv){a.ox=a1.x-a.x;a.oy=a1.y-a.y;b.ix=c1.x-b.x;b.iy=c1.y-b.y}P.splice(i+1,0,np);return gi+1}
 function exitPath(){if(!editPath)return;editPath=null;actPt=-1;render()}
 
-function editText(n,isNew,at){trange=null;editing=n;doc.lt=n.id;TED.hidden=false;TED.value=n.text;render();posTed();TED.focus();if(at){const o=caretAt(n,at);try{TED.setSelectionRange(o,o)}catch(_){}}else if(!isNew)TED.select();if(matchMedia('(pointer:coarse)').matches){setTimeout(revealSel,350);setTimeout(revealSel,800)}}
+function editText(n,isNew,at){trange=null;editing=n;doc.lt=n.id;TED.hidden=false;TC_.hidden=false;tcLoop();TED.value=n.text;render();posTed();TED.focus();if(at){const o=caretAt(n,at);try{TED.setSelectionRange(o,o)}catch(_){}}else if(!isNew)TED.select();if(matchMedia('(pointer:coarse)').matches){setTimeout(revealSel,350);setTimeout(revealSel,800)}}
 function posTed(){const n=editing;if(!n)return;layoutT(n);const z=view.z,[x,y]=w2s(n.x,n.y),s=TED.style;
  const Lt=n._L;s.left=x+'px';s.top=y+'px';s.font=`${n.it?'italic ':''}${n.fw||400} ${n.fs*z}px/${n.fs*(n.lh||1.2)*z}px ${ffCss(n.ff)}`;s.letterSpacing=(n.ls||0)*z+'px';s.paddingLeft=(Lt?.lines[0]?.ind||0)*z+'px';s.textAlign=n.ta||'left';
- s.width=(n.w*z+(n.fixW?0:2))+'px';s.height=Math.max((Lt?Lt.lines.length*Lt.lh:n.h)*z,n.fs*z)+'px';s.transform=n.rot?`rotate(${n.rot}deg)`:'';s.opacity=n.op??1;TED.classList.toggle('fw',!!n.fixW)}
+ s.width=(n.w*z+(n.fixW?0:2))+'px';s.height=Math.max((Lt?Lt.lines.length*Lt.lh:n.h)*z,n.fs*z)+'px';s.transform=n.rot?`rotate(${n.rot}deg)`:'';s.opacity=n.op??1;TED.classList.toggle('fw',!!n.fixW);const c=TC_.style;c.left=s.left;c.top=s.top;c.width=n.w*z+'px';c.height=s.height;c.transform=s.transform;TCK='';tcDraw()}
 TED.addEventListener('input',()=>{if(!editing)return;const o=String(editing.text),v=TED.value;if(editing.runs?.length){let p=0;while(p<o.length&&p<v.length&&o[p]===v[p])p++;let q=0;while(q<o.length-p&&q<v.length-p&&o[o.length-1-q]===v[v.length-1-q])q++;const A=charStyles(editing),k=A[p-1]||A[p]||null;editing.runs=packRuns([...A.slice(0,p),...Array(v.length-p-q).fill(k),...A.slice(o.length-q)].map(x=>x?{...x}:{}));if(!editing.runs.length)delete editing.runs}editing.text=v;posTed();render()});
 TED.addEventListener('blur',()=>{if(editing){const a=TED.selectionStart,b=TED.selectionEnd;trange=a<b?{id:editing.id,s:a,e:b}:null}endText()});
 TED.addEventListener('keydown',e=>{e.stopPropagation();if((e.ctrlKey||e.metaKey)&&/^[biu]$/i.test(e.key)){e.preventDefault();return textToggle(e.key.toLowerCase())}if(e.key==='Escape'){e.preventDefault();TED.blur()}});
-function endText(){const n=editing;if(!n)return;editing=null;TED.hidden=true;n.text=TED.value;if(!n.text.trim()){detach(n);reindex()}commit()}
+/* Caret and selection are drawn from the real text layout, so mixed bold/italic/size runs line up (the textarea underneath only takes input). */
+const TC_=document.getElementById('tedC');let TCK='',TCT=0;
+function tcPos(n,o){const T=n._L||layoutT(n),Ls=T.lines;if(!Ls.length)return{li:0,x:0};let li=0;for(let i=0;i<Ls.length;i++){if((Ls[i].o??0)<=o)li=i;else break}
+ const l=Ls[li];let x=l.x;for(const g of l.segs){if(o<=g.o)break;if(o>=g.o+g.t.length){x+=g.w;continue}x+=tMeasure(n,g.t.slice(0,o-g.o),g.k);break}return{li,x}}
+function tcDraw(){const n=editing;if(!n||TC_.hidden)return;const a=TED.selectionStart,b=TED.selectionEnd,k=a+','+b+','+TED.value.length+','+view.z+','+(document.activeElement===TED);if(k===TCK)return;TCK=k;
+ const z=view.z,T=n._L||layoutT(n),lh=T.lh;let h='';
+ if(a===b){if(document.activeElement===TED){const p=tcPos(n,a);h=`<b style="left:${p.x*z}px;top:${p.li*lh*z}px;height:${lh*z}px"></b>`}}
+ else{const p=tcPos(n,a),q=tcPos(n,b);for(let li=p.li;li<=q.li;li++){const l=T.lines[li];if(!l)continue;const x0=li===p.li?p.x:l.x,x1=li===q.li?q.x:l.x+Math.max(l.w,n.fs*.3);if(x1>x0)h+=`<i style="left:${x0*z}px;top:${li*lh*z}px;width:${(x1-x0)*z}px;height:${lh*z}px"></i>`}}
+ TC_.innerHTML=h;TC_.classList.add('mv');clearTimeout(TCT);TCT=setTimeout(()=>TC_.classList.remove('mv'),500)}
+function tcLoop(){if(!editing)return;tcDraw();requestAnimationFrame(tcLoop)}
+/* Mouse: place the caret from the real layout instead of the textarea's single-style metrics. */
+let TCD=null;const tcWord=(t,i)=>{const re=/[\p{L}\p{N}_]/u;let a=i,b=i;if(!re.test(t[i]||'')&&re.test(t[i-1]||''))a=b=i-1;if(!re.test(t[a]||''))return[i,Math.min(t.length,i+1)];while(a>0&&re.test(t[a-1]))a--;while(b<t.length&&re.test(t[b]))b++;return[a,b]};
+TED.addEventListener('pointerdown',e=>{if(!editing||e.pointerType!=='mouse'||e.button!==0)return;e.preventDefault();TED.focus();const t=TED.value,o=caretAt(editing,toW(e));
+ if(e.detail===2){const[a,b]=tcWord(t,o);TED.setSelectionRange(a,b);TCD={a,b,w:1}}else if(e.detail>=3){const a=t.lastIndexOf('\n',o-1)+1,i=t.indexOf('\n',o),b=i<0?t.length:i;TED.setSelectionRange(a,b);TCD=null;return}
+ else{const an=e.shiftKey?(TED.selectionDirection==='backward'?TED.selectionEnd:TED.selectionStart):o;TCD={a:an,b:an};TED.setSelectionRange(Math.min(an,o),Math.max(an,o),o<an?'backward':'forward')}try{TED.setPointerCapture(e.pointerId)}catch(_){}});
+TED.addEventListener('pointermove',e=>{if(!TCD||!editing)return;let o=caretAt(editing,toW(e)),a=TCD.a,b=TCD.b;if(TCD.w){const[wa,wb]=tcWord(TED.value,o);if(wa<a){TED.setSelectionRange(wa,b,'backward')}else TED.setSelectionRange(a,Math.max(b,wb));return}TED.setSelectionRange(Math.min(a,o),Math.max(a,o),o<a?'backward':'forward')});
+TED.addEventListener('pointerup',e=>{if(TCD){TCD=null;return}
+ if(editing&&e.pointerType!=='mouse'){const p=toW(e),n=editing;setTimeout(()=>{if(editing===n&&TED.selectionStart===TED.selectionEnd){const o=caretAt(n,p);TED.setSelectionRange(o,o)}},0)}});
+function endText(){const n=editing;if(!n)return;editing=null;TED.hidden=true;TC_.hidden=true;n.text=TED.value;if(!n.text.trim()){detach(n);reindex()}commit()}
 
 V.addEventListener('dblclick',e=>{if(tool!=='move'||pen)return;const tg=document.elementFromPoint(e.clientX,e.clientY);if(!tg)return;{const fl=tg.closest('[data-h="fl"]');if(fl){const f=IDX.get(fl.dataset.f)?.n;if(f){setSel([f]);return renameNode(f,1)}}}const a=tg.closest('[data-h^="a"]');
  if(a&&editPath){const n=IDX.get(editPath).n,r=ptAt(n,+a.dataset.h.slice(1)),P=r.p,Q=r.s.pts,i=r.j;if(P.ix||P.iy||P.ox||P.oy){P.ix=P.iy=P.ox=P.oy=0}else{const N=Q.length,pr=Q[(i-1+N)%N],nx=Q[(i+1)%N],vx=(nx.x-pr.x)/6,vy=(nx.y-pr.y)/6;P.ox=vx;P.oy=vy;P.ix=-vx;P.iy=-vy}normPath(n);return commit()}
