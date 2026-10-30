@@ -949,7 +949,7 @@ function posTed(){const n=editing;if(!n)return;layoutT(n);const z=view.z,[x,y]=w
  s.width=(n.w*z+(n.fixW?0:2))+'px';s.height=Math.max((Lt?Lt.lines.length*Lt.lh:n.h)*z,n.fs*z)+'px';s.transform=n.rot?`rotate(${n.rot}deg)`:'';s.opacity=n.op??1;TED.classList.toggle('fw',!!n.fixW);const c=TC_.style;c.left=s.left;c.top=s.top;c.width=n.w*z+'px';c.height=s.height;c.transform=s.transform;TCK='';tcDraw()}
 TED.addEventListener('input',()=>{if(!editing)return;const o=String(editing.text),v=TED.value;if(editing.runs?.length){let p=0;while(p<o.length&&p<v.length&&o[p]===v[p])p++;let q=0;while(q<o.length-p&&q<v.length-p&&o[o.length-1-q]===v[v.length-1-q])q++;const A=charStyles(editing),k=A[p-1]||A[p]||null;editing.runs=packRuns([...A.slice(0,p),...Array(v.length-p-q).fill(k),...A.slice(o.length-q)].map(x=>x?{...x}:{}));if(!editing.runs.length)delete editing.runs}editing.text=v;posTed();render()});
 TED.addEventListener('blur',()=>{if(editing){const a=TED.selectionStart,b=TED.selectionEnd;trange=a<b?{id:editing.id,s:a,e:b}:null}endText()});
-TED.addEventListener('keydown',e=>{e.stopPropagation();if((e.ctrlKey||e.metaKey)&&/^[biu]$/i.test(e.key)){e.preventDefault();return textToggle(e.key.toLowerCase())}if(e.key==='Escape'){e.preventDefault();TED.blur()}});
+TED.addEventListener('keydown',e=>{e.stopPropagation();const lk=latKey(e);if((e.ctrlKey||e.metaKey)&&/^[biu]$/i.test(lk)){e.preventDefault();return textToggle(lk.toLowerCase())}if(e.key==='Escape'){e.preventDefault();TED.blur()}});
 /* Caret and selection are drawn from the real text layout, so mixed bold/italic/size runs line up (the textarea underneath only takes input). */
 const TC_=document.getElementById('tedC');let TCK='',TCT=0;
 function tcPos(n,o){const T=n._L||layoutT(n),Ls=T.lines;if(!Ls.length)return{li:0,x:0};let li=0;for(let i=0;i<Ls.length;i++){if((Ls[i].o??0)<=o)li=i;else break}
@@ -1272,7 +1272,7 @@ window.addEventListener('dragover',e=>e.preventDefault());
 window.addEventListener('drop',e=>{e.preventDefault();dragN=0;$('drop').hidden=true;const fs=[...e.dataTransfer.files];if(fs.some(f=>/\.(ttf|otf|woff2?)$/i.test(f.name)))importFonts(fs);const pj=fs.find(f=>/\.(ccanvas|json)$/i.test(f.name));if(pj)return pj.text().then(openData);const fg=fs.find(f=>/\.fig$/i.test(f.name));if(fg)return fg.arrayBuffer().then(b=>openFig(b,fg.name.replace(/\.fig$/i,'')));const at=V.contains(e.target)?toW(e):null,vf=fs.filter(f=>/\.(svg|psd|pdf|html?)$/i.test(f.name));if(vf.length)importFiles(vf,at);addImages(fs.filter(f=>!vf.includes(f)),at)});
 
 /*expItems moved*/
-const svgStr=(ns,b,sc=1,css='')=>`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${r2(b.w*sc)}" height="${r2(b.h*sc)}" viewBox="${r2(b.x)} ${r2(b.y)} ${r2(b.w)} ${r2(b.h)}">${css}${renderKids(ns.map(n=>({...n,hid:false})),0)}</svg>`;
+const svgStr=(ns,b,sc=1,css='')=>{EXPT++;try{return`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${r2(b.w*sc)}" height="${r2(b.h*sc)}" viewBox="${r2(b.x)} ${r2(b.y)} ${r2(b.w)} ${r2(b.h)}">${css}${renderKids(ns.map(n=>({...n,hid:false})),0)}</svg>`}finally{EXPT--}};
 /*rast moved*/
 /*doExport moved*/
 let XP=[],XPT=new Map();
@@ -1316,7 +1316,10 @@ document.addEventListener('click',e=>{const mt=e.target.closest('.mt');if(mt){co
 document.addEventListener('pointerover',e=>{const mt=e.target.closest?.('.mt');if(mt&&document.querySelector('.mn.on')&&!mt.parentNode.classList.contains('on')){closeMenus();mt.parentNode.classList.add('on')}});
 
 const TK={v:'move',h:'hand',f:'frame',a:'frame',r:'rect',o:'ellipse',l:'line',p:'pen',t:'text'};
-document.addEventListener('keydown',e=>{if(inField())return;const k=e.key,K=k.toLowerCase(),m=e.ctrlKey||e.metaKey;
+/* shortcuts follow the physical key, so they work the same on Russian and other non-Latin layouts */
+const KPUN={BracketLeft:'[]{',BracketRight:']}',Backslash:'\\|',Semicolon:';:',Quote:"'\"",Comma:',<',Period:'.>',Slash:'/?',Backquote:'`~',Minus:'-_',Equal:'=+'};
+function latKey(e){const k=e.key;if(!k||k.length!==1||/^[\x20-\x7e]$/.test(k)&&!(e.altKey&&/Mac/.test(navigator.platform)))return k;const c=e.code||'';let m=/^Key([A-Z])$/.exec(c);if(m)return e.shiftKey?m[1]:m[1].toLowerCase();m=/^Digit(\d)$/.exec(c);if(m&&!e.shiftKey)return m[1];const p=KPUN[c];if(p)return e.shiftKey?p[1]:p[0];return k}
+document.addEventListener('keydown',e=>{if(inField())return;const k=latKey(e),K=k.toLowerCase(),m=e.ctrlKey||e.metaKey;
  if(!$('gModal').hidden){if(k==='Escape')gRes?gRes(null):closeG();return}
  if(!$('fModal').hidden){if(k==='Escape')$('fModal').hidden=true;return}
  if(!$('xModal').hidden){if(k==='Escape')$('xModal').hidden=true;if(k==='Enter')CMD.xgo();return}
@@ -1744,7 +1747,7 @@ const POD=`<svg class="qPod" aria-hidden="true" viewBox="3 3 46 58" xmlns="http:
   else if(e.key==='ArrowUp'&&hist.length){e.preventDefault();hi=Math.min(hist.length-1,hi+1);inp.value=hist[hi];live()}else if(e.key==='ArrowDown'){e.preventDefault();hi=Math.max(-1,hi-1);inp.value=hi<0?'':hist[hi];live()}});
  bar.addEventListener('mousedown',e=>{if(e.target.closest('button'))e.preventDefault()});
  bar.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.id==='qGo'){const v=inp.value.trim();if(v)run(v);else{inp.focus();live()}}else if(b.dataset.run){inp.value=b.dataset.run;inp.focus();live()}});
- document.addEventListener('keydown',e=>{if(e.key==='/'&&!e.ctrlKey&&!e.metaKey&&!inField()){e.preventDefault();inp.focus()}})})();
+ document.addEventListener('keydown',e=>{if(latKey(e)==='/'&&!e.ctrlKey&&!e.metaKey&&!inField()){e.preventDefault();inp.focus()}})})();
 
 const NOK={};
 function tStyle(n,k){return`${(k.it??n.it)?'italic ':''}${k.fw||n.fw||400} ${n.fs}px ${ffCss(n.ff)}`}
@@ -1813,7 +1816,7 @@ function geoOf(n){const t=xf(n);if(n.dq&&/rect|ellipse|path|poly|star/.test(n.ty
  case'bool':{const g=boolGeo(n);return`<path d="${g?g.d:''}"/>`}case'poly':case'star':return`<path d="${shD(n)}"${t}/>`;
  case'group':{const b=aabb(n);return b?`<rect x="${r2(b.x)}" y="${r2(b.y)}" width="${r2(b.w)}" height="${r2(b.h)}"/>`:''}
  case'text':return`<rect x="${r2(n.x)}" y="${r2(n.y)}" width="${r2(n.w)}" height="${r2(n.h)}"${t}/>`;default:return rshape(n,t)}}
-function bbWrap(n,acc){const f=fxOn(n).find(f=>f.t==='bb');if(!f||!acc)return'';const b=n.type==='frame'?n:aabb(n);if(!b)return'';const m=(f.b||0)*1.5+2,id=n.id;
+function bbWrap(n,acc){const f=fxOn(n).find(f=>f.t==='bb');if(!f||!acc||acc.length>1.5e6)return'';const b=n.type==='frame'?n:aabb(n);if(!b)return'';const m=(f.b||0)*1.5+2,id=n.id;
  return`<clipPath id="bc${id}">${geoOf(n)}</clipPath><filter id="bf${id}" filterUnits="userSpaceOnUse" x="${r2(b.x-m)}" y="${r2(b.y-m)}" width="${r2(b.w+2*m)}" height="${r2(b.h+2*m)}"><feGaussianBlur stdDeviation="${r2((f.b||0)/2)}" edgeMode="duplicate"/></filter><g clip-path="url(#bc${id})" pointer-events="none"${opa(n)}><g filter="url(#bf${id})">${acc}</g></g>`}
 function renderKids(l,ed,inh=''){if(!anyBB)return l.map(c=>svgOf(c,ed)).join('');let acc=inh,o='';for(const c of l){if(c.hid)continue;o+=bbWrap(c,acc)+svgOf(c,ed,acc);acc+=svgOf(c,0,acc)}return o}
 
@@ -1839,7 +1842,10 @@ function textSVG(n,ed){const pn=n.tp&&IDX.get(n.tp)?.n,an=n.ta==='center'?'middl
  const dA=(at,c)=>c&&!/fill="none"/.test(at)?at.replace(/ fill="[^"]*"/,'').replace(/ fill-opacity="[^"]*"/,'')+` fill="${c}"`:at,
   G=at=>`<text xml:space="preserve"${base}${at}>${sp}</text>${dec.map(([x,y,w,h,c])=>`<rect x="${r2(x)}" y="${r2(y-h/2)}" width="${r2(w)}" height="${r2(h)}"${dA(at,c)}/>`).join('')}`;
  return`<g${xf(n)}>${ed?`<rect x="${r2(n.x)}" y="${r2(n.y)}" width="${r2(n.w)}" height="${r2(n.h)}" fill="transparent"/>`:''}${fillsS(n,G)}${strokesS(n,G)}</g>`}
-function imageSVG(n){const u=ASSETS[n.asset]||'',G=at=>rshape(n,at),fit=n.fit||'stretch',bx=`x="${r2(n.x)}" y="${r2(n.y)}" width="${r2(n.w)}" height="${r2(n.h)}"`;
+/* the live canvas points images at blob URLs (a few bytes each) instead of inlining data URLs, so documents with many big photos stay light; exports still inline the data */
+let EXPT=0;const AURL=new Map();
+function aURL(id){const d=ASSETS[id]||'';if(EXPT||d.length<4096||!d.startsWith('data:'))return d;const c=AURL.get(id);if(c&&c.d===d)return c.u;if(c)URL.revokeObjectURL(c.u);let u=d;try{const m=/^data:([^;,]*)(;base64)?,/.exec(d),raw=d.slice(m[0].length);let b;if(m[2]){const s2=atob(raw);b=new Uint8Array(s2.length);for(let i=0;i<s2.length;i++)b[i]=s2.charCodeAt(i)}else b=new TextEncoder().encode(decodeURIComponent(raw));u=URL.createObjectURL(new Blob([b],{type:m[1]||'application/octet-stream'}))}catch(e){u=d}AURL.set(id,{d,u});return u}
+function imageSVG(n){const u=aURL(n.asset),G=at=>rshape(n,at),fit=n.fit||'stretch',bx=`x="${r2(n.x)}" y="${r2(n.y)}" width="${r2(n.w)}" height="${r2(n.h)}"`;
  if(!n.nw){const im=imgOf(n.asset);if(im){n.nw=im.naturalWidth;n.nh=im.naturalHeight}}
  let img,clip=rcOf(n).some(v=>v>0);
  if(fit==='tile'&&n.nw){const k=n.tsc||1,tw=n.nw*k,th=n.nh*k,pid='pt'+n.id;img=`<pattern id="${pid}" patternUnits="userSpaceOnUse" x="${r2(n.x)}" y="${r2(n.y)}" width="${r2(tw)}" height="${r2(th)}"><image href="${u}" width="${r2(tw)}" height="${r2(th)}" preserveAspectRatio="none"/></pattern>${G(` fill="url(#${pid})"`)}`;clip=false}
@@ -2237,7 +2243,7 @@ async function openFig(buf,name){const tid=toast(L('Opening the Figma file…','
    n=mk('frame',{children:kids});n.clip=t==='SECTION'?false:!f.frameMaskDisabled;const sc=box(n,M,w2,h2);
    if(n.rot||n.fy){// frames can't rotate here: keep the look as a group with a background shape
     const bg=mk('rect');box(bg,M,w2,h2);fills(bg,f.fillPaints);strokes(bg,f);radii(bg,f,sc);const g=mk('group',{children:[...(bg.fill||bg.stroke?[bg]:[]),...kids]});common(g,f,sc);return g.children.length?[g]:[]}
-   delete n.open;fills(n,f.fillPaints);strokes(n,f);radii(n,f,sc);common(n,f,sc);if(t==='SECTION'){n.sec=true;if(!n.fill)n.fill='#2b2b2b';if(!n.stroke){n.stroke='#444444';n.sw=1}if(!n.r)n.r=16}
+   delete n.open;fills(n,f.fillPaints);strokes(n,f);radii(n,f,sc);common(n,f,sc);{const ip=(f.fillPaints||[]).filter(p=>vis(p)&&p.type==='IMAGE').pop(),ia=ip&&imgAsset(hx(ip.image?.hash));if(ia){const im=mk('image',{asset:ia,name:L('Background image','Фоновое фото'),x:n.x,y:n.y,w:n.w,h:n.h,fit:({FIT:'fit',TILE:'tile',STRETCH:'stretch'})[ip.imageScaleMode]||'fill'});if(ip.originalImageWidth){im.nw=ip.originalImageWidth;im.nh=ip.originalImageHeight}if(n.r)im.r=n.r;if(n.rc)im.rc=n.rc;if((ip.opacity??1)<1)im.op=r2(ip.opacity);im.abs=true;n.children.unshift(im);n.clip=true}}if(t==='SECTION'){n.sec=true;if(!n.fill)n.fill='#2b2b2b';if(!n.stroke){n.stroke='#444444';n.sw=1}if(!n.r)n.r=16}
    // auto layout
    if(f.stackMode==='HORIZONTAL'||f.stackMode==='VERTICAL'){const H=f.stackMode==='HORIZONTAL',al=(v)=>v==='CENTER'?1:v==='MAX'?2:0,hug=v=>v&&v!=='FIXED';
     const A={d:f.stackWrap==='WRAP'&&H?'w':H?'h':'v',g:r2(+f.stackSpacing||0),p:[f.stackVerticalPadding,f.stackPaddingRight??f.stackHorizontalPadding,f.stackPaddingBottom??f.stackVerticalPadding,f.stackHorizontalPadding].map(v=>r2((+v||0)*sc))};
@@ -2330,7 +2336,7 @@ async function saveFig(){let F;try{F=await loadOFig()}catch(e){return toast(e.me
     if(n.list){const lines=T.split('\n').map((l,k)=>({lineType:n.list==='ol'?'ORDERED_LIST':'UNORDERED_LIST',styleId:0,indentationLevel:0,sourceDirectionality:'AUTO',listStartOffset:0,isFirstLineOfList:k===0}));o.textData.lines=lines}
     NC.push(o);return}
    if(n.type==='image'&&!n.dq){const im=await imgOf2(n.asset),M=mW(n),o=place({...base,type:'ROUNDED_RECTANGLE',name:base.name||'Image',proportionsConstrained:true,...radF(n),...strokeP(n),fillPaints:[]},M,n.w,n.h);
-    if(im)o.fillPaints=[{type:'IMAGE',opacity:1,visible:true,blendMode:'NORMAL',transform:{m00:1,m01:0,m02:0,m10:0,m11:1,m12:0},image:{hash:hexU(im.h),name:im.h},imageThumbnail:{hash:hexU(im.th),name:im.th},imageScaleMode:({fit:'FIT',tile:'TILE',stretch:'STRETCH'})[n.fit]||'FILL',scale:n.tsc||.5,originalImageWidth:im.w,originalImageHeight:im.h2,thumbHash:new Uint8Array(0),altText:''}];
+    if(im)o.fillPaints=[{type:'IMAGE',opacity:1,visible:true,blendMode:'NORMAL',transform:{m00:1,m01:0,m02:0,m10:0,m11:1,m12:0},image:{hash:hexU(im.h),name:im.h},imageThumbnail:{hash:hexU(im.th),name:im.th},animationFrame:0,imageShouldColorManage:false,rotation:0,imageScaleMode:({fit:'FIT',tile:'TILE',stretch:'STRETCH'})[n.fit]||'FILL',scale:n.tsc||.5,originalImageWidth:im.w,originalImageHeight:im.h2,thumbHash:new Uint8Array(0),altText:''}];
     else o.fillPaints=[solid('#d9d9d9')];NC.push(o);return}
    if(!n.dq&&(n.type==='rect'||n.type==='ellipse'||n.type==='poly'||n.type==='star')&&!(n.type!=='rect'&&n.ct==='smooth')){const M=mW(n),o=place({...base,type:{rect:'ROUNDED_RECTANGLE',ellipse:'ELLIPSE',poly:'REGULAR_POLYGON',star:'STAR'}[n.type],name:base.name||{rect:'Rectangle',ellipse:'Ellipse',poly:'Polygon',star:'Star'}[n.type],fillPaints:fillP(n),...strokeP(n),...(n.type==='rect'?radF(n):n.r>0?{cornerRadius:n.r}:{})},M,n.w,n.h);
     if(n.type==='poly'||n.type==='star')o.count=clamp(Math.round(n.pc||5),3,60);if(n.type==='star')o.starInnerScale=n.ir??.38;NC.push(o);return}
