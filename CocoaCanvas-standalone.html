@@ -66,7 +66,7 @@ aside{background:var(--panel);overflow:auto;min-height:0}
 #scene,#ui{position:absolute;inset:0;width:100%;height:100%;display:block}
 #ui{pointer-events:none;overflow:visible}#ui [data-h]{pointer-events:all}
 .hd{fill:#fff;stroke:var(--sel);stroke-width:1}.hr{fill:#fff;stroke:var(--sel);stroke-width:1;cursor:grab}
-.rz{fill:transparent;cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M6 15a8 8 0 0 1 9-9' fill='none' stroke='%23fff' stroke-width='4'/%3E%3Cpath d='M6 15a8 8 0 0 1 9-9' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3Cpath d='M13 3l4 3-4 3zM3 13l3 4 3-4z' fill='%23000' stroke='%23fff'/%3E%3C/svg%3E") 12 12,alias}.sg{fill:none;stroke:transparent;stroke-width:10;cursor:copy}.he{stroke:transparent;stroke-width:8;fill:none}
+.rz{fill:transparent;cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M6 15a8 8 0 0 1 9-9' fill='none' stroke='%23fff' stroke-width='4'/%3E%3Cpath d='M6 15a8 8 0 0 1 9-9' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3Cpath d='M13 3l4 3-4 3zM3 13l3 4 3-4z' fill='%23000' stroke='%23fff'/%3E%3C/svg%3E") 12 12,alias}.sg{fill:none;stroke:transparent;stroke-width:16;cursor:copy}.he{stroke:transparent;stroke-width:8;fill:none}
 .fl{font:11px var(--sans);fill:var(--mute);cursor:default;user-select:none}.fl.on{fill:var(--sel)}
 .badge rect{fill:var(--sel)}.badge text{font:11px var(--sans);fill:#fff}
 #ted{position:absolute;margin:0;padding:0;border:0;outline:none;background:transparent;resize:none;overflow:hidden;transform-origin:center;white-space:pre;caret-color:var(--sel);z-index:3}
@@ -645,8 +645,8 @@ function drawUI0(){let s='';const z=view.z,hs=matchMedia('(pointer:coarse)').mat
  const sLab=s;s='';
  if(hover&&!sel.includes(hover)&&IDX.has(hover.id)&&!drag)s+=outline(hover,2);
  const ts=topSel();
- if(editPath){const n=IDX.get(editPath)?.n;if(n){s+=outline(n,1);const sp=(x,y)=>w2s(...l2w(n,x,y)).join(' ');let g0=0;for(const S of subs(n)){const Q=S.pts;for(let i=0;i<Q.length-(S.closed?0:1);i++){const a=Q[i],c=Q[(i+1)%Q.length];s+=`<path class="sg" data-h="s${g0+i}" d="M${sp(a.x,a.y)} C${sp(a.x+a.ox,a.y+a.oy)} ${sp(c.x+c.ix,c.y+c.iy)} ${sp(c.x,c.y)}"/>`}g0+=Q.length}subs(n).flatMap(S=>S.pts).forEach((p,i)=>{const A=w2s(...l2w(n,p.x,p.y));for(const k of['i','o']){const hx=p[k+'x'],hy=p[k+'y'];if(!hx&&!hy)continue;const H=w2s(...l2w(n,p.x+hx,p.y+hy));s+=`<line x1="${A[0]}" y1="${A[1]}" x2="${H[0]}" y2="${H[1]}" stroke="var(--sel)"/>${hs>4?`<circle data-h="${k}${i}" cx="${H[0]}" cy="${H[1]}" r="20" fill="transparent"/>`:''}<circle class="hd" data-h="${k}${i}" cx="${H[0]}" cy="${H[1]}" r="${hs}"/>`}
-  s+=`${hs>4?`<circle data-h="a${i}" cx="${A[0]}" cy="${A[1]}" r="22" fill="transparent"/>`:''}<rect class="hd" data-h="a${i}" x="${A[0]-hs}" y="${A[1]-hs}" width="${hs*2}" height="${hs*2}"${i===actPt?' style="fill:var(--sel)"':''}/>`})}}
+ if(editPath){const n=IDX.get(editPath)?.n;if(n){s+=outline(n,1);const sp=(x,y)=>w2s(...l2w(n,x,y)).join(' ');let g0=0;for(const S of subs(n)){const Q=S.pts;for(let i=0;i<Q.length-(S.closed?0:1);i++){const a=Q[i],c=Q[(i+1)%Q.length];s+=`<path class="sg" data-h="s${g0+i}" d="M${sp(a.x,a.y)} C${sp(a.x+a.ox,a.y+a.oy)} ${sp(c.x+c.ix,c.y+c.iy)} ${sp(c.x,c.y)}"/>`}g0+=Q.length}subs(n).flatMap(S=>S.pts).forEach((p,i)=>{const A=w2s(...l2w(n,p.x,p.y));for(const k of['i','o']){const hx=p[k+'x'],hy=p[k+'y'];if(!hx&&!hy)continue;const H=w2s(...l2w(n,p.x+hx,p.y+hy));s+=`<line x1="${A[0]}" y1="${A[1]}" x2="${H[0]}" y2="${H[1]}" stroke="var(--sel)"/><circle data-h="${k}${i}" cx="${H[0]}" cy="${H[1]}" r="${hs>4?20:11}" fill="transparent"/><circle class="hd" data-h="${k}${i}" cx="${H[0]}" cy="${H[1]}" r="${hs}"/>`}
+  s+=`<circle data-h="a${i}" cx="${A[0]}" cy="${A[1]}" r="${hs>4?22:12}" fill="transparent"/><rect class="hd" data-h="a${i}" x="${A[0]-hs}" y="${A[1]-hs}" width="${hs*2}" height="${hs*2}"${i===actPt?' style="fill:var(--sel)"':''}/>`})}}
  else if(distort&&IDX.get(distort)){const n=IDX.get(distort).n,P=n.dq.map(([x,y])=>w2s(...l2w(n,x,y)));s+=`<polygon points="${P.map(p=>p.join(',')).join(' ')}" fill="none" stroke="var(--sel)"/>`;P.forEach((p,i)=>s+=`<rect class="hd" data-h="q${i}" x="${p[0]-hs-1}" y="${p[1]-hs-1}" width="${hs*2+2}" height="${hs*2+2}" style="cursor:move"/>`)}
  else if(ts.length&&!editing&&!pen){
   for(const n of sel)s+=outline(n,1);
@@ -780,6 +780,10 @@ V.addEventListener('pointerdown',e=>{if(e.target===TED)return;DN={x:e.clientX,y:
  if(tool==='pencil'){drag={m:'pencil',pts:[p]};return}
  if((editPath||distort)&&e.pointerType!=='mouse'){actPt=-1;drag={m:'pan',sx:e.clientX,sy:e.clientY,vx:view.x,vy:view.y};drawUI();return}
  if(distort)endDistort();
+ if(editPath&&e.pointerType==='mouse'&&tool==='move'){const n=IDX.get(editPath)?.n;if(n){const q=w2l(n,p),np={x:q.x,y:q.y,ix:0,iy:0,ox:0,oy:0},r=actPt>=0?ptAt(n,actPt):null;let gi;
+  if(r&&!r.s.closed&&(r.j===0||r.j===r.s.pts.length-1)){if(r.j===0){r.s.pts.unshift(np);gi=actPt}else{r.s.pts.splice(r.j+1,0,np);gi=actPt+1}}
+  else{(n.more=n.more||[]).push({pts:[np],closed:false});gi=subs(n).reduce((a,x)=>a+x.pts.length,0)-1}
+  actPt=gi;drag={m:'pt',k:'a',i:gi,n,moved:true};return render()}}
  if(editPath)exitPath();
  if(tool!=='move'){drag={m:'new',t:tool,p0:p,n:null};return}
  const el=e.target.closest('#scene [data-id]');
@@ -893,7 +897,7 @@ function endDrag(e){const d=drag;if(!d)return;drag=null;setTimeout(lodSync);if(d
  else if(d.m==='alh'&&d.moved)commit();
  else if(d.m==='gd'){if(d.moved||d.added){delete d.n.cS;commit()}else render()}
  else if(d.m==='dq'&&d.moved){WC.clear();commit()}
- else if(d.m==='pt'&&d.moved){normPath(d.n);commit()}
+ else if(d.m==='pt'&&d.moved){if(d.k==='a')ptJoin(d.n,d.i);normPath(d.n);commit()}
  render()}
 V.addEventListener('pointerup',endDrag);V.addEventListener('pointercancel',endDrag);
 V.addEventListener('pointerleave',()=>{if(hover&&!drag){hover=null;drawUI()}});
@@ -947,7 +951,14 @@ function splitSeg(n,gi,p,crv){const r=ptAt(n,gi),q=w2l(n,p),P=r.s.pts,i=r.j,a=P[
  /* Ctrl/Cmd on a straight segment: the new point gets smooth handles along the segment, so dragging it bends a curve */
  if(crv&&!cv){const dx=b.x-a.x,dy=b.y-a.y,l=Math.hypot(dx,dy)||1,k=Math.min(Math.hypot(m.x-a.x,m.y-a.y),Math.hypot(b.x-m.x,b.y-m.y))/2/l;np.ix=-dx*k;np.iy=-dy*k;np.ox=dx*k;np.oy=dy*k}
  if(cv){a.ox=a1.x-a.x;a.oy=a1.y-a.y;b.ix=c1.x-b.x;b.iy=c1.y-b.y}P.splice(i+1,0,np);return gi+1}
-function exitPath(){if(!editPath)return;editPath=null;actPt=-1;render()}
+/* dropping an end point on another end point of the same object joins them (same line: closes it) */
+function ptJoin(n,gi){const ra=ptAt(n,gi);if(!ra)return;const A=ra.p,z=view.z,Sa=w2s(...l2w(n,A.x,A.y));let tb=-1,k=0;for(const S of subs(n)){S.pts.forEach((q,j)=>{if(k+j!==gi&&tb<0){const Q=w2s(...l2w(n,q.x,q.y));if(Math.hypot(Q[0]-Sa[0],Q[1]-Sa[1])<10)tb=k+j}});k+=S.pts.length}if(tb<0)return;
+ const rb=ptAt(n,tb),end=r=>!r.s.closed&&(r.j===0||r.j===r.s.pts.length-1);if(!end(ra)||!end(rb))return;
+ const L=subs(n).map(x=>({pts:x.pts,closed:x.closed})),ia=L.findIndex(x=>x.pts===ra.s.pts),ib=L.findIndex(x=>x.pts===rb.s.pts),rev=P=>P.reverse().map(q=>({...q,ix:q.ox,iy:q.oy,ox:q.ix,oy:q.iy}));
+ if(ia===ib){const P=L[ia].pts;if(P.length<3)return;const a=P[ra.j],b=P[rb.j];if(ra.j===0){b.ox=a.ox;b.oy=a.oy}else{b.ix=a.ix;b.iy=a.iy}P.splice(ra.j,1);L[ia].closed=true}
+ else{let Pa=L[ia].pts,Pb=L[ib].pts;if(ra.j===0)Pa=rev([...Pa]);if(rb.j!==0)Pb=rev([...Pb]);const a=Pa.pop();Pb[0]={...Pb[0],ix:a.ix,iy:a.iy};L[ia]={pts:[...Pa,...Pb],closed:false};L.splice(ib,1)}
+ n.pts=L[0].pts;n.closed=L[0].closed;if(L.length>1)n.more=L.slice(1);else delete n.more;actPt=-1}
+function exitPath(){if(!editPath)return;{const n=IDX.get(editPath)?.n;if(n?.more){n.more=n.more.filter(x=>x.pts.length>1);if(!n.more.length)delete n.more;normPath(n);commit()}}editPath=null;actPt=-1;render()}
 
 function editText(n,isNew,at){trange=null;editing=n;doc.lt=n.id;TED.hidden=false;TC_.hidden=false;tcLoop();TED.value=n.text;render();posTed();TED.focus();if(at){const o=caretAt(n,at);try{TED.setSelectionRange(o,o)}catch(_){}}else if(!isNew)TED.select();if(matchMedia('(pointer:coarse)').matches){setTimeout(revealSel,350);setTimeout(revealSel,800)}}
 function posTed(){const n=editing;if(!n)return;layoutT(n);const z=view.z,[x,y]=w2s(n.x,n.y),s=TED.style;
