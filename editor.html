@@ -1939,9 +1939,70 @@ function makePDF(pages){const enc=new TextEncoder(),parts=[],off=[];let len=0;co
   obj(o+1,()=>put(`<< /Length ${cs.length} >>\nstream\n${cs}\nendstream`));
   obj(o+2,()=>{put(`<< /Type /XObject /Subtype /Image /Width ${p.pw} /Height ${p.ph} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.jpg.length} >>\nstream\n`);put(p.jpg);put('\nendstream')})});
  const xo=len,N=3+n*3;put(`xref\n0 ${N}\n0000000000 65535 f \n`);for(let i=1;i<N;i++)put(String(off[i]).padStart(10,'0')+' 00000 n \n');put(`trailer\n<< /Size ${N} /Root 1 0 R >>\nstartxref\n${xo}\n%%EOF\n`);return new Blob(parts,{type:'application/pdf'})}
+/* ---------- vector PDF (jsPDF + svg2pdf.js): shapes, gradients and photos stay vector/original, text stays real selectable text with its font embedded; effects, masks, blend modes, text on a path and fonts that can't be embedded are flattened to pictures in place ---------- */
+const VPDF=['https://cdn.jsdelivr.net/npm/jspdf@4.2.1/dist/jspdf.umd.min.js','https://cdn.jsdelivr.net/npm/svg2pdf.js@2.9.0/dist/svg2pdf.umd.min.js'];let vpdfLib=null;
+function loadVPDF(){const ok=()=>window.jspdf?.jsPDF?.API?.svg;if(ok())return Promise.resolve(window.jspdf.jsPDF);if(vpdfLib)return vpdfLib;
+ const ld=u=>new Promise((y,n)=>{const s=document.createElement('script');s.src=u;s.onload=y;s.onerror=n;document.head.appendChild(s)});
+ return vpdfLib=(window.jspdf?Promise.resolve():ld(VPDF[0])).then(()=>ld(VPDF[1])).then(()=>{if(!ok())throw new Error('svg2pdf');return window.jspdf.jsPDF}).catch(e=>{vpdfLib=null;throw e})}
+const u8b64=u=>{let s='';for(let i=0;i<u.length;i+=32768)s+=String.fromCharCode.apply(null,u.subarray(i,i+32768));return btoa(s)};
+async function urlBytes(u){return new Uint8Array(await(await fetch(u)).arrayBuffer())}
+/* TrueType bytes from a TTF or WOFF file; null for CFF/OTF and WOFF2, which the PDF writer can't embed */
+async function sfntOf(u){const t=String.fromCharCode(...u.subarray(0,4));if(t==='\0\x01\0\0'||t==='true')return u;if(t!=='wOFF')return null;
+ const v=new DataView(u.buffer,u.byteOffset,u.byteLength),fl=v.getUint32(4),n=v.getUint16(12),T=[];if(fl===0x4F54544F)return null;
+ for(let i=0;i<n;i++){const o=44+i*20,off=v.getUint32(o+4),cl=v.getUint32(o+8),ol=v.getUint32(o+12);let d=u.subarray(off,off+cl);
+  if(cl<ol)d=new Uint8Array(await new Response(new Blob([d]).stream().pipeThrough(new DecompressionStream('deflate'))).arrayBuffer());T.push([v.getUint32(o),d,v.getUint32(o+16)])}
+ let len=12+16*n;for(const[,d]of T)len+=d.length+3&~3;const out=new Uint8Array(len),w=new DataView(out.buffer);let e=0;while(1<<e+1<=n)e++;
+ w.setUint32(0,fl);w.setUint16(4,n);w.setUint16(6,16<<e);w.setUint16(8,e);w.setUint16(10,n*16-(16<<e));let p=12+16*n;
+ T.forEach(([tag,d,ck],i)=>{const o=12+i*16;w.setUint32(o,tag);w.setUint32(o+4,ck);w.setUint32(o+8,p);w.setUint32(o+12,d.length);out.set(d,p);p+=d.length+3&~3});return out}
+/* full static TTFs (every script the family has) of a Google font, via google-webfonts-helper */
+const GWFH={},FTTF={};
+function gwfh(fam){return GWFH[fam]=GWFH[fam]||(async()=>{const A='https://gwfh.mranftl.com/api/fonts/'+fam.toLowerCase().replace(/[^a-z0-9]+/g,'-'),j=await(await fetch(A)).json(),
+  sub=['latin','latin-ext','cyrillic','cyrillic-ext','greek','vietnamese'].filter(s=>j.subsets?.includes(s)),k=sub.length>1?await(await fetch(A+'?subsets='+sub.join(','))).json():j;
+  return(k.variants||[]).filter(x=>x.ttf).map(x=>({w:+x.fontWeight||400,it:x.fontStyle==='italic',u:x.ttf}))})().catch(()=>{delete GWFH[fam];return[]})}
+/* the built-in system stacks have no font file, so they print with the nearest open font */
+const VSUB={'system-ui':'Inter','-apple-system':'Inter','Segoe UI':'Inter',Georgia:'PT Serif','Times New Roman':'PT Serif','ui-monospace':'Roboto Mono',Menlo:'Roboto Mono',Consolas:'Roboto Mono','Arial Rounded MT Bold':'Nunito',Impact:'Oswald',sans:'Inter','sans-serif':'Inter',serif:'PT Serif',monospace:'Roboto Mono'};
+async function vFont(fam,w,it,pdf,R){const key=fam+'|'+w+'|'+it;if(R.k.has(key))return R.k.get(key);
+ const P=(async()=>{let src;if(IMPF[fam])src='imp:'+fam;else{const vs=await gwfh(VSUB[fam]||fam);if(!vs.length)return null;
+   const c=vs.slice().sort((a,b)=>(a.it!==it)-(b.it!==it)||Math.abs(a.w-w)-Math.abs(b.w-w))[0];src=c.u}
+  if(!R.u.has(src))R.u.set(src,(FTTF[src]=FTTF[src]||(src.startsWith('imp:')?urlBytes(IMPF[fam]):urlBytes(src)).then(sfntOf).catch(()=>{delete FTTF[src];return null})).then(b=>{if(!b)return null;const nm='ccf'+R.n++;
+   try{pdf.addFileToVFS(nm+'.ttf',u8b64(b));pdf.addFont(nm+'.ttf',nm,'normal');pdf.setFont(nm,'normal');pdf.getTextWidth('Aa');return nm}catch(e){console.warn('[pdf font]',fam,e);return null}}));
+  return R.u.get(src)})();R.k.set(key,P);return P}
+const vFam=s=>(String(s).split(',')[0]||'').trim().replace(/^["']|["']$/g,'');
+async function vPrep(svg,b,css,sc,pdf,R){const off=e=>e.closest('defs,mask,clipPath,pattern,filter,symbol,marker'),C=new Set();
+ for(const e of svg.querySelectorAll('[filter],[mask],[style*="blend"],text'))if(!off(e)){
+  if(e.tagName!=='text'){C.add(e);continue}if(e.querySelector('textPath')||/url\(/.test((e.getAttribute('fill')||'')+(e.getAttribute('stroke')||''))){C.add(e);continue}
+  const els=[e,...e.querySelectorAll('tspan')],fs=[];for(const el of els){const cs=getComputedStyle(el);fs.push([el,vFam(cs.fontFamily),parseInt(cs.fontWeight)||400,cs.fontStyle!=='normal'])}
+  const nms=await Promise.all(fs.map(([,f,w,it])=>vFont(f,w,it,pdf,R)));if(nms.some(x=>!x)){C.add(e);continue}
+  fs.forEach(([el],i)=>{el.setAttribute('font-family',nms[i]);el.setAttribute('font-weight','400');el.setAttribute('font-style','normal')})}
+ const top=[...C].filter(e=>{for(let p=e.parentElement;p&&p!==svg;p=p.parentElement)if(C.has(p))return false;return true});
+ const vb=svg.viewBox.baseVal,T=new DOMMatrix([1,0,0,1,vb.x,vb.y]),wm=e=>e===svg?new DOMMatrix():T.multiply(DOMMatrix.fromMatrix(e.getCTM())),ser=new XMLSerializer(),
+  defs=[...svg.querySelectorAll('linearGradient,radialGradient,clipPath,mask,filter,pattern,defs')].filter(d=>!d.parentElement.closest('linearGradient,radialGradient,clipPath,mask,filter,pattern,defs')).map(d=>ser.serializeToString(d)).join(''),
+  ms=m=>`matrix(${[m.a,m.b,m.c,m.d,m.e,m.f].map(v=>+v.toFixed(6)).join(' ')})`,job=[];
+ for(const e of top){let bb;try{bb=e.getBBox()}catch(_){continue}let pad=2;for(const k of[e,...e.querySelectorAll('[stroke-width]')])pad=Math.max(pad,+k.getAttribute('stroke-width')||0);
+  let x0=bb.x-pad,y0=bb.y-pad,x1=bb.x+bb.width+pad,y1=bb.y+bb.height+pad;const fid=/url\(#([^)]+)\)/.exec(e.getAttribute('filter')||'')?.[1],fe=fid&&svg.querySelector(`[id="${CSS.escape(fid)}"]`);
+  if(fe?.getAttribute('filterUnits')==='userSpaceOnUse'){const g=a=>+fe.getAttribute(a)||0;x0=Math.min(x0,g('x'));y0=Math.min(y0,g('y'));x1=Math.max(x1,g('x')+g('width'));y1=Math.max(y1,g('y')+g('height'))}
+  const M=wm(e),pts=[[x0,y0],[x1,y0],[x0,y1],[x1,y1]].map(([x,y])=>M.transformPoint({x,y})),X0=Math.max(b.x,Math.min(...pts.map(p=>p.x))),Y0=Math.max(b.y,Math.min(...pts.map(p=>p.y))),X1=Math.min(b.x+b.w,Math.max(...pts.map(p=>p.x))),Y1=Math.min(b.y+b.h,Math.max(...pts.map(p=>p.y)));
+  const P=wm(e.parentElement);if(X1-X0<.5||Y1-Y0<.5){job.push([e,null,P]);continue}const w=X1-X0,h=Y1-Y0,k=Math.min(Math.max(sc,1),6000/Math.max(w,h));
+  const s=`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${w*k}" height="${h*k}" viewBox="${X0} ${Y0} ${w} ${h}">${css}<defs>${defs}</defs><g transform="${ms(P)}">${ser.serializeToString(e)}</g></svg>`;
+  job.push([e,{x:X0,y:Y0,w,h,u:(await rastC(s,w*k,h*k)).toDataURL('image/png')},P])}
+ const NS='http://www.w3.org/2000/svg';for(const[e,r,P]of job){if(!r){e.remove();continue}const g=document.createElementNS(NS,'g'),im=document.createElementNS(NS,'image');g.setAttribute('transform',ms(P.inverse()));
+  for(const[a,v]of[['x',r.x],['y',r.y],['width',r.w],['height',r.h],['preserveAspectRatio','none'],['href',r.u]])im.setAttribute(a,v);g.appendChild(im);e.replaceWith(g)}
+ /* the PDF writer takes PNG and JPEG; anything else (WebP, GIF, SVG…) is redrawn as PNG */
+ for(const im of svg.querySelectorAll('image')){const u=im.getAttribute('href')||im.getAttribute('xlink:href')||'';if(!u||/^data:image\/(png|jpe?g)[;,]/i.test(u))continue;
+  try{const i=new Image();i.src=u;await i.decode();const k=Math.min(1,4096/Math.max(i.naturalWidth||1,i.naturalHeight||1)),c=document.createElement('canvas');c.width=Math.max(1,Math.round((i.naturalWidth||300)*k));c.height=Math.max(1,Math.round((i.naturalHeight||150)*k));c.getContext('2d').drawImage(i,0,0,c.width,c.height);im.removeAttribute('xlink:href');im.setAttribute('href',c.toDataURL('image/png'))}catch(e){im.remove()}}
+ svg.querySelectorAll('style').forEach(s=>s.remove())}
+async function vecPDF(it,sc){const jsPDF=await loadVPDF(),R={k:new Map(),u:new Map(),n:0};let pdf=null;
+ for(const[ns,b]of it){const css=await fontCSS(ns),W=Math.max(1,r2(b.w)),H=Math.max(1,r2(b.h)),o=W>H?'l':'p';
+  if(pdf)pdf.addPage([W,H],o);else pdf=new jsPDF({unit:'pt',format:[W,H],orientation:o,compress:true});
+  const host=document.createElement('div');host.style.cssText='position:fixed;left:-100000px;top:0;width:10px;height:10px;overflow:hidden;opacity:0;pointer-events:none';
+  const svg=document.importNode(new DOMParser().parseFromString(svgStr(ns,b,1,css),'image/svg+xml').documentElement,true);host.appendChild(svg);document.body.appendChild(host);
+  try{await vPrep(svg,b,css,sc,pdf,R);await pdf.svg(svg,{x:0,y:0,width:W,height:H})}finally{host.remove()}}
+ pdf.setProperties({title:it.length===1?it[0][2]:doc.name||'',creator:'CocoaCanvas'});return pdf.output('blob')}
 async function expRun(it,fmt,sc){if(fmt==='html')return exportHTML(it);if(!it.length)return toast(L('Nothing to export.','Нечего экспортировать.'));
- try{if(fmt==='pdf'){const pg=[];for(const[ns,b]of it){const css=await fontCSS(ns),k=Math.min(sc,8000/Math.max(b.w,b.h)),c=await rastC(svgStr(ns,b,k,css),b.w*k,b.h*k,'#fff'),bl=await new Promise(r=>c.toBlob(r,'image/jpeg',sc>=2?.92:.82));pg.push({w:b.w,h:b.h,pw:c.width,ph:c.height,jpg:new Uint8Array(await bl.arrayBuffer())})}
-   dl(makePDF(pg),safe(it.length===1?it[0][2]:doc.name||L('Untitled','Без названия'))+'.pdf');return toast(L(`Exported a PDF with ${pg.length} ${plu(pg.length,'page','pages')}`,`PDF экспортирован: ${pg.length} ${plu(pg.length,'страница','страницы','страниц')}`))}
+ try{if(fmt==='pdf'){const nmP=safe(it.length===1?it[0][2]:doc.name||L('Untitled','Без названия'))+'.pdf',okP=()=>toast(L(`Exported a PDF with ${it.length} ${plu(it.length,'page','pages')}`,`PDF экспортирован: ${it.length} ${plu(it.length,'страница','страницы','страниц')}`));
+   toast(L('Making the PDF…','Создаю PDF…'));let flat='';try{const bl=await vecPDF(it,sc);dl(bl,nmP);return okP()}catch(e){console.warn('[vector pdf]',e);flat=(L('Couldn’t make a vector PDF (it needs an internet connection the first time), so the pages are saved as pictures.','Не удалось сделать векторный PDF (в первый раз нужен интернет), поэтому страницы сохранены картинками.'))}
+   const pg=[];for(const[ns,b]of it){const css=await fontCSS(ns),k=Math.min(sc,8000/Math.max(b.w,b.h)),c=await rastC(svgStr(ns,b,k,css),b.w*k,b.h*k,'#fff'),bl=await new Promise(r=>c.toBlob(r,'image/jpeg',sc>=2?.92:.82));pg.push({w:b.w,h:b.h,pw:c.width,ph:c.height,jpg:new Uint8Array(await bl.arrayBuffer())})}
+   dl(makePDF(pg),nmP);return toast(flat)}
   let warn=false;for(const[ns,b,name]of it){const f=safe(name)+(sc!==1&&fmt!=='svg'?`@${sc}x`:'')+'.'+fmt;const css=await fontCSS(ns);if(fmt==='svg')dl(new Blob([svgStr(ns,b,1,css)],{type:'image/svg+xml'}),f);else{const bl=await rast(svgStr(ns,b,sc,css),b.w*sc,b.h*sc,fmt);if(fmt==='webp'&&bl.type!=='image/webp'){warn=true;dl(bl,f.replace(/\.webp$/,'.png'))}else dl(bl,f)}}
   toast(warn?L('This browser can’t save WebP, so you got PNG instead.','Этот браузер не умеет сохранять WebP, поэтому сохранён PNG.'):L(`Exported ${it.length} ${plu(it.length,'file','files')}`,`Экспортировано: ${it.length} ${plu(it.length,'файл','файла','файлов')}`))}catch(e){toast(L('Export failed: ','Не удалось экспортировать: ')+(e.message||e))}}
 async function doExport(what,fmt,sc){return expRun(expItems(what),fmt,sc)}
