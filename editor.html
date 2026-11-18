@@ -677,6 +677,7 @@ function drawUI0(){let s='';const z=view.z,hs=matchMedia('(pointer:coarse)').mat
  if(pen&&pen.pts.length){const P=pen.pts,f=(x,y)=>w2s(x,y).join(' ');let d='M'+f(P[0].x,P[0].y);for(let i=1;i<P.length;i++){const a=P[i-1],c=P[i];d+=` C${f(a.x+a.ox,a.y+a.oy)} ${f(c.x+c.ix,c.y+c.iy)} ${f(c.x,c.y)}`}
   const l=P[P.length-1];if(drag?.m!=='penh')d+=` C${f(l.x+l.ox,l.y+l.oy)} ${f(mouse.x,mouse.y)} ${f(mouse.x,mouse.y)}`;s+=`<path d="${d}" fill="none" stroke="var(--sel)" stroke-width="1.5"/>`;
   P.forEach((p,i)=>{const A=w2s(p.x,p.y);if(p.ox||p.oy){const o=w2s(p.x+p.ox,p.y+p.oy),q=w2s(p.x+p.ix,p.y+p.iy);s+=`<line x1="${q[0]}" y1="${q[1]}" x2="${o[0]}" y2="${o[1]}" stroke="var(--sel)"/><circle cx="${o[0]}" cy="${o[1]}" r="3" class="hd"/><circle cx="${q[0]}" cy="${q[1]}" r="3" class="hd"/>`}s+=`<rect class="hd" x="${A[0]-hs}" y="${A[1]-hs}" width="${hs*2}" height="${hs*2}"${i===0&&P.length>2?' style="fill:var(--sel)"':''}/>`})}
+ s+=vgSVG();
  if(drag?.m==='pbox'){const[a,b]=w2s(drag.p0.x,drag.p0.y),[c,d]=w2s(drag.p1.x,drag.p1.y);s+=`<rect x="${Math.min(a,c)}" y="${Math.min(b,d)}" width="${Math.abs(c-a)}" height="${Math.abs(d-b)}" fill="rgba(75,156,255,.12)" stroke="var(--sel)"/>`}
  if(drag?.m==='pencil')s+=`<polyline points="${drag.pts.map(p=>w2s(p.x,p.y).join(',')).join(' ')}" fill="none" stroke="var(--sel)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
  s+=alUI();
@@ -707,13 +708,40 @@ function pick(id,deep){const c=chainOf(id);if(!c.length)return null;let i;
 function setSel(a){sel=a.filter(Boolean);if(trange&&!(sel.length===1&&sel[0].id===trange.id))trange=null;for(const n of sel)for(let p=par(n);p;p=par(p))p.open=true;if(scope){const s=IDX.get(scope)?.n;if(!s||!sel.every(n=>anc(n,s)))scope=null}actPt=-1;render()}
 function toggleSel(n){if(sel.includes(n))sel=sel.filter(x=>x!==n);else{sel=sel.filter(x=>!anc(x,n)&&!anc(n,x));sel.push(n)}setSel(sel)}
 
-let H=[],F=[],last='';
+let H=[],F=[],last='',HA=[],FA=[],lastA=-1,EB=-1,PF=[],PP=null;
 const snap=()=>JSON.stringify(doc,rep);
-function commit(){prune();reindex();try{alRun()}catch(e){console.error(e)}try{trackTS()}catch(_){}const s=snap();if(s===last)return render();H.push(last);if(H.length>200)H.shift();F=[];last=s;autosave();render()}
+function commit(){prune();reindex();try{alRun()}catch(e){console.error(e)}try{trackTS()}catch(_){}const s=snap();if(s===last)return render();H.push(last);HA.length=H.length-1;HA.push(lastA);if(H.length>200){H.shift();HA.shift();if(EB>0)EB--}F=[];FA=[];last=s;lastA=editPath?actPt:-1;autosave();render()}
 function restoreDoc(s){doc=JSON.parse(s);walk(n=>{if(Array.isArray(n.fx)){n.efx=n.fx;delete n.fx}if(n.lh==='fill'){n.lvh='fill';if(n.type==='text')n.lh=1.2;else delete n.lh}});frameNo=0;walk(n=>{if(n.type==='frame')frameNo++});reindex();{const n=editPath&&IDX.get(editPath)?.n;if(n?.type!=='path')editPath=null}actPt=-1;PSEL.clear();render()}
-function undo(){if(editing||!H.length)return;F.push(last);last=H.pop();restoreDoc(last);autosave()}
-function redo(){if(editing||!F.length)return;H.push(last);last=F.pop();restoreDoc(last);autosave()}
+/* undo follows what you're doing: while drawing with the pen it removes the last point, while editing points or distorting it only steps back through those edits */
+function canUndo(){return !!(pen?.pts.length||H.length)}
+function canRedo(){return !!((tool==='pen'&&!editPath&&PF.length)||F.length)}
+function hRest(a){restoreDoc(last);if(editPath&&a>=0){const n=IDX.get(editPath)?.n;if(n&&a<subs(n).reduce((t,x)=>t+x.pts.length,0)){actPt=a;PSEL.add(a);render()}}autosave()}
+function undo(){if(editing||drag)return;
+ if(pen){const p=pen.pts.pop();if(p){PF.push(p);PP=pen.par}if(!pen.pts.length)pen=null;return render()}
+ if((editPath||distort)&&H.length<=EB){if(editPath)exitPath();else endDistort();return}
+ if(!H.length)return;F.push(last);FA.push(lastA);HA.length=H.length;last=H.pop();lastA=HA.pop()??-1;hRest(lastA)}
+function redo(){if(editing||drag)return;
+ if(tool==='pen'&&!editPath&&PF.length){if(!pen)pen={pts:[],par:PP};pen.pts.push(PF.pop());return render()}
+ if(!F.length)return;H.push(last);HA.length=H.length-1;HA.push(lastA);last=F.pop();lastA=FA.pop()??-1;hRest(lastA)}
 
+/* vertex snapping, like Figma: the pen, point drags and new shapes snap to anchor points, corners and centres of other layers, or line up with them. Hold Ctrl/Cmd to place freely. */
+let VG=null,VC=null;
+const VSTOOL=()=>tool!=='move'&&tool!=='hand'&&tool!=='pencil'&&tool!=='text'&&(tool==='pen'||!editPath);
+function vtx(ex){const r=V.getBoundingClientRect(),z=view.z,m=40/z,x0=-view.x/z-m,y0=-view.y/z-m,x1=x0+r.width/z+2*m,y1=y0+r.height/z+2*m,out=[],sk=ex.skip;
+ const add=(x,y)=>{if(x>=x0&&x<=x1&&y>=y0&&y<=y1)out.push([x,y])};
+ const go=l=>{for(const n of l){if(n.hid)continue;
+  if(n.pts){for(const S of subs(n))for(const q of S.pts)if(!sk||!sk.has(q))add(...l2w(n,q.x,q.y))}
+  else if(n.type!=='group'&&n.w!=null){const w=n.w,h=n.h||0;for(const[a,b]of[[0,0],[w,0],[w,h],[0,h],[w/2,h/2]])add(...l2w(n,a,b));if(n.type==='ellipse')for(const[a,b]of[[w/2,0],[w,h/2],[w/2,h],[0,h/2]])add(...l2w(n,a,b))}
+  if(n.children)go(n.children)}};
+ go(doc.nodes);if(pen)for(const q of pen.pts)add(q.x,q.y);return out}
+function vtxC(){const k=[view.x,view.y,view.z,pen?.pts.length||0,editPath].join('|');if(!VC||VC.k!==k||VC.l!==last)VC={k,l:last,T:vtx({})};return VC.T}
+function vsnap(p,e,ex){VG=null;if(e&&(e.ctrlKey||e.metaKey))return p;
+ const T=ex.T||vtxC(),th=(e&&e.pointerType==='touch'?12:8)/view.z;let b=null,bx=null,by=null;
+ for(const[x,y]of T){const ax=Math.abs(x-p.x),ay=Math.abs(y-p.y);if(ax<th&&ay<th){const d=Math.hypot(ax,ay);if(d<th&&(!b||d<b.d))b={d,x,y}}if(ax<th&&(!bx||ax<bx.d||ax===bx.d&&ay<Math.abs(bx.y-p.y)))bx={d:ax,x,y};if(ay<th&&(!by||ay<by.d||ay===by.d&&ax<Math.abs(by.x-p.x)))by={d:ay,x,y}}
+ if(b){VG={p:[b.x,b.y],pt:1};return{x:b.x,y:b.y,s:1}}
+ if(!bx&&!by)return p;const q={x:bx?bx.x:p.x,y:by?by.y:p.y,s:1};VG={p:[q.x,q.y],ax:bx&&[bx.x,bx.y],ay:by&&[by.x,by.y]};return q}
+function vgSVG(){const g=VG;if(!g)return'';const X=(x,y)=>{const[a,b]=w2s(x,y);return`<path d="M${a-4} ${b-4}L${a+4} ${b+4}M${a+4} ${b-4}L${a-4} ${b+4}" stroke="var(--guide)" stroke-width="1.5"/>`};let s=X(...g.p);
+ for(const t of[g.ax,g.ay])if(t){const[a,b]=w2s(...t),[c,d]=w2s(...g.p);s+=`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="var(--guide)"/>`+X(...t)}return s}
 const idb=new Promise(r=>{try{const q=indexedDB.open('cocoacanvas',1);q.onupgradeneeded=()=>q.result.createObjectStore('kv');q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)}catch(e){r(null)}});
 async function kvSet(k,v){const d=await idb;if(d)d.transaction('kv','readwrite').objectStore('kv').put(v,k)}
 async function kvGet(k){const d=await idb;if(!d)return;return new Promise(r=>{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r()})}
@@ -736,7 +764,7 @@ function sceneSet0(){const bump=()=>{DRAWN++;if(drag&&drag.m==='move')drag.dax=[
 function draw(){cancelAnimationFrame(rq);rq=0;anyBB=false;walk(n=>{if(!anyBB&&!n.hid&&n.efx?.some(f=>f.t==='bb'&&!f.off))anyBB=true;if(n.type!=='text')return;if(!FST[n.ff]&&GF.some(g=>g[0]===n.ff))ensureFont(n.ff);{const k=JSON.stringify(n,TLX)+FONTV;if(TLC.get(n)!==k){layoutT(n);TLC.set(n,JSON.stringify(n,TLX)+FONTV)}}const pn=n.tp&&IDX.get(n.tp)?.n,b=pn&&aabb(pn);if(b){const m=n.fs;Object.assign(n,{x:b.x-m,y:b.y-m,w:b.w+2*m,h:b.h+2*m,rot:0})}});try{alRun()}catch(e){console.error(e)}sceneSet();viewUpd();snapLater();layRender();insp();try{notesRender()}catch(e){console.error(e)}const pn=$('pname');pn.placeholder=L('Untitled','Без названия');if(document.activeElement!==pn&&pn.value!==(doc.name||'')){pn.value=doc.name||'';window.hCenter?.()}}
 function viewUpd(){if(!gx){snapLater();if(typeof lodSync==='function')lodSync()}const v=gx?gx.v0:view;W.setAttribute('transform',`translate(${v.x} ${v.y}) scale(${v.z})`);if(typeof notesView==='function')notesView();drawUI();$('zLbl').textContent=Math.round(view.z*100)+'%';if(editing)posTed()}
 
-function setTool(t){if(pen&&t!=='pen')endPen();if(distort)endDistort();if(editPath&&(t==='pen'||t==='move'&&tool==='pen')){actPt=-1;PSEL.clear()}else if(editPath)exitPath();tool=t;document.querySelectorAll('#tbar [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t));V.className=t==='hand'?'t-pan':t==='text'?'t-text':t==='move'?'':'t-draw';render()}
+function setTool(t){VG=null;if(pen&&t!=='pen')endPen();if(distort)endDistort();if(editPath&&(t==='pen'||t==='move'&&tool==='pen')){actPt=-1;PSEL.clear()}else if(editPath)exitPath();tool=t;document.querySelectorAll('#tbar [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t===t));V.className=t==='hand'?'t-pan':t==='text'?'t-text':t==='move'?'':'t-draw';render()}
 function setZoom(z,cx,cy){const r=V.getBoundingClientRect();if(cx==null){cx=r.width/2;cy=r.height/2}z=clamp(z,.02,256);const wx=(cx-view.x)/view.z,wy=(cy-view.y)/view.z;view.z=z;view.x=cx-wx*z;view.y=cy-wy*z;render()}
 function zoomTo(b){if(!b)return;const r=V.getBoundingClientRect(),z=clamp(Math.min((r.width-120)/Math.max(b.w,1),(r.height-120)/Math.max(b.h,1)),.02,8);view.z=z;view.x=r.width/2-(b.x+b.w/2)*z;view.y=r.height/2-(b.y+b.h/2)*z;render()}
 const zfit=()=>{const b=union(doc.nodes.filter(n=>!n.hid).map(aabb));if(b)zoomTo(b);else{view={x:80,y:80,z:1};render()}};
@@ -783,16 +811,16 @@ V.addEventListener('pointerdown',e=>{if(e.target===TED)return;DN={x:e.clientX,y:
   if(/^[aios]\d/.test(k)){const n=IDX.get(editPath).n;let i=+k.slice(1),t=k[0];if(t==='s'){i=splitSeg(n,i,p,e.ctrlKey||e.metaKey);t='a'}else if(t==='a'&&e.altKey){const P=ptAt(n,i).p;P.ox=P.oy=P.ix=P.iy=0;t='o'}if(t==='a'&&k[0]==='a'&&e.shiftKey){if(PSEL.has(i)){PSEL.delete(i);actPt=[...PSEL].pop()??-1;return render()}PSEL.add(i)}else if(t!=='a'||!PSEL.has(i)||k[0]==='s')PSEL=new Set([i]);actPt=i;drag={m:'pt',k:t,i,n,pull:t==='o'&&e.altKey,moved:k[0]==='s'};if(t==='a'&&PSEL.size>1){drag.q0=w2l(n,p);drag.bat=[...PSEL].map(g=>{const q=ptAt(n,g)?.p;return q&&{p:q,x:q.x,y:q.y}}).filter(Boolean)}return render()}
   if(/^q\d$/.test(k)){const n=IDX.get(distort).n;drag={m:'dq',i:+k[1],n,o:clone(n.dq)};return}
   return startRs(k)}
- if(tool==='pen'&&!editPath)return penDown(p);
+ if(tool==='pen'&&!editPath)return penDown(p,e);
  if(tool==='pencil'){drag={m:'pencil',pts:[p]};return}
  if((editPath||distort)&&e.pointerType!=='mouse'&&!(editPath&&tool==='pen')){actPt=-1;PSEL.clear();drag={m:'pan',sx:e.clientX,sy:e.clientY,vx:view.x,vy:view.y};drawUI();return}
  if(distort)endDistort();
- if(editPath&&tool==='pen'){const n=IDX.get(editPath)?.n;if(n){const q=w2l(n,p),np={x:q.x,y:q.y,ix:0,iy:0,ox:0,oy:0},r=actPt>=0?ptAt(n,actPt):null;let gi;
+ if(editPath&&tool==='pen'){const n=IDX.get(editPath)?.n;if(n){const q=w2l(n,vsnap(p,e,{})),np={x:q.x,y:q.y,ix:0,iy:0,ox:0,oy:0},r=actPt>=0?ptAt(n,actPt):null;let gi;
   if(r&&!r.s.closed&&(r.j===0||r.j===r.s.pts.length-1)){if(r.j===0){r.s.pts.unshift(np);gi=actPt}else{r.s.pts.splice(r.j+1,0,np);gi=actPt+1}}
   else{(n.more=n.more||[]).push({pts:[np],closed:false});gi=subs(n).reduce((a,x)=>a+x.pts.length,0)-1}
   actPt=gi;PSEL=new Set([gi]);drag={m:'pt',k:'a',i:gi,n,moved:true};return render()}}
  if(editPath){if(!e.shiftKey){actPt=-1;PSEL.clear()}drag={m:'pbox',p0:p,p1:p};return render()}
- if(tool!=='move'){drag={m:'new',t:tool,p0:p,n:null};return}
+ if(tool!=='move'){const T=vtx({});drag={m:'new',t:tool,p0:vsnap(p,e,{T}),n:null,T};return}
  const el=e.target.closest('#scene [data-id]');
  let n=el?pick(el.dataset.id,e.ctrlKey||e.metaKey):null,ctx=null;
  if(n&&!par(n)&&n.type==='frame'&&n.children.length&&!sel.includes(n)){ctx=n;n=null}
@@ -803,7 +831,7 @@ V.addEventListener('pointerdown',e=>{if(e.target===TED)return;DN={x:e.clientX,y:
  startMove(e,p,n);drag.was=was});
 
 V.addEventListener('pointermove',e=>{const p=toW(e);mouse=p;const d=drag;
- if(!d){if(tool==='move'){const el=e.target.closest('#scene [data-id]');let n=el?pick(el.dataset.id,e.ctrlKey||e.metaKey):null;if(n&&!par(n)&&n.type==='frame'&&n.children.length)n=null;if(n!==hover){hover=n;drawUI()}}else if(pen)drawUI();return}
+ if(!d){if(tool==='move'){const el=e.target.closest('#scene [data-id]');let n=el?pick(el.dataset.id,e.ctrlKey||e.metaKey):null;if(n&&!par(n)&&n.type==='frame'&&n.children.length)n=null;if(n!==hover){hover=n;drawUI()}}else if(VSTOOL()){const h=!!VG;mouse=vsnap(p,e,{});if(pen||h||VG)drawUI()}return}
  if(!d.armed&&d.m!=='pan'&&d.m!=='pencil'){if(DN.th&&Math.hypot(e.clientX-DN.x,e.clientY-DN.y)<DN.th)return;d.armed=true}
  switch(d.m){
  case'pan':gxStart();view.x=d.vx+e.clientX-d.sx;view.y=d.vy+e.clientY-d.sy;return gxApply();
@@ -829,7 +857,7 @@ V.addEventListener('pointermove',e=>{const p=toW(e);mouse=p;const d=drag;
  case'penh':{const a=pen.pts[d.i];a.ox=p.x-a.x;a.oy=p.y-a.y;a.ix=-a.ox;a.iy=-a.oy;return drawUI()}
  case'dq':{const q=w2l(d.n,p),o=d.o,i=d.i,dq=clone(o);if(e.shiftKey){const dx=q.x-o[i][0],dy=q.y-o[i][1];if(Math.abs(dx)>=Math.abs(dy)){const j=[1,0,3,2][i];dq[i][0]+=dx;dq[j][0]-=dx}else{const j=[3,2,1,0][i];dq[i][1]+=dy;dq[j][1]-=dy}}else dq[i]=[q.x,q.y];d.n.dq=dq;d.moved=true;return render()}
  case'pbox':d.p1=p;return drawUI();
- case'pt':{const q=w2l(d.n,p),P=ptAt(d.n,d.i).p;if(d.bat){const dx=q.x-d.q0.x,dy=q.y-d.q0.y;d.bat.forEach(o=>{o.p.x=o.x+dx;o.p.y=o.y+dy})}else if(d.k==='a'){P.x=q.x;P.y=q.y}else{const o=d.k,x=d.k==='o'?'i':'o';P[o+'x']=q.x-P.x;P[o+'y']=q.y-P.y;if(!e.altKey||d.pull){P[x+'x']=-P[o+'x'];P[x+'y']=-P[o+'y']}}d.moved=true;return render()}}});
+ case'pt':{const P=ptAt(d.n,d.i).p;if(!d.bat&&!d.T)d.T=vtx({skip:new Set([P])});const q=w2l(d.n,d.bat?p:vsnap(p,e,{T:d.T}));if(d.bat){const dx=q.x-d.q0.x,dy=q.y-d.q0.y;d.bat.forEach(o=>{o.p.x=o.x+dx;o.p.y=o.y+dy})}else if(d.k==='a'){P.x=q.x;P.y=q.y}else{const o=d.k,x=d.k==='o'?'i':'o';P[o+'x']=q.x-P.x;P[o+'y']=q.y-P.y;if(!e.altKey||d.pull){P[x+'x']=-P[o+'x'];P[x+'y']=-P[o+'y']}}d.moved=true;return render()}}});
 
 const flickOn=()=>{try{return localStorage.getItem('cv-flick')!=='0'}catch(e){return true}};
 function flickDel(d,e){if(!flickOn()||e.type!=='pointerup'||e.pointerType==='mouse'||d.alt||d.alp||!d.vs||d.vs.length<3||editing)return false;
@@ -896,7 +924,7 @@ function xfFrame(d){const x=d.xs;if(!x?.c)return render();if(d.xq)return;d.xq=re
 function xfEnd(d){const x=d?.xs;XHIDE=null;if(d?.xq)cancelAnimationFrame(d.xq);if(!x?.c)return;for(const n of d.ts){const el=W.querySelector(`[data-id="${n.id}"]`);if(el)el.style.visibility=''}requestAnimationFrame(()=>requestAnimationFrame(()=>x.c.remove()))}
 var DRAWN=0;function fastMove(d){if(d.fm===false)return false;if(d.fmN!==DRAWN||!d.fe){const ts=topSel(),els=ts.map(n=>W.querySelector(`[data-id="${n.id}"]`));if(!els.length||els.some(x=>!x)){d.fm=false;return false}if(d.sp?.c){d.sp.c.remove();d.sp=null}d.fe=els;d.fb=d.dax||[0,0];d.fmN=DRAWN;if(SNAP?.on&&!d.alp)dragSprite(d)}
  const tx=d.ax-d.fb[0],ty=d.ay-d.fb[1];if(!d.fq){d.fq=requestAnimationFrame(()=>{d.fq=0;if(drag!==d)return;const X=d.ax-d.fb[0],Y=d.ay-d.fb[1];if(d.sp?.c)d.sp.c.style.transform=`translate(${(d.ax-d.sp.ax0)*d.sp.z}px,${(d.ay-d.sp.ay0)*d.sp.z}px)`;else for(const el of d.fe){el.setAttribute('transform',`translate(${X} ${Y})`);/* Safari keeps painting user-space gradients (gradient strokes on straight lines) at the old spot unless the gradient itself changes */for(const g of el.querySelectorAll('[gradientUnits=userSpaceOnUse]'))g.setAttribute('gradientTransform',g.getAttribute('gradientTransform')?'':'translate(0 0)')}dragUI(d);if(!d.fi||performance.now()-d.fi>120){d.fi=performance.now();try{insp()}catch(_){}}})}return true}
-function endDrag(e){const d=drag;if(!d)return;drag=null;setTimeout(lodSync);if(d.xs)xfEnd(d);if(d.sp?.c){for(const el of d.fe||[]){el.style.visibility='';el.setAttribute('transform',`translate(${d.ax-d.fb[0]} ${d.ay-d.fb[1]})`)}dragSpriteEnd(d)}if(d.m==='pan')gxEnd();V.classList.remove('dn');
+function endDrag(e){const d=drag;if(!d)return;drag=null;VG=null;setTimeout(lodSync);if(d.xs)xfEnd(d);if(d.sp?.c){for(const el of d.fe||[]){el.style.visibility='';el.setAttribute('transform',`translate(${d.ax-d.fb[0]} ${d.ay-d.fb[1]})`)}dragSpriteEnd(d)}if(d.m==='pan')gxEnd();V.classList.remove('dn');
  if(d.m==='move'){if(d.moved&&flickDel(d,e))return;if(d.moved){if(d.alp)alDrop(d,mouse);else reparent();commit()}else if(d.drill)setSel([d.drill]);else{if(d.n&&!e.shiftKey&&!document.body.classList.contains('multi')&&sel.length>1)setSel([d.n])}}
  else if((d.m==='rs'||d.m==='rot'||d.m==='pc'||d.m==='ir')&&d.moved)commit();
  else if(d.m==='new')endNew(d);
@@ -933,7 +961,7 @@ function doRs(p,e){const d=drag;d.moved=true;restore(d);const{hx,hy}=d,lk=!!(d.o
   d.ts.forEach(n=>scaleN(n,fb,tb,k))}
  if(d.xs)return xfFrame(d);render()}
 
-function doNew(p,e){const d=drag;let x0=d.p0.x,y0=d.p0.y,dx=p.x-x0,dy=p.y-y0;if(!d.n&&Math.hypot(dx,dy)*view.z<3)return;
+function doNew(p,e){const d=drag;p=vsnap(p,e,{T:d.T});let x0=d.p0.x,y0=d.p0.y,dx=p.x-x0,dy=p.y-y0;if(!d.n&&Math.hypot(dx,dy)*view.z<3)return;
  if(d.t==='line'){if(e.shiftKey){const a=Math.round(Math.atan2(dy,dx)/(Math.PI/4))*Math.PI/4,l=Math.hypot(dx,dy);dx=Math.cos(a)*l;dy=Math.sin(a)*l}
   const P=[[x0,y0],[x0+dx,y0+dy]].map(([x,y])=>({x:Math.round(x),y:Math.round(y),ix:0,iy:0,ox:0,oy:0}));
   if(!d.n){d.n=addNode(mk('line'),frameAt(d.p0));sel=[d.n]}Object.assign(d.n,pathFrom(P,false));return render()}
@@ -946,11 +974,11 @@ function endNew(d){let n=d.n;const x=Math.round(d.p0.x),y=Math.round(d.p0.y);
  if(n.type==='frame'&&!par(n)){const inside=doc.nodes.filter(k=>k!==n&&(n.sec||!(k.type==='frame'&&k.children.length))&&(b=>b&&b.x>=n.x&&b.y>=n.y&&b.x+b.w<=n.x+n.w&&b.y+b.h<=n.y+n.h)(aabb(k)));inside.forEach(k=>{detach(k);n.children.push(k)});reindex()}
  sel=[n];setTool('move');if(n.type==='text')editText(n,true);else commit()}
 
-function penDown(p){if(!pen)pen={pts:[],par:frameAt(p)};const P=pen.pts;
+function penDown(p,e){p=vsnap(p,e,{});if(!pen)pen={pts:[],par:frameAt(p)};const P=pen.pts;PF=[];
  if(P.length>2){const a=w2s(P[0].x,P[0].y),c=w2s(p.x,p.y);if(Math.hypot(a[0]-c[0],a[1]-c[1])<8){pen.closed=true;return endPen()}}
- P.push({x:Math.round(p.x),y:Math.round(p.y),ix:0,iy:0,ox:0,oy:0});drag={m:'penh',i:P.length-1};drawUI()}
-function endPen(){const P=pen;pen=null;if(P&&P.pts.length>=2){const n=addNode(mk('path'),P.par);Object.assign(n,pathFrom(P.pts,!!P.closed));sel=[n];commit();setTool('move')}else render()}
-function enterPath(n){if(n.dq&&/path|rect|ellipse|poly|star/.test(n.type)){const S=deformSubs(n);n.type='path';n.pts=S[0].pts;n.closed=S[0].closed;if(S.length>1)n.more=S.slice(1);delete n.dq;delete n.r;normPath(n);commit()}if(/^(rect|ellipse|poly|star)$/.test(n.type)){toPath(n);commit()}if(n.type!=='path')return;editPath=n.id;sel=[n];actPt=-1;render()}
+ P.push({x:p.s?p.x:Math.round(p.x),y:p.s?p.y:Math.round(p.y),ix:0,iy:0,ox:0,oy:0});drag={m:'penh',i:P.length-1};drawUI()}
+function endPen(){const P=pen;pen=null;PF=[];VG=null;if(P&&P.pts.length>=2){const n=addNode(mk('path'),P.par);Object.assign(n,pathFrom(P.pts,!!P.closed));sel=[n];commit();setTool('move')}else render()}
+function enterPath(n){if(n.dq&&/path|rect|ellipse|poly|star/.test(n.type)){const S=deformSubs(n);n.type='path';n.pts=S[0].pts;n.closed=S[0].closed;if(S.length>1)n.more=S.slice(1);delete n.dq;delete n.r;normPath(n);commit()}if(/^(rect|ellipse|poly|star)$/.test(n.type)){toPath(n);commit()}if(n.type!=='path')return;editPath=n.id;sel=[n];actPt=-1;EB=H.length;lastA=-1;render()}
 function toPath(n){n.pts=shapePts(n);n.closed=true;n.type='path';delete n.r;delete n.rc;delete n.pc;delete n.ir;delete n.fx;delete n.fy}
 function splitSeg(n,gi,p,crv){const r=ptAt(n,gi),q=w2l(n,p),P=r.s.pts,i=r.j,a=P[i],b=P[(i+1)%P.length],L2=(u,v,t)=>({x:u.x+(v.x-u.x)*t,y:u.y+(v.y-u.y)*t});
  const p0=a,p1={x:a.x+a.ox,y:a.y+a.oy},p2={x:b.x+b.ix,y:b.y+b.iy},p3=b;let bt=.5,bd=1/0;
@@ -1254,7 +1282,7 @@ function flatten(){const ts=topSel().filter(n=>n.type!=='frame'&&n.type!=='image
  if(ts.length===1&&/rect|ellipse|poly|star/.test(ts[0].type)&&!ts[0].dq){toPath(ts[0]);return commit()}
  const o=[];walk(n=>{if(ts.includes(n))o.push(n)});const S=ringsToSubs(o.flatMap(ringsOf));if(!S.length)return;const last=o[o.length-1],l=sibs(last),base=leaves([o[0]])[0]||o[0],n=pathFromSubs(S,o.length===1?o[0]:base);
  if(o.length>1||o[0].type==='bool')n.name=o.length===1?o[0].name:'';l.splice(l.indexOf(last)+1,0,n);o.forEach(detach);reindex();sel=[n];commit()}
-function startDistort(){const n=sel.length===1?sel[0]:null;if(!n||!/image|path|rect|ellipse|poly|star|text/.test(n.type)||n.tp)return toast(L('Select one image, shape or text.','Выделите одно фото, фигуру или текст.'));if(editPath)exitPath();if(!n.dq)n.dq=[[0,0],[n.w,0],[n.w,n.h],[0,n.h]];distort=n.id;inspKey='';render()}
+function startDistort(){const n=sel.length===1?sel[0]:null;if(!n||!/image|path|rect|ellipse|poly|star|text/.test(n.type)||n.tp)return toast(L('Select one image, shape or text.','Выделите одно фото, фигуру или текст.'));if(editPath)exitPath();if(!n.dq)n.dq=[[0,0],[n.w,0],[n.w,n.h],[0,n.h]];distort=n.id;EB=H.length;inspKey='';render()}
 function endDistort(){const n=IDX.get(distort)?.n;distort=null;if(n?.dq&&JSON.stringify(n.dq)===JSON.stringify([[0,0],[n.w,0],[n.w,n.h],[0,n.h]]))delete n.dq;commit()}
 function undistort(){topSel().forEach(n=>delete n.dq);distort=null;commit()}
 function textOnPath(){const ts=topSel(),t=ts.find(n=>n.type==='text'),p=ts.find(n=>/path|rect|ellipse|poly|star/.test(n.type));if(ts.length!==2||!t||!p)return toast(L('Select one text and one shape or path.','Выделите один текст и одну фигуру или контур.'));t.tp=p.id;t.to=t.to||0;delete t.dq;sel=[t];commit()}
@@ -2500,7 +2528,7 @@ const ptEnd=e=>{if(e.pointerType!=='touch')return;clearTimeout(lpT);PT.delete(e.
  if(e.type==='pointerup'&&lp0&&BC.contains('iopen')&&phone()&&!document.elementFromPoint(e.clientX,e.clientY)?.closest?.('#scene [data-id],#ui [data-h]'))BC.remove('iopen','ifull');
  if(e.type==='pointerup'&&lp0){const now=Date.now();if(tapP&&now-tapT<320&&Math.hypot(e.clientX-tapP.x,e.clientY-tapP.y)<24){tapT=0;synthT=now;V.dispatchEvent(new MouseEvent('dblclick',{clientX:e.clientX,clientY:e.clientY,bubbles:true}))}else{tapT=now;tapP={x:e.clientX,y:e.clientY}}}lp0=null};
 V.addEventListener('pointerup',ptEnd,{capture:true});
-['pointerup','pointercancel'].forEach(t=>window.addEventListener(t,e=>{if(e.pointerType!=='touch')return;if(PT.delete(e.pointerId)&&PT.size<2){G=null;if(!drag)gxEnd()}if(!PT.size&&MT){const m=MT;MT=null;if(t==='pointerup'&&Date.now()-m.t<400&&m.mv<16&&m.n>=2){view={...m.v};viewUpd();if(m.n===2){if(H.length){undo();toast(L('Undo','Отменено'))}}else if(F.length){redo();toast(L('Redo','Повторено'))}}}},true));
+['pointerup','pointercancel'].forEach(t=>window.addEventListener(t,e=>{if(e.pointerType!=='touch')return;if(PT.delete(e.pointerId)&&PT.size<2){G=null;if(!drag)gxEnd()}if(!PT.size&&MT){const m=MT;MT=null;if(t==='pointerup'&&Date.now()-m.t<400&&m.mv<16&&m.n>=2){view={...m.v};viewUpd();if(m.n===2){if(canUndo()){undo();toast(L('Undo','Отменено'))}}else if(canRedo()){redo();toast(L('Redo','Повторено'))}}}},true));
 V.addEventListener('lostpointercapture',e=>{if(e.pointerType==='touch'&&!PT.has(e.pointerId))return});V.addEventListener('pointercancel',ptEnd,{capture:true});
 V.addEventListener('dblclick',e=>{if(e.isTrusted&&Date.now()-synthT<700)e.stopImmediatePropagation()},{capture:true});
 
@@ -3309,6 +3337,8 @@ window.ONB=(()=>{const get=k=>{try{return localStorage.getItem(k)}catch(e){retur
  Promise.resolve(window.ONB).catch(()=>{}).then(go)})();
 /* ---------- what's new (patch notes). Add a new entry at the TOP of this list; the landing page reads it too. ---------- */
 /*CC-NOTES*/const NOTES=[
+{"v":"1.7","date":"2026-11-18","title":["Vertex snapping, smarter undo","Привязка к точкам, умная отмена"],"en":[["layout","Pen, point edits and new shapes snap to points, corners and centres of other layers, like in Figma. Hold Ctrl/Cmd to place freely"],["fix","Undo follows what you are doing: while drawing with the pen it removes the last point, while editing points it steps back through point edits only"]],
+ "ru":[["layout","Перо, правка точек и новые фигуры привязываются к точкам, углам и центрам других слоёв, как в Figma. Удерживайте Ctrl/Cmd, чтобы ставить свободно"],["fix","Отмена учитывает, что вы делаете: при рисовании пером убирает последнюю точку, при правке точек отменяет только правки точек"]]},
 {"v":"1.6","date":"2026-10-29","title":["Plugins, auto layout, HTML export","Плагины, автораскладка, экспорт в HTML"],"en":[["plug","Plugins from the puzzle button: Apple and Google design kits, 6,000 icons, placeholders, patterns, noise, QR codes and lorem ipsum"],["layout","Auto layout and constraints, like in Figma"],["export","Export to HTML/CSS, and multi-page PDF with your own page order"],["helper","Cocoa Helper understands typos, synonyms and chained commands"],["text","New text copies the style of the last text you edited; F2 renames"],["fix","Much smoother on phones with real designs: only changed layers are redrawn, pinch and pan move a ready-made picture of the canvas, and dragged layers glide on their own layer"],["plug","New plugins: charts and tables, sticky notes and to-dos, radius sync and background removal"],["export","Import PDF (vector shapes and editable text) and HTML pages as layers; a new logo"],["layout","Sections (Shift+S) to organise the canvas, a point-count handle on polygons and stars, and flick a layer away to delete it"],["touch","Rotation snaps to 15° with a finger or pen (strength in Settings), and every slider can be dragged from anywhere along it"],["helper","A hello and a short tour on first launch, made for your phone, tablet or computer"],["touch","Tablets: side panels slide with your finger: swipe one toward the edge to hide it, swipe in from the edge to bring it back"],["fix","Fixes: pinch zoom jump, menu firing under the finger, helper covering buttons"]],
  "ru":[["plug","Плагины по кнопке с пазлом: наборы Apple и Google, 6000 иконок, заготовки, узоры, шум, QR-коды и lorem ipsum"],["layout","Автораскладка и привязки, как в Figma"],["export","Экспорт в HTML/CSS и многостраничный PDF со своим порядком страниц"],["helper","Cocoa Helper понимает опечатки, синонимы и цепочки команд"],["text","Новый текст берёт стиль последнего изменённого; F2 переименовывает"],["fix","Гораздо плавнее на телефонах с настоящими макетами: перерисовываются только изменённые слои, масштаб и прокрутка двигают готовую картинку холста, а перетаскиваемые слои скользят отдельным слоем"],["plug","Новые плагины: графики и таблицы, стикеры и списки дел, синхронизация скруглений и удаление фона"],["export","Импорт PDF (векторы и редактируемый текст) и HTML-страниц как слоёв; новый логотип"],["layout","Секции (Shift+S) для порядка на холсте, маркер числа вершин у многоугольников и звёзд, и удаление смахиванием"],["touch","Поворот пальцем или пером притягивается к 15° (сила в настройках), а любой ползунок можно тянуть с любого места"],["helper","Приветствие и короткое знакомство при первом запуске, отдельно для телефона, планшета и компьютера"],["touch","Планшеты: боковые панели следуют за пальцем: смахните панель к краю, чтобы скрыть, и потяните от края, чтобы вернуть"],["fix","Исправлено: скачок при масштабировании, меню под пальцем, помощник поверх кнопок"]]},
 {"v":"1.5","date":"2026-10-29","title":["Settings, full screen, install as app","Настройки, полный экран, установка"],"en":[["settings","A Settings window for language, start screen, colour picker and storage"],["phone","Full screen mode and install as an app, with offline support"],["undo","Two-finger tap to undo, three-finger tap to redo"],["fix","Smoother panning and more accurate pinch zoom"]],
