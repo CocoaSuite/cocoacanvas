@@ -469,15 +469,7 @@ details.wnV{background:none;padding:0}details.wnV summary{list-style:none;displa
 /* uniform: tablets keep every menu and window at least 48px from the screen edges */
 @media (pointer:coarse) and (min-width:721px){.modal{padding:48px}.box{max-height:calc(100dvh - 96px);overflow:auto}.dd{max-height:calc(100dvh - 120px);overflow:auto}#ctx{max-height:calc(100dvh - 96px)}#cp{max-height:calc(100dvh - 96px);overflow:auto}.plw{top:max(48px,var(--plt,48px));bottom:48px;right:48px;max-width:calc(100vw - 96px)}}
 
-/* CocoaCanvas touch-first QoL: visible actions, without keyboard or hover. */
-#ccTouchBar{position:absolute;z-index:12;display:flex;align-items:center;gap:4px;max-width:calc(100% - 16px);padding:5px;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:0 8px 28px #0008;touch-action:manipulation;user-select:none;-webkit-user-select:none}
-#ccTouchBar[hidden]{display:none!important}
-#ccTouchBar button{display:flex;align-items:center;justify-content:center;min-width:40px;min-height:40px;border:0;border-radius:10px;background:transparent;padding:5px 8px;font-size:12px;gap:5px}
-#ccTouchBar button:hover,#ccTouchBar button:focus-visible{background:var(--panel2)}
-#ccTouchBar button:disabled{opacity:.3}
-#ccTouchBar .ccTLabel{font-size:11px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mute);padding:0 6px;flex:0 1 auto}
-#ccTouchBar .ccTSep{height:24px;width:1px;background:var(--line);flex:none}
-#ccTouchBar svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+/* Larger direct-manipulation handles and touch-friendly inspector fields. */
 @media(pointer:coarse){
  #ui .he{stroke-width:20px}
  #ui .rz{stroke:transparent;stroke-width:8px}
@@ -487,15 +479,7 @@ details.wnV{background:none;padding:0}details.wnV summary{list-style:none;displa
  #insp .seg button{min-height:38px}
  #insp .sec button{min-width:32px;min-height:32px}
 }
-@media(max-width:720px){
- #ccTouchBar{left:50%!important;top:12px!important;bottom:auto!important;transform:translateX(-50%);max-width:calc(100% - 24px);overflow-x:auto;scrollbar-width:none}
- #ccTouchBar::-webkit-scrollbar{display:none}
- #ccTouchBar .ccTLabel{display:none}
- #ccTouchBar button{min-width:42px;min-height:42px;flex:none}
- #ccTouchBar button:disabled{display:none}
- body.iopen #ccTouchBar,body.lopen #ccTouchBar,body.mmenu #ccTouchBar{display:none!important}
-}
-@media(pointer:fine){#ccTouchBar{display:none!important}}
+
 
 </style>
 </head>
@@ -524,15 +508,7 @@ details.wnV{background:none;padding:0}details.wnV summary{list-style:none;displa
 <main id="mid">
  <aside id="lay"><div class="ph"><span data-ru="Слои">Layers</span><button data-c="img" data-ru="+ Фото">+ Image</button><button class="ic tb" data-c="laycol" data-tt="Hide panel|Скрыть панель"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button></div><input id="laySearch" type="search" autocomplete="off" spellcheck="false"><div id="layList"></div></aside>
  <section id="stage">
-  <div id="view"><svg id="scene" xmlns="http://www.w3.org/2000/svg"><g id="world"></g></svg><div id="notes"></div><svg id="ui"></svg><div id="tedC" hidden></div><textarea id="ted" hidden spellcheck="false"></textarea><div id="ccTouchBar" role="toolbar" aria-label="Selected object actions" hidden>
- <span class="ccTLabel" id="ccTouchName"></span>
- <button type="button" data-cc-action="parent" title="Select parent / Выбрать родителя" aria-label="Select parent"><svg viewBox="0 0 24 24"><path d="M12 19V5m-5 5 5-5 5 5"/></svg></button>
- <span class="ccTSep"></span>
- <button type="button" data-cc-action="dup" title="Duplicate / Дублировать" aria-label="Duplicate"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/></svg></button>
- <button type="button" data-cc-action="group" title="Group / Сгруппировать" aria-label="Group"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
- <button type="button" data-cc-action="front" title="Bring to front / На передний план" aria-label="Bring to front"><svg viewBox="0 0 24 24"><rect x="4" y="9" width="11" height="11" rx="1"/><rect x="9" y="4" width="11" height="11" rx="1"/></svg></button>
- <button type="button" data-cc-action="lock" title="Lock or unlock / Заблокировать" aria-label="Lock or unlock"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></button>
-</div></div>
+  <div id="view"><svg id="scene" xmlns="http://www.w3.org/2000/svg"><g id="world"></g></svg><div id="notes"></div><svg id="ui"></svg><div id="tedC" hidden></div><textarea id="ted" hidden spellcheck="false"></textarea></div>
   <button id="fabL" class="fab" data-tt="Layers|Слои"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></button><button id="fabX" class="fab" data-c="del" data-tt="Delete|Удалить"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button><button id="fabD" class="fab" data-tt="Design|Дизайн"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button><button id="bDone" class="pri" data-c="done" data-ru="Готово" hidden>Done</button>
   <div id="tbar">
    <button id="dkL" class="ic dk" data-tt="Layers|Слои"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></button>
@@ -3373,58 +3349,7 @@ window.ONB=(()=>{const get=k=>{try{return localStorage.getItem(k)}catch(e){retur
  const seen=get('cv-seen');if(seen!==cur){dots(true);
   Promise.all([kvGet('cur').catch(()=>null),kvGet('recent').catch(()=>null)]).then(([c,r])=>{const old=!!seen||(r&&r.length)||(c&&c.d&&c.d.length>40);if(!old){put('cv-seen',cur);dots(false);return}if(get('cv-wn-off')!=='1')setTimeout(show,900)})}})();
 
-/* Touch-first contextual actions. Only rendered on coarse-pointer devices.
-   The toolbar is DOM overlay, not document content: never saved or exported. */
-(function(){
- const bar=$('ccTouchBar');
- const actions=bar.querySelectorAll('[data-cc-action]');
- const iconLock='<svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>';
- const iconUnlock='<svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M16 10V7a4 4 0 0 0-8 0"/></svg>';
- function sync(){
-  const ts=topSel(),coarse=matchMedia('(pointer:coarse)').matches;
-  const show=coarse&&ts.length&&!editing&&!editPath&&!distort&&!pen&&tool==='move'&&!drag;
-  if(!show){bar.hidden=true;return}
-  const box=selBox();if(!box){bar.hidden=true;return}
-  bar.hidden=false;
-  const parent=ts.length===1?par(ts[0]):null;
-  const g=bar.querySelector('[data-cc-action=group]');
-  g.disabled=ts.length<2;g.title=L('Group','Сгруппировать');
-  bar.querySelector('[data-cc-action=parent]').disabled=!parent;
-  const locked=ts.every(n=>n.lock);
-  const lb=bar.querySelector('[data-cc-action=lock]');
-  lb.innerHTML=locked?iconUnlock:iconLock;
-  lb.setAttribute('aria-label',locked?L('Unlock','Разблокировать'):L('Lock','Заблокировать'));
-  bar.querySelector('#ccTouchName').textContent=ts.length===1?nm(ts[0]):ts.length+' '+L('selected','выбрано');
-  if(matchMedia('(max-width:720px)').matches){bar.style.left='';bar.style.top='';return}
-  const r=V.getBoundingClientRect(),p=w2s(box.x+box.w/2,box.y);
-  const width=bar.offsetWidth,height=bar.offsetHeight,margin=8;
-  const x=clamp(p[0]-width/2,margin,Math.max(margin,r.width-width-margin));
-  const upper=p[1]-height-15,lower=p[1]+box.h*view.z+15;
-  const y=upper>=margin?upper:lower+height<r.height-margin?lower:margin;
-  bar.style.left=x+'px';bar.style.top=clamp(y,margin,Math.max(margin,r.height-height-margin))+'px';
- }
- // Prevent a button touch from beginning a canvas drag or triggering a context menu.
- for(const type of ['pointerdown','pointermove','pointerup','contextmenu'])bar.addEventListener(type,e=>{e.stopPropagation();if(type==='contextmenu')e.preventDefault()});
- bar.addEventListener('click',e=>{
-  const b=e.target.closest('button[data-cc-action]');if(!b||b.disabled)return;
-  e.preventDefault();e.stopPropagation();
-  const action=b.dataset.ccAction,ts=topSel();
-  if(!ts.length)return;
-  if(action==='lock'){
-   const locked=ts.every(n=>n.lock);
-   ts.forEach(n=>n.lock=!locked);
-   commit();
-  }else if(action==='parent'){
-   const p=ts.length===1?par(ts[0]):null;
-   if(p)setSel([p]);
-  }else if(CMD[action])CMD[action]();
-  requestAnimationFrame(sync);
- });
- const previousViewUpd=viewUpd;
- viewUpd=function(){previousViewUpd();sync()};
- addEventListener('resize',()=>requestAnimationFrame(sync));
- requestAnimationFrame(sync);
-})();
+
 
 </script>
 </body>
