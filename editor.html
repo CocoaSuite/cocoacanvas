@@ -468,6 +468,34 @@ details.wnV{background:none;padding:0}details.wnV summary{list-style:none;displa
 ::-webkit-scrollbar{width:8px;height:8px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.22);border-radius:8px;border:2px solid transparent;background-clip:padding-box}::-webkit-scrollbar-thumb:hover{background-color:rgba(255,255,255,.38)}::-webkit-scrollbar-corner{background:transparent}
 /* uniform: tablets keep every menu and window at least 48px from the screen edges */
 @media (pointer:coarse) and (min-width:721px){.modal{padding:48px}.box{max-height:calc(100dvh - 96px);overflow:auto}.dd{max-height:calc(100dvh - 120px);overflow:auto}#ctx{max-height:calc(100dvh - 96px)}#cp{max-height:calc(100dvh - 96px);overflow:auto}.plw{top:max(48px,var(--plt,48px));bottom:48px;right:48px;max-width:calc(100vw - 96px)}}
+
+/* CocoaCanvas touch-first QoL: visible actions, without keyboard or hover. */
+#ccTouchBar{position:absolute;z-index:12;display:flex;align-items:center;gap:4px;max-width:calc(100% - 16px);padding:5px;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:0 8px 28px #0008;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+#ccTouchBar[hidden]{display:none!important}
+#ccTouchBar button{display:flex;align-items:center;justify-content:center;min-width:40px;min-height:40px;border:0;border-radius:10px;background:transparent;padding:5px 8px;font-size:12px;gap:5px}
+#ccTouchBar button:hover,#ccTouchBar button:focus-visible{background:var(--panel2)}
+#ccTouchBar button:disabled{opacity:.3}
+#ccTouchBar .ccTLabel{font-size:11px;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mute);padding:0 6px;flex:0 1 auto}
+#ccTouchBar .ccTSep{height:24px;width:1px;background:var(--line);flex:none}
+#ccTouchBar svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media(pointer:coarse){
+ #ui .he{stroke-width:20px}
+ #ui .rz{stroke:transparent;stroke-width:8px}
+ #insp input[type=text],#insp input[type=number],#insp select{min-height:38px;font-size:16px}
+ #insp .nf>span{min-width:28px;min-height:34px;display:flex;align-items:center;justify-content:center;padding:4px}
+ #insp .nf input{padding-left:30px}
+ #insp .seg button{min-height:38px}
+ #insp .sec button{min-width:32px;min-height:32px}
+}
+@media(max-width:720px){
+ #ccTouchBar{left:50%!important;top:auto!important;bottom:14px;transform:translateX(-50%);max-width:calc(100% - 112px);overflow-x:auto;scrollbar-width:none}
+ #ccTouchBar::-webkit-scrollbar{display:none}
+ #ccTouchBar .ccTLabel{display:none}
+ #ccTouchBar button{min-width:42px;min-height:42px;flex:none}
+ body.iopen #ccTouchBar,body.lopen #ccTouchBar,body.mmenu #ccTouchBar{display:none!important}
+}
+@media(pointer:fine){#ccTouchBar{display:none!important}}
+
 </style>
 </head>
 <body>
@@ -495,7 +523,16 @@ details.wnV{background:none;padding:0}details.wnV summary{list-style:none;displa
 <main id="mid">
  <aside id="lay"><div class="ph"><span data-ru="Слои">Layers</span><button data-c="img" data-ru="+ Фото">+ Image</button><button class="ic tb" data-c="laycol" data-tt="Hide panel|Скрыть панель"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button></div><input id="laySearch" type="search" autocomplete="off" spellcheck="false"><div id="layList"></div></aside>
  <section id="stage">
-  <div id="view"><svg id="scene" xmlns="http://www.w3.org/2000/svg"><g id="world"></g></svg><div id="notes"></div><svg id="ui"></svg><div id="tedC" hidden></div><textarea id="ted" hidden spellcheck="false"></textarea></div>
+  <div id="view"><svg id="scene" xmlns="http://www.w3.org/2000/svg"><g id="world"></g></svg><div id="notes"></div><svg id="ui"></svg><div id="tedC" hidden></div><textarea id="ted" hidden spellcheck="false"></textarea><div id="ccTouchBar" role="toolbar" aria-label="Selected object actions" hidden>
+ <span class="ccTLabel" id="ccTouchName"></span>
+ <button type="button" data-cc-action="parent" title="Select parent / Выбрать родителя" aria-label="Select parent"><svg viewBox="0 0 24 24"><path d="M12 19V5m-5 5 5-5 5 5"/></svg></button>
+ <span class="ccTSep"></span>
+ <button type="button" data-cc-action="dup" title="Duplicate / Дублировать" aria-label="Duplicate"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/></svg></button>
+ <button type="button" data-cc-action="group" title="Group / Сгруппировать" aria-label="Group"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
+ <button type="button" data-cc-action="front" title="Bring to front / На передний план" aria-label="Bring to front"><svg viewBox="0 0 24 24"><rect x="4" y="9" width="11" height="11" rx="1"/><rect x="9" y="4" width="11" height="11" rx="1"/></svg></button>
+ <button type="button" data-cc-action="lock" title="Lock or unlock / Заблокировать" aria-label="Lock or unlock"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></button>
+ <button type="button" data-cc-action="del" title="Delete / Удалить" aria-label="Delete"><svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v6M14 11v6"/></svg></button>
+</div></div>
   <button id="fabL" class="fab" data-tt="Layers|Слои"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></button><button id="fabX" class="fab" data-c="del" data-tt="Delete|Удалить"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button><button id="fabD" class="fab" data-tt="Design|Дизайн"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button><button id="bDone" class="pri" data-c="done" data-ru="Готово" hidden>Done</button>
   <div id="tbar">
    <button id="dkL" class="ic dk" data-tt="Layers|Слои"><svg viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></button>
@@ -646,7 +683,7 @@ function uiG(){if(UI.__g&&UI.contains(UI.__g.L))return UI.__g;UI.innerHTML='';co
 function uiSet(l,s_,g){const U=uiG();if(U.l!==l){U.l=l;U.L.innerHTML=l}U.S.removeAttribute('transform');U.sv=(U.sv||0)+1;if(U.s!==s_){U.s=s_;U.S.innerHTML=s_}if(U.g!==g){U.g=g;U.G.innerHTML=g}}function guideSVG(){let s='';const z=view.z;
  if(drag?.g)for(const g of drag.g){if(g.seg){for(const[u,v]of g.s){const[a,b]=g.seg==='x'?[w2s(u,g.c),w2s(v,g.c)]:[w2s(g.c,u),w2s(g.c,v)],o=g.seg==='x'?[0,-4,0,4]:[-4,0,4,0];s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="var(--guide)"/>`+[a,b].map(P=>`<line x1="${P[0]+o[0]}" y1="${P[1]+o[1]}" x2="${P[0]+o[2]}" y2="${P[1]+o[3]}" stroke="var(--guide)"/>`).join('');const lb=String(Math.round(g.gap)),lw=lb.length*6.5+8,mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;s+=`<g class="badge"><rect x="${mx-lw/2}" y="${my-8}" width="${lw}" height="16" rx="3" style="fill:var(--guide)"/><text x="${mx}" y="${my+4}" text-anchor="middle">${lb}</text></g>`}continue}const[a,b]=g.x!=null?[w2s(g.x,g.a),w2s(g.x,g.b)]:[w2s(g.a,g.y),w2s(g.b,g.y)];s+=`<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="var(--guide)"/>`}
  return s}
-function drawUI0(){let s='';const z=view.z,hs=matchMedia('(pointer:coarse)').matches?8:4;
+function drawUI0(){let s='';const z=view.z,hs=matchMedia('(pointer:coarse)').matches?10:4;
  {const FL=[];const scan=(l,inS)=>{for(const f of l)if(f.type==='frame'&&!f.hid){FL.push(f);if(f.sec)scan(f.children,1)}};scan(doc.nodes,0);for(const f of FL){const[x,y]=w2s(f.x,f.y);if(f.sec){const mx=Math.max(0,(f.w*z-24)/7|0);let t=nm(f);if(t.length>mx)t=mx>2?t.slice(0,mx-1)+'…':'';if(!t)continue;const tw=t.length*7+18;s+=`<g class="secL${sel.includes(f)?' on':''}" data-h="fl" data-f="${f.id}"><rect data-h="fl" data-f="${f.id}" x="${x+8}" y="${y+8}" width="${tw}" height="22" rx="7"/><text data-h="fl" data-f="${f.id}" x="${x+17}" y="${y+23}">${esc(t)}</text></g>`;continue}const mx=Math.max(0,f.w*z/6.4|0);let t=nm(f);if(t.length>mx)t=mx>2?t.slice(0,mx-1)+'…':'';s+=`<text class="fl${sel.includes(f)?' on':''}" data-h="fl" data-f="${f.id}" x="${x}" y="${y-6}">${esc(t)}</text>`}}
  const sLab=s;s='';
  if(hover&&!sel.includes(hover)&&IDX.has(hover.id)&&!drag)s+=outline(hover,2);
@@ -657,7 +694,7 @@ function drawUI0(){let s='';const z=view.z,hs=matchMedia('(pointer:coarse)').mat
  else if(ts.length&&!editing&&!pen){
   for(const n of sel)s+=outline(n,1);
   const one=ts.length===1&&!isGrp(ts[0])&&!ts[0].dq?ts[0]:null,b=one||(selBox()&&{...selBox(),rot:0});
-  if(b){const C=corners(b),P=C.map(p=>w2s(...p)),txt=one&&one.type==='text',SM=Math.min(b.w,b.h)*z,HR=hs>4?Math.max(10,Math.min(17,SM/4)):7;
+  if(b){const C=corners(b),P=C.map(p=>w2s(...p)),txt=one&&one.type==='text',SM=Math.min(b.w,b.h)*z,HR=hs>4?Math.max(20,Math.min(24,SM/4)):7;
    if(!one||!/^(rect|frame|image|text)$/.test(one.type))s+=poly(C);
    if(hs<=4||SM>=72)for(const[a,c,k,cu]of[[0,1,'0,-1','ns'],[1,2,'1,0','ew'],[2,3,'0,1','ns'],[3,0,'-1,0','ew']]){s+=`<line class="he" data-h="${k}" x1="${P[a][0]}" y1="${P[a][1]}" x2="${P[c][0]}" y2="${P[c][1]}" style="cursor:${cu}-resize"/>`}
    if(!ts.every(n=>n.type==='frame')){const cx=P.reduce((a,p)=>a+p[0],0)/4,cy=P.reduce((a,p)=>a+p[1],0)/4;P.forEach((p,i)=>{const pv=P[(i+3)%4],nx=P[(i+1)%4],a1=Math.hypot(p[0]-pv[0],p[1]-pv[1])||1,a2=Math.hypot(p[0]-nx[0],p[1]-nx[1])||1,dx=(p[0]-pv[0])/a1+(p[0]-nx[0])/a2,dy=(p[1]-pv[1])/a1+(p[1]-nx[1])/a2,l=Math.hypot(dx,dy)||1;if(hs>4){const R=30,t=Math.atan2(dy,dx),a=[t-.62,t+.62].map(u=>[p[0]+Math.cos(u)*R,p[1]+Math.sin(u)*R]),A=`M${a[0][0]} ${a[0][1]} A${R} ${R} 0 0 1 ${a[1][0]} ${a[1][1]}`;s+=`<path d="${A}" fill="none" stroke="rgba(0,0,0,.45)" stroke-width="5" stroke-linecap="round"/><path d="${A}" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><circle class="rz" data-h="rot" cx="${p[0]+dx/l*(R+4)}" cy="${p[1]+dy/l*(R+4)}" r="16"/>`}else s+=`<circle class="rz" data-h="rot" cx="${p[0]+dx/l*(hs*2+1)}" cy="${p[1]+dy/l*(hs*2+1)}" r="${hs*2+2}"/>`})}
@@ -3335,6 +3372,60 @@ window.ONB=(()=>{const get=k=>{try{return localStorage.getItem(k)}catch(e){retur
  const mq=document.querySelector('.mq [data-c="settings"]');if(mq)mq.insertAdjacentHTML('afterend',`<button data-c="whatsnew"><svg viewBox="0 0 24 24">${WNI.helper}</svg><span data-ru="Что нового" data-en="What’s new">${L('What’s new','Что нового')}</span></button>`+`<button data-c="about"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg><span data-ru="О программе" data-en="About">${L('About','О программе')}</span></button>`);
  const seen=get('cv-seen');if(seen!==cur){dots(true);
   Promise.all([kvGet('cur').catch(()=>null),kvGet('recent').catch(()=>null)]).then(([c,r])=>{const old=!!seen||(r&&r.length)||(c&&c.d&&c.d.length>40);if(!old){put('cv-seen',cur);dots(false);return}if(get('cv-wn-off')!=='1')setTimeout(show,900)})}})();
+
+/* Touch-first contextual actions. Only rendered on coarse-pointer devices.
+   The toolbar is DOM overlay, not document content: never saved or exported. */
+(function(){
+ const bar=$('ccTouchBar');
+ const actions=bar.querySelectorAll('[data-cc-action]');
+ const iconLock='<svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>';
+ const iconUnlock='<svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M16 10V7a4 4 0 0 0-8 0"/></svg>';
+ function sync(){
+  const ts=topSel(),coarse=matchMedia('(pointer:coarse)').matches;
+  const show=coarse&&ts.length&&!editing&&!editPath&&!distort&&!pen&&tool==='move'&&!drag;
+  if(!show){bar.hidden=true;return}
+  const box=selBox();if(!box){bar.hidden=true;return}
+  bar.hidden=false;
+  const parent=ts.length===1?par(ts[0]):null;
+  const g=bar.querySelector('[data-cc-action=group]');
+  g.disabled=ts.length<2;g.title=L('Group','Сгруппировать');
+  bar.querySelector('[data-cc-action=parent]').disabled=!parent;
+  const locked=ts.every(n=>n.lock);
+  const lb=bar.querySelector('[data-cc-action=lock]');
+  lb.innerHTML=locked?iconUnlock:iconLock;
+  lb.setAttribute('aria-label',locked?L('Unlock','Разблокировать'):L('Lock','Заблокировать'));
+  bar.querySelector('#ccTouchName').textContent=ts.length===1?nm(ts[0]):ts.length+' '+L('selected','выбрано');
+  if(matchMedia('(max-width:720px)').matches){bar.style.left='';bar.style.top='';return}
+  const r=V.getBoundingClientRect(),p=w2s(box.x+box.w/2,box.y);
+  const width=bar.offsetWidth,height=bar.offsetHeight,margin=8;
+  const x=clamp(p[0]-width/2,margin,Math.max(margin,r.width-width-margin));
+  const upper=p[1]-height-15,lower=p[1]+box.h*view.z+15;
+  const y=upper>=margin?upper:lower+height<r.height-margin?lower:margin;
+  bar.style.left=x+'px';bar.style.top=clamp(y,margin,Math.max(margin,r.height-height-margin))+'px';
+ }
+ // Prevent a button touch from beginning a canvas drag or triggering a context menu.
+ for(const type of ['pointerdown','pointermove','pointerup','contextmenu'])bar.addEventListener(type,e=>{e.stopPropagation();if(type==='contextmenu')e.preventDefault()});
+ bar.addEventListener('click',e=>{
+  const b=e.target.closest('button[data-cc-action]');if(!b||b.disabled)return;
+  e.preventDefault();e.stopPropagation();
+  const action=b.dataset.ccAction,ts=topSel();
+  if(!ts.length)return;
+  if(action==='lock'){
+   const locked=ts.every(n=>n.lock);
+   ts.forEach(n=>n.lock=!locked);
+   commit();
+  }else if(action==='parent'){
+   const p=ts.length===1?par(ts[0]):null;
+   if(p)setSel([p]);
+  }else if(CMD[action])CMD[action]();
+  requestAnimationFrame(sync);
+ });
+ const previousViewUpd=viewUpd;
+ viewUpd=function(){previousViewUpd();sync()};
+ addEventListener('resize',()=>requestAnimationFrame(sync));
+ requestAnimationFrame(sync);
+})();
+
 </script>
 </body>
 </html>
