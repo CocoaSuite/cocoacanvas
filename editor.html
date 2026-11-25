@@ -163,7 +163,8 @@ input[type=range]::-moz-range-track{background:transparent}input[type=range]::-m
  body.hassel #fabX{opacity:1;pointer-events:auto;transform:none}#fabX svg{width:22px;height:22px;fill:none;stroke:var(--bad);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
  body.tmore #fabX{bottom:calc(122px + max(8px,calc(env(safe-area-inset-bottom) - 12px)))}body.iopen #fabX{bottom:calc(min(58vh,520px) + 12px);z-index:36}body.iopen.ifull #fabX{display:none!important}}
 @media (pointer:coarse) and (min-width:721px){#fabX{bottom:96px;left:276px}body.lcol #fabX{left:12px}}
-html,body{touch-action:manipulation;overscroll-behavior:none}
+html,body{touch-action:pan-x pan-y;overscroll-behavior:none}
+@media (any-pointer:coarse){html{overflow:hidden;position:fixed;inset:0;width:100%;height:100%;-webkit-text-size-adjust:100%}body{position:fixed;inset:0;width:100%;height:100%;height:100dvh;overflow:hidden;overscroll-behavior:none}#view{touch-action:none}aside,#insp,#layList,.modal .box,#ctx,.dd,.menus,#stList,.stB,.stR,.pfB,#plList,#pbList,#plAsk,#fList,#qOut,.wnB,.vl,.kt,.figPg{overscroll-behavior:contain}}
 #scene,#ui{transform-origin:0 0}
 #spDel.bad{background:var(--bad);border-color:var(--bad);color:#111}.vr input[type=checkbox]{flex:none;width:18px;height:18px;margin:0}
 .mq,.dk{display:none}
@@ -2748,6 +2749,11 @@ CMD.storage=openStorage;
 /* stop the browser's own page zoom from fighting canvas pinch */
 ['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
 document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault()},{passive:false});
+/* Keep single-finger scrolling inside actual scroll containers, never the page. */
+let pageTouch=null;
+document.addEventListener('touchstart',e=>{pageTouch=e.touches.length===1?{x:e.touches[0].clientX,y:e.touches[0].clientY}:null},{passive:true});
+document.addEventListener('touchmove',e=>{if(e.touches.length!==1||!pageTouch)return;const t=e.touches[0],dx=t.clientX-pageTouch.x,dy=t.clientY-pageTouch.y;pageTouch={x:t.clientX,y:t.clientY};if(e.target.closest?.('#view')){if(!e.target.closest?.('textarea,[contenteditable]')&&e.cancelable)e.preventDefault();return}if(e.target.closest?.('input,textarea,select,[contenteditable]'))return;const vertical=Math.abs(dy)>=Math.abs(dx);for(let n=e.target;n&&n!==document.body&&n!==document.documentElement;n=n.parentElement){if(n.nodeType!==1)continue;const c=getComputedStyle(n),o=vertical?c.overflowY:c.overflowX;if(!/auto|scroll/.test(o))continue;const p=vertical?n.scrollTop:n.scrollLeft,m=vertical?n.scrollHeight-n.clientHeight:n.scrollWidth-n.clientWidth,d=vertical?dy:dx;if(m>1&&((d>0&&p>0)||(d<0&&p<m-1)))return}if(e.cancelable)e.preventDefault()},{passive:false});
+document.addEventListener('touchend',()=>{pageTouch=null},{passive:true});document.addEventListener('touchcancel',()=>{pageTouch=null},{passive:true});
 const HITW=()=>matchMedia('(pointer:coarse)').matches?26:10;
 /* ---------- full screen ---------- */
 const fsOK=()=>!!(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen)&&!(isIOS&&Math.min(screen.width,screen.height)<700);/* iPad: works, but the system draws the status bar and its close button on top, so body.iosfs leaves a strip for them */
