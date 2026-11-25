@@ -2495,15 +2495,19 @@ Object.assign(CMD,{laycol:()=>BC.toggle('lcol'),inspcol:()=>BC.toggle('icol'),mu
 
 const PT=new Map();let MT=null;let ctxT=0,G=null,penSeen=false,lpT=0,lp0=null,tapT=0,tapP=null,synthT=0,textTap=null,textOpened=0,textPress=null;
 const TEXT_TAP_MS=800,TEXT_TAP_SLOP=20;
+let nativeTextTarget=null,pendingTextOpen=null;
+function clearNativeTextTarget(){if(!nativeTextTarget)return;nativeTextTarget.el.removeEventListener('touchend',nativeTextEnd,true);nativeTextTarget.el.removeEventListener('touchcancel',nativeTextCancel,true);nativeTextTarget=null}
+function clearPendingTextOpen(){if(pendingTextOpen){clearTimeout(pendingTextOpen.timer);pendingTextOpen=null}}
+function activatePendingText(){const p=pendingTextOpen;if(!p)return false;clearPendingTextOpen();return openTappedText(p.id,p.event)}
 function sameTextTap(a,b){return !!(a&&b&&a.id===b.id&&b.t>=a.t&&b.t-a.t<=TEXT_TAP_MS)}
-function finishTextPress(e){const p=textPress;if(!p||p.pointerId!==e.pointerId)return false;textPress=null;clearTimeout(lpT);PT.delete(p.pointerId);lp0=null;tapT=0;
+function finishTextPress(e,native=false){const p=textPress;if(!p||p.pointerId!==e.pointerId)return false;textPress=null;clearTimeout(lpT);PT.delete(p.pointerId);lp0=null;tapT=0;
  const now=Date.now(),n=IDX.get(p.id)?.n;if(e.type==='pointercancel'||now-p.t>=550||Math.hypot(e.clientX-p.x,e.clientY-p.y)>TEXT_TAP_SLOP||!validText(n)||!canTapText()){textTap=null;return true}
- closeMenus();const next={id:p.id,t:now};if(sameTextTap(textTap,next)){textTap=null;synthT=now;openTappedText(p.id,e)}else{if(editing){textOpened=0;TED.blur();if(editing)endText()}setSel([n]);textTap=next}return true}
+ closeMenus();const next={id:p.id,t:now};if(sameTextTap(textTap,next)){textTap=null;synthT=now;if(native||!nativeTextTarget)openTappedText(p.id,e);else{clearPendingTextOpen();pendingTextOpen={id:p.id,event:{clientX:e.clientX,clientY:e.clientY,pointerType:'touch',type:'pointerup',shiftKey:false},timer:setTimeout(activatePendingText,120)}}}else{if(editing){textOpened=0;TED.blur();if(editing)endText()}setSel([n]);textTap=next}return true}
 function abortDrag(){clearTimeout(lpT);const d=drag;if(!d)return;drag=null;spriteClean(d);V.classList.remove('dn');
  if(d.m==='penh'&&pen){pen.pts.pop();if(!pen.pts.length)pen=null}else if(!/pan|marq|pencil/.test(d.m)&&(d.moved||(d.m==='new'&&d.n)))restoreDoc(last);render()}
 V.addEventListener('pointerdown',e=>{if(e.pointerType==='pen')penSeen=true;if(e.pointerType!=='touch')return;if(e.isPrimary){PT.clear();G=null;MT=null;gxEnd()}
  PT.set(e.pointerId,{x:e.clientX,y:e.clientY});
- if(PT.size>=2){textTap=null;textPress=null;clearTimeout(lpT);if(!MT){MT={t:Date.now(),n:0,mv:0,v:{...view},s:new Map()};for(const[id,p]of PT)MT.s.set(id,{...p})}else MT.s.set(e.pointerId,{x:e.clientX,y:e.clientY});MT.n=Math.max(MT.n,PT.size);e.stopImmediatePropagation();lp0=null;abortDrag();if(editing)TED.blur();if(PT.size===2){const[a,b]=[...PT.values()],r=V.getBoundingClientRect();gxStart();G={d:Math.hypot(a.x-b.x,a.y-b.y)||1,c:{x:(a.x+b.x)/2-r.left,y:(a.y+b.y)/2-r.top},v:{...view}}}return}
+ if(PT.size>=2){textTap=null;textPress=null;clearPendingTextOpen();clearTimeout(lpT);if(!MT){MT={t:Date.now(),n:0,mv:0,v:{...view},s:new Map()};for(const[id,p]of PT)MT.s.set(id,{...p})}else MT.s.set(e.pointerId,{x:e.clientX,y:e.clientY});MT.n=Math.max(MT.n,PT.size);e.stopImmediatePropagation();lp0=null;abortDrag();if(editing)TED.blur();if(PT.size===2){const[a,b]=[...PT.values()],r=V.getBoundingClientRect();gxStart();G={d:Math.hypot(a.x-b.x,a.y-b.y)||1,c:{x:(a.x+b.x)/2-r.left,y:(a.y+b.y)/2-r.top},v:{...view}}}return}
  if(penSeen&&tool!=='move'&&tool!=='hand'&&e.target!==TED){e.stopImmediatePropagation();closeMenus();cap(e);drag={m:'pan',sx:e.clientX,sy:e.clientY,vx:view.x,vy:view.y};return}
  const now=Date.now();if(textTap&&now-textTap.t>TEXT_TAP_MS)textTap=null;const n=canTapText()&&e.target!==TED&&!e.target.closest?.('[data-h="fl"]')?textHit(e,textTap?.id,18):null;
  clearTimeout(lpT);if(n){lp0=null;tapT=0;textPress={id:n.id,pointerId:e.pointerId,x:e.clientX,y:e.clientY,t:now,down:e};e.preventDefault();e.stopImmediatePropagation();cap(e);
@@ -2521,9 +2525,15 @@ const ptEnd=e=>{if(e.pointerType!=='touch')return;clearTimeout(lpT);PT.delete(e.
 V.addEventListener('pointerup',ptEnd,{capture:true});
 /* Reserved text contacts finish at window capture before resize, drag or selection cleanup can run. */
 for(const type of ['pointerup','pointercancel'])window.addEventListener(type,e=>{if(e.pointerType==='touch'&&finishTextPress(e)){e.stopImmediatePropagation()}},true);
-window.addEventListener('pointerdown',e=>{if(e.target!==TED){textOpened=0;if(!V.contains(e.target)){textTap=null;if(editing&&document.activeElement!==TED)endText()}}},true);
-window.addEventListener('touchend',e=>{const t=e.changedTouches[0],p=textPress;if(p&&t&&!e.touches.length)finishTextPress({type:'pointerup',pointerId:p.pointerId,pointerType:'touch',clientX:t.clientX,clientY:t.clientY,shiftKey:false});if(editing&&Date.now()-textOpened<350){TED.focus({preventScroll:true});if(e.cancelable)e.preventDefault()}},{capture:true,passive:false});
-window.addEventListener('touchcancel',()=>{if(textPress){PT.delete(textPress.pointerId);textPress=null;clearTimeout(lpT)}textTap=null},{capture:true,passive:true});
+window.addEventListener('pointerdown',e=>{if(e.target!==TED){clearPendingTextOpen();textOpened=0;if(!V.contains(e.target)){textTap=null;if(editing&&document.activeElement!==TED)endText()}}},true);
+function nativeTextEnd(e){const t=e.changedTouches[0],p=textPress;if(e.touches.length||!t)return;const tracked=nativeTextTarget;if(tracked&&tracked.id!==t.identifier)return;clearNativeTextTarget();
+ if(p){if(e.cancelable)e.preventDefault();finishTextPress({type:'pointerup',pointerId:p.pointerId,pointerType:'touch',clientX:t.clientX,clientY:t.clientY,shiftKey:false},true)}
+ if(pendingTextOpen){if(e.cancelable)e.preventDefault();activatePendingText()}
+ if(editing&&Date.now()-textOpened<350){TED.focus({preventScroll:true});if(e.cancelable)e.preventDefault()}}
+function nativeTextCancel(){clearNativeTextTarget();clearPendingTextOpen();if(textPress){PT.delete(textPress.pointerId);textPress=null;clearTimeout(lpT)}textTap=null}
+window.addEventListener('touchstart',e=>{clearNativeTextTarget();if(e.touches.length!==1){clearPendingTextOpen();return}if(!V.contains(e.target)||e.target===TED||!canTapText())return;const t=e.changedTouches[0];if(!t||(!textPress&&!textHit(t,textTap?.id,18)))return;nativeTextTarget={el:e.target,id:t.identifier};e.target.addEventListener('touchend',nativeTextEnd,{capture:true,passive:false});e.target.addEventListener('touchcancel',nativeTextCancel,{capture:true,passive:true})},{capture:true,passive:true});
+window.addEventListener('touchend',nativeTextEnd,{capture:true,passive:false});
+window.addEventListener('touchcancel',nativeTextCancel,{capture:true,passive:true});
 /* Prevent the compatibility click from stealing focus immediately after a successful double tap. */
 for(const type of ['mousedown','click'])window.addEventListener(type,e=>{if(editing&&Date.now()-textOpened<350&&e.target!==TED&&V.contains(e.target)){e.preventDefault();e.stopImmediatePropagation()}},true);
 ['pointerup','pointercancel'].forEach(t=>window.addEventListener(t,e=>{if(e.pointerType!=='touch')return;if(PT.delete(e.pointerId)&&PT.size<2){G=null;if(!drag)gxEnd()}if(!PT.size&&MT){const m=MT;MT=null;if(t==='pointerup'&&Date.now()-m.t<400&&m.mv<16&&m.n>=2){view={...m.v};viewUpd();if(m.n===2){if(H.length){undo();toast(L('Undo','Отменено'))}}else if(F.length){redo();toast(L('Redo','Повторено'))}}}},true));
