@@ -973,7 +973,7 @@ function ptJoin(n,gi){const ra=ptAt(n,gi);if(!ra)return;const A=ra.p,z=view.z,Sa
 let PSEL=new Set();
 function exitPath(){if(!editPath)return;PSEL.clear();{const n=IDX.get(editPath)?.n;if(n?.more){n.more=n.more.filter(x=>x.pts.length>1);if(!n.more.length)delete n.more;normPath(n);commit()}}editPath=null;actPt=-1;if(tool==='pen'){tool='move';document.querySelectorAll('#tbar [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t==='move'))}render()}
 
-function editText(n,isNew,at){trange=null;editing=n;doc.lt=n.id;TED.hidden=false;TC_.hidden=false;tcLoop();TED.value=n.text;render();posTed();TED.focus({preventScroll:true});if(at){const o=caretAt(n,at);try{TED.setSelectionRange(o,o)}catch(_){}}else if(!isNew)TED.select();if(matchMedia('(pointer:coarse)').matches){setTimeout(revealSel,350);setTimeout(revealSel,800)}}
+function editText(n,isNew,at){trange=null;editing=n;doc.lt=n.id;TED.hidden=false;TC_.hidden=false;tcLoop();TED.value=n.text;render();posTed();focusTextEditor();if(at){const o=caretAt(n,at);try{TED.setSelectionRange(o,o)}catch(_){}}else if(!isNew)TED.select();if(matchMedia('(pointer:coarse)').matches){setTimeout(revealSel,350);setTimeout(revealSel,800)}}
 function posTed(){const n=editing;if(!n)return;layoutT(n);const z=view.z,[x,y]=w2s(n.x,n.y),s=TED.style;
  const Lt=n._L;s.left=x+'px';s.top=y+'px';s.font=`${n.it?'italic ':''}${n.fw||400} ${n.fs*z}px/${n.fs*(n.lh||1.2)*z}px ${ffCss(n.ff)}`;s.letterSpacing=(n.ls||0)*z+'px';s.paddingLeft=(Lt?.lines[0]?.ind||0)*z+'px';s.textAlign=n.ta||'left';
  s.width=(n.w*z+(n.fixW?0:2))+'px';s.height=Math.max((Lt?Lt.lines.length*Lt.lh:n.h)*z,n.fs*z)+'px';s.transform=n.rot?`rotate(${n.rot}deg)`:'';s.opacity=n.op??1;TED.classList.toggle('fw',!!n.fixW);const c=TC_.style;c.left=s.left;c.top=s.top;c.width=n.w*z+'px';c.height=s.height;c.transform=s.transform;TCK='';tcDraw()}
@@ -1006,10 +1006,20 @@ function textHit(e,preferred=null,padPx=0){const raw=(x,y)=>document.elementsFro
  const t=preferred&&IDX.get(preferred)?.n|| (sel.length===1?sel[0]:null);if(inside(t,Math.max(8,padPx))&&(!n||n===t||anc(t,n)||preferred===t.id))return t;
  if(padPx)for(const [dx,dy] of [[0,-1],[0,1],[-1,0],[1,0],[-.7,-.7],[.7,-.7],[-.7,.7],[.7,.7]]){const a=raw(e.clientX+dx*padPx,e.clientY+dy*padPx),k=a&&pick(a.dataset.id,true);if(inside(k,padPx))return k}return null}
 function canTapText(){return tool==='move'&&!pen&&!editPath&&!distort&&!pickK&&!space&&!document.body.classList.contains('multi')}
-function openTappedText(id,e){const n=IDX.get(id)?.n;if(!n||n.type!=='text'||!canTapText()||chainOf(id).some(k=>k.lock||k.hid))return false;if(editing===n){TED.focus({preventScroll:true});return true}if(editing){textOpened=0;TED.blur();if(editing)endText()}if(drag)endDrag(e);spriteClean();setSel([n]);textOpened=Date.now();editText(n,false,n.tp?null:toW(e));return true}
+let txtFocusTries=0;
+/* Show the inline editor and insist on real focus, so the on-screen keyboard comes up. */
+function focusTextEditor(){if(!editing)return;if(TED.hidden)TED.hidden=false;
+ TED.focus({preventScroll:true});
+ if(document.activeElement===TED||txtFocusTries>=2){txtFocusTries=0;return}
+ txtFocusTries++;requestAnimationFrame(()=>{if(editing)focusTextEditor()})}
+/* One tap selects a text layer; the second tap opens the editor where the finger landed. */
+function openTappedText(id,e){const n=IDX.get(id)?.n;if(!n||n.type!=='text'||!canTapText()||chainOf(id).some(k=>k.lock||k.hid))return false;
+ if(editing===n){textOpened=Date.now();focusTextEditor();return true}
+ if(editing){textOpened=0;TED.blur();if(editing)endText()}
+ if(drag)endDrag(e);spriteClean();setSel([n]);textOpened=Date.now();editText(n,false,n.tp?null:toW(e));return true}
 V.addEventListener('dblclick',e=>{if(tool!=='move'||pen||editing)return;const tg=document.elementFromPoint(e.clientX,e.clientY);if(!tg)return;{const fl=tg.closest('[data-h="fl"]');if(fl){const f=IDX.get(fl.dataset.f)?.n;if(f){setSel([f]);return renameNode(f,1)}}}const a=tg.closest('[data-h^="a"]');
  if(a&&editPath){const n=IDX.get(editPath).n,r=ptAt(n,+a.dataset.h.slice(1)),P=r.p,Q=r.s.pts,i=r.j;if(P.ix||P.iy||P.ox||P.oy){P.ix=P.iy=P.ox=P.oy=0}else{const N=Q.length,pr=Q[(i-1+N)%N],nx=Q[(i+1)%N],vx=(nx.x-pr.x)/6,vy=(nx.y-pr.y)/6;P.ox=vx;P.oy=vy;P.ix=-vx;P.iy=-vy}normPath(n);return commit()}
- const t=textHit(e);if(t&&!editPath&&!distort&&!document.body.classList.contains('multi')){e.preventDefault();setSel([t]);return editText(t,false,t.tp?null:toW(e))}
+ const t=textHit(e);if(t&&!editPath&&!distort&&!document.body.classList.contains('multi')){e.preventDefault();return openTappedText(t.id,e)}
  const el=tg.closest('#scene [data-id]');if(!el)return;const n=IDX.get(el.dataset.id)?.n,s=sel[0];if(!n||!s)return;
  if(sel.length===1&&s.type==='bool'&&s===n){scope=s.id;sel=[s];draw();const t2=document.elementFromPoint(e.clientX,e.clientY)?.closest('#scene [data-id]');const k=t2&&pick(t2.dataset.id);return setSel([k&&k!==s?k:s.children[s.children.length-1]])}
  if(sel.length===1&&isCont(s)&&anc(n,s)){if(s.type==='group')scope=s.id;const c=chainOf(n.id);setSel([c[c.indexOf(s)+1]]);return}
@@ -2502,7 +2512,7 @@ function activatePendingText(){const p=pendingTextOpen;if(!p)return false;clearP
 function sameTextTap(a,b){return !!(a&&b&&a.id===b.id&&b.t>=a.t&&b.t-a.t<=TEXT_TAP_MS)}
 function finishTextPress(e,native=false){const p=textPress;if(!p||p.pointerId!==e.pointerId)return false;textPress=null;clearTimeout(lpT);PT.delete(p.pointerId);lp0=null;tapT=0;
  const now=Date.now(),n=IDX.get(p.id)?.n;if(e.type==='pointercancel'||now-p.t>=550||Math.hypot(e.clientX-p.x,e.clientY-p.y)>TEXT_TAP_SLOP||!validText(n)||!canTapText()){textTap=null;return true}
- closeMenus();const next={id:p.id,t:now};if(sameTextTap(textTap,next)){textTap=null;synthT=now;if(native||!nativeTextTarget)openTappedText(p.id,e);else{clearPendingTextOpen();pendingTextOpen={id:p.id,event:{clientX:e.clientX,clientY:e.clientY,pointerType:'touch',type:'pointerup',shiftKey:false},timer:setTimeout(activatePendingText,120)}}}else{if(editing){textOpened=0;TED.blur();if(editing)endText()}setSel([n]);textTap=next}return true}
+ closeMenus();const next={id:p.id,t:now};if(sameTextTap(textTap,next)){textTap=null;synthT=now;clearPendingTextOpen();openTappedText(p.id,e)}else{if(editing){textOpened=0;TED.blur();if(editing)endText()}setSel([n]);textTap=next}return true}
 function abortDrag(){clearTimeout(lpT);const d=drag;if(!d)return;drag=null;spriteClean(d);V.classList.remove('dn');
  if(d.m==='penh'&&pen){pen.pts.pop();if(!pen.pts.length)pen=null}else if(!/pan|marq|pencil/.test(d.m)&&(d.moved||(d.m==='new'&&d.n)))restoreDoc(last);render()}
 V.addEventListener('pointerdown',e=>{if(e.pointerType==='pen')penSeen=true;if(e.pointerType!=='touch')return;if(e.isPrimary){PT.clear();G=null;MT=null;gxEnd()}
@@ -2529,7 +2539,7 @@ window.addEventListener('pointerdown',e=>{if(e.target!==TED){clearPendingTextOpe
 function nativeTextEnd(e){const t=e.changedTouches[0],p=textPress;if(e.touches.length||!t)return;const tracked=nativeTextTarget;if(tracked&&tracked.id!==t.identifier)return;clearNativeTextTarget();
  if(p){if(e.cancelable)e.preventDefault();finishTextPress({type:'pointerup',pointerId:p.pointerId,pointerType:'touch',clientX:t.clientX,clientY:t.clientY,shiftKey:false},true)}
  if(pendingTextOpen){if(e.cancelable)e.preventDefault();activatePendingText()}
- if(editing&&Date.now()-textOpened<350){TED.focus({preventScroll:true});if(e.cancelable)e.preventDefault()}}
+ if(editing&&Date.now()-textOpened<350){focusTextEditor();if(e.cancelable)e.preventDefault()}}
 function nativeTextCancel(){clearNativeTextTarget();clearPendingTextOpen();if(textPress){PT.delete(textPress.pointerId);textPress=null;clearTimeout(lpT)}textTap=null}
 window.addEventListener('touchstart',e=>{clearNativeTextTarget();if(e.touches.length!==1){clearPendingTextOpen();return}if(!V.contains(e.target)||e.target===TED||!canTapText())return;const t=e.changedTouches[0];if(!t||(!textPress&&!textHit(t,textTap?.id,18)))return;nativeTextTarget={el:e.target,id:t.identifier};e.target.addEventListener('touchend',nativeTextEnd,{capture:true,passive:false});e.target.addEventListener('touchcancel',nativeTextCancel,{capture:true,passive:true})},{capture:true,passive:true});
 window.addEventListener('touchend',nativeTextEnd,{capture:true,passive:false});
