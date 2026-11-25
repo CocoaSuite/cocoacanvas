@@ -163,7 +163,8 @@ input[type=range]::-moz-range-track{background:transparent}input[type=range]::-m
  body.hassel #fabX{opacity:1;pointer-events:auto;transform:none}#fabX svg{width:22px;height:22px;fill:none;stroke:var(--bad);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
  body.tmore #fabX{bottom:calc(122px + max(8px,calc(env(safe-area-inset-bottom) - 12px)))}body.iopen #fabX{bottom:calc(min(58vh,520px) + 12px);z-index:36}body.iopen.ifull #fabX{display:none!important}}
 @media (pointer:coarse) and (min-width:721px){#fabX{bottom:96px;left:276px}body.lcol #fabX{left:12px}}
-html,body{touch-action:manipulation;overscroll-behavior:none}
+html,body{touch-action:pan-x pan-y;overscroll-behavior:none}
+@media (any-pointer:coarse){html{overflow:hidden;position:fixed;inset:0;width:100%;height:100%;-webkit-text-size-adjust:100%}body{position:fixed;inset:0;width:100%;height:100%;height:100dvh;overflow:hidden;overscroll-behavior:none}#view{touch-action:none}aside,#insp,#layList,.modal .box,#ctx,.dd,.menus,#stList,.stB,.stR,.pfB,#plList,#pbList,#plAsk,#fList,#qOut,.wnB,.vl,.kt,.figPg{overscroll-behavior:contain}}
 #scene,#ui{transform-origin:0 0}
 #spDel.bad{background:var(--bad);border-color:var(--bad);color:#111}.vr input[type=checkbox]{flex:none;width:18px;height:18px;margin:0}
 .mq,.dk{display:none}
@@ -780,7 +781,7 @@ let DN={x:0,y:0,th:0};var gx=null;
 function gxStart(){if(gx)return;gx={v0:{...view}};if(SNAP&&SNAP.ok&&SNAP.c&&SNAP.dr===DRAWN&&SNAP.vw===V.clientWidth&&SNAP.vh===V.clientHeight&&snapCovers()){gx.snap=true;snapPlace();SNAP.c.style.display='block';$('scene').style.visibility='hidden'}else clearTimeout(SNAP.t);for(const el of[gx.snap?SNAP.c:$('scene'),UI,$('notes')])el.style.willChange='transform'}
 function gxApply(){if(!gx)return viewUpd();const v=gx.v0,k=view.z/v.z,t=`translate(${view.x-v.x*k}px,${view.y-v.y*k}px) scale(${k})`;if(gx.snap)snapPlace();else $('scene').style.transform=t;UI.style.transform=t;notesView();$('zLbl').textContent=Math.round(view.z*100)+'%'}
 function gxEnd(){if(!gx)return;const sn=gx.snap;gx=null;for(const el of[$('scene'),UI]){el.style.transform='';el.style.willChange=''}$('notes').style.willChange='';viewUpd();if(sn){$('scene').style.visibility='';lodSync();requestAnimationFrame(()=>requestAnimationFrame(()=>{if(gx?.snap||LOD)return;SNAP.c.style.display='none';SNAP.c.style.transform='';SNAP.c.style.willChange=''}))}}
-V.addEventListener('pointerdown',e=>{if(e.target===TED)return;DN={x:e.clientX,y:e.clientY,th:e.pointerType==='touch'?10:e.pointerType==='pen'?6:0};if(pickK)return pickAt(e);if(editing)TED.blur();closeMenus();
+function canvasDown(e){if(e.target===TED)return;DN={x:e.clientX,y:e.clientY,th:e.pointerType==='touch'?10:e.pointerType==='pen'?6:0};if(pickK)return pickAt(e);if(editing){textOpened=0;TED.blur();if(editing)endText()}closeMenus();
  const p=toW(e);mouse=p;const SH=e.shiftKey||document.body.classList.contains('multi');
  if(e.button===1||space||tool==='hand'){e.preventDefault();cap(e);drag={m:'pan',sx:e.clientX,sy:e.clientY,vx:view.x,vy:view.y};V.classList.add('dn');return}
  if(e.button!==0)return;cap(e);
@@ -813,7 +814,8 @@ V.addEventListener('pointerdown',e=>{if(e.target===TED)return;DN={x:e.clientX,y:
   if(!SH){scope=null;setSel([])}drag={m:'marq',p0:p,ctx,base:[...sel]};return}
  const was=sel.length===1&&sel[0]===n;
  if(SH){toggleSel(n);if(!sel.includes(n))return}else if(!sel.includes(n)){if(e.pointerType!=='mouse'&&sel.some(s=>anc(n,s))){startMove(e,p,null);drag.drill=n;return}setSel([n])}
- startMove(e,p,n);drag.was=was});
+ startMove(e,p,n);drag.was=was}
+V.addEventListener('pointerdown',canvasDown);
 
 V.addEventListener('pointermove',e=>{const p=toW(e);mouse=p;const d=drag;
  if(!d){if(tool==='move'){const el=e.target.closest('#scene [data-id]');let n=el?pick(el.dataset.id,e.ctrlKey||e.metaKey):null;if(n&&!par(n)&&n.type==='frame'&&n.children.length)n=null;if(n!==hover){hover=n;drawUI()}}else if(pen)drawUI();return}
@@ -984,13 +986,13 @@ function ptJoin(n,gi){const ra=ptAt(n,gi);if(!ra)return;const A=ra.p,z=view.z,Sa
 let PSEL=new Set();
 function exitPath(){if(!editPath)return;PSEL.clear();{const n=IDX.get(editPath)?.n;if(n?.more){n.more=n.more.filter(x=>x.pts.length>1);if(!n.more.length)delete n.more;normPath(n);commit()}}editPath=null;actPt=-1;if(tool==='pen'){tool='move';document.querySelectorAll('#tbar [data-t]').forEach(b=>b.classList.toggle('on',b.dataset.t==='move'))}render()}
 
-function editText(n,isNew,at){trange=null;editing=n;doc.lt=n.id;TED.hidden=false;TC_.hidden=false;tcLoop();TED.value=n.text;render();posTed();TED.focus();if(at){const o=caretAt(n,at);try{TED.setSelectionRange(o,o)}catch(_){}}else if(!isNew)TED.select();if(matchMedia('(pointer:coarse)').matches){setTimeout(revealSel,350);setTimeout(revealSel,800)}}
+function editText(n,isNew,at){trange=null;editing=n;doc.lt=n.id;TED.hidden=false;TC_.hidden=false;tcLoop();TED.value=n.text;render();posTed();focusTextEditor();if(at){const o=caretAt(n,at);try{TED.setSelectionRange(o,o)}catch(_){}}else if(!isNew)TED.select();if(matchMedia('(pointer:coarse)').matches){setTimeout(revealSel,350);setTimeout(revealSel,800)}}
 function posTed(){const n=editing;if(!n)return;layoutT(n);const z=view.z,[x,y]=w2s(n.x,n.y),s=TED.style;
  const Lt=n._L;s.left=x+'px';s.top=y+'px';s.font=`${n.it?'italic ':''}${n.fw||400} ${n.fs*z}px/${n.fs*(n.lh||1.2)*z}px ${ffCss(n.ff)}`;s.letterSpacing=(n.ls||0)*z+'px';s.paddingLeft=(Lt?.lines[0]?.ind||0)*z+'px';s.textAlign=n.ta||'left';
  s.width=(n.w*z+(n.fixW?0:2))+'px';s.height=Math.max((Lt?Lt.lines.length*Lt.lh:n.h)*z,n.fs*z)+'px';s.transform=n.rot?`rotate(${n.rot}deg)`:'';s.opacity=n.op??1;TED.classList.toggle('fw',!!n.fixW);const c=TC_.style;c.left=s.left;c.top=s.top;c.width=n.w*z+'px';c.height=s.height;c.transform=s.transform;TCK='';tcDraw()}
-TED.addEventListener('input',()=>{if(!editing)return;const o=String(editing.text),v=TED.value;if(editing.runs?.length){let p=0;while(p<o.length&&p<v.length&&o[p]===v[p])p++;let q=0;while(q<o.length-p&&q<v.length-p&&o[o.length-1-q]===v[v.length-1-q])q++;const A=charStyles(editing),k=A[p-1]||A[p]||null;editing.runs=packRuns([...A.slice(0,p),...Array(v.length-p-q).fill(k),...A.slice(o.length-q)].map(x=>x?{...x}:{}));if(!editing.runs.length)delete editing.runs}editing.text=v;posTed();render()});
-TED.addEventListener('blur',()=>{if(editing){const a=TED.selectionStart,b=TED.selectionEnd;trange=a<b?{id:editing.id,s:a,e:b}:null}endText()});
-TED.addEventListener('keydown',e=>{e.stopPropagation();const lk=latKey(e);if((e.ctrlKey||e.metaKey)&&/^[biu]$/i.test(lk)){e.preventDefault();return textToggle(lk.toLowerCase())}if(e.key==='Escape'){e.preventDefault();TED.blur()}});
+TED.addEventListener('input',()=>{textOpened=0;if(!editing)return;const o=String(editing.text),v=TED.value;if(editing.runs?.length){let p=0;while(p<o.length&&p<v.length&&o[p]===v[p])p++;let q=0;while(q<o.length-p&&q<v.length-p&&o[o.length-1-q]===v[v.length-1-q])q++;const A=charStyles(editing),k=A[p-1]||A[p]||null;editing.runs=packRuns([...A.slice(0,p),...Array(v.length-p-q).fill(k),...A.slice(o.length-q)].map(x=>x?{...x}:{}));if(!editing.runs.length)delete editing.runs}editing.text=v;posTed();render()});
+TED.addEventListener('blur',()=>{if(editing&&Date.now()-textOpened<350)return;if(editing){const a=TED.selectionStart,b=TED.selectionEnd;trange=a<b?{id:editing.id,s:a,e:b}:null}endText()});
+TED.addEventListener('keydown',e=>{e.stopPropagation();const lk=latKey(e);if((e.ctrlKey||e.metaKey)&&/^[biu]$/i.test(lk)){e.preventDefault();return textToggle(lk.toLowerCase())}if(e.key==='Escape'){e.preventDefault();textOpened=0;TED.blur();if(editing)endText()}});
 /* Caret and selection are drawn from the real text layout, so mixed bold/italic/size runs line up (the textarea underneath only takes input). */
 const TC_=document.getElementById('tedC');let TCK='',TCT=0;
 function tcPos(n,o){const T=n._L||layoutT(n),Ls=T.lines;if(!Ls.length)return{li:0,x:0};let li=0;for(let i=0;i<Ls.length;i++){if((Ls[i].o??0)<=o)li=i;else break}
@@ -1011,9 +1013,27 @@ TED.addEventListener('pointerup',e=>{if(TCD){TCD=null;return}
  if(editing&&e.pointerType!=='mouse'){const p=toW(e),n=editing;setTimeout(()=>{if(editing===n&&TED.selectionStart===TED.selectionEnd){const o=caretAt(n,p);TED.setSelectionRange(o,o)}},0)}});
 function endText(){const n=editing;if(!n)return;editing=null;TED.hidden=true;TC_.hidden=true;n.text=TED.value;if(!n.text.trim()){detach(n);reindex()}commit()}
 
-V.addEventListener('dblclick',e=>{if(tool!=='move'||pen)return;const tg=document.elementFromPoint(e.clientX,e.clientY);if(!tg)return;{const fl=tg.closest('[data-h="fl"]');if(fl){const f=IDX.get(fl.dataset.f)?.n;if(f){setSel([f]);return renameNode(f,1)}}}const a=tg.closest('[data-h^="a"]');
+function validText(n){return n?.type==='text'&&IDX.has(n.id)&&!chainOf(n.id).some(k=>k.lock||k.hid)}
+function textHit(e,preferred=null,padPx=0){const raw=(x,y)=>document.elementsFromPoint(x,y).find(el=>el.closest?.('#scene [data-id]'))?.closest('#scene [data-id]'),el=raw(e.clientX,e.clientY),n=el&&pick(el.dataset.id,true);if(validText(n))return n;
+ const p=toW(e),inside=(t,pad)=>{if(!validText(t))return false;const q=w2l(t,p),m=pad/view.z;return q.x>=-m&&q.y>=-m&&q.x<=t.w+m&&q.y<=t.h+m};
+ const t=preferred&&IDX.get(preferred)?.n|| (sel.length===1?sel[0]:null);if(inside(t,Math.max(8,padPx))&&(!n||n===t||anc(t,n)||preferred===t.id))return t;
+ if(padPx)for(const [dx,dy] of [[0,-1],[0,1],[-1,0],[1,0],[-.7,-.7],[.7,-.7],[-.7,.7],[.7,.7]]){const a=raw(e.clientX+dx*padPx,e.clientY+dy*padPx),k=a&&pick(a.dataset.id,true);if(inside(k,padPx))return k}return null}
+function canTapText(){return tool==='move'&&!pen&&!editPath&&!distort&&!pickK&&!space&&!document.body.classList.contains('multi')}
+let txtFocusTries=0;
+/* Show the inline editor and insist on real focus, so the on-screen keyboard comes up. */
+function focusTextEditor(){if(!editing)return;if(TED.hidden)TED.hidden=false;
+ TED.focus({preventScroll:true});
+ if(document.activeElement===TED||txtFocusTries>=2){txtFocusTries=0;return}
+ txtFocusTries++;requestAnimationFrame(()=>{if(editing)focusTextEditor()})}
+/* One tap selects a text layer; the second tap opens the editor where the finger landed. */
+function openTappedText(id,e){const n=IDX.get(id)?.n;if(!n||n.type!=='text'||!canTapText()||chainOf(id).some(k=>k.lock||k.hid))return false;
+ if(editing===n){textOpened=Date.now();focusTextEditor();return true}
+ if(editing){textOpened=0;TED.blur();if(editing)endText()}
+ if(drag)endDrag(e);spriteClean();setSel([n]);textOpened=Date.now();editText(n,false,n.tp?null:toW(e));return true}
+V.addEventListener('dblclick',e=>{if(tool!=='move'||pen||editing)return;const tg=document.elementFromPoint(e.clientX,e.clientY);if(!tg)return;{const fl=tg.closest('[data-h="fl"]');if(fl){const f=IDX.get(fl.dataset.f)?.n;if(f){setSel([f]);return renameNode(f,1)}}}const a=tg.closest('[data-h^="a"]');
  if(a&&editPath){const n=IDX.get(editPath).n,r=ptAt(n,+a.dataset.h.slice(1)),P=r.p,Q=r.s.pts,i=r.j;if(P.ix||P.iy||P.ox||P.oy){P.ix=P.iy=P.ox=P.oy=0}else{const N=Q.length,pr=Q[(i-1+N)%N],nx=Q[(i+1)%N],vx=(nx.x-pr.x)/6,vy=(nx.y-pr.y)/6;P.ox=vx;P.oy=vy;P.ix=-vx;P.iy=-vy}normPath(n);return commit()}
- const el=tg.closest('#scene [data-id]');if(!el)return;const n=IDX.get(el.dataset.id).n,s=sel[0];
+ const t=textHit(e);if(t&&!editPath&&!distort&&!document.body.classList.contains('multi')){e.preventDefault();return openTappedText(t.id,e)}
+ const el=tg.closest('#scene [data-id]');if(!el)return;const n=IDX.get(el.dataset.id)?.n,s=sel[0];if(!n||!s)return;
  if(sel.length===1&&s.type==='bool'&&s===n){scope=s.id;sel=[s];draw();const t2=document.elementFromPoint(e.clientX,e.clientY)?.closest('#scene [data-id]');const k=t2&&pick(t2.dataset.id);return setSel([k&&k!==s?k:s.children[s.children.length-1]])}
  if(sel.length===1&&isCont(s)&&anc(n,s)){if(s.type==='group')scope=s.id;const c=chainOf(n.id);setSel([c[c.indexOf(s)+1]]);return}
  if(sel.length===1&&(s===n||anc(n,s))){if(s.type==='text')editText(s,false,e.isTrusted||s.tp?null:toW(e));else enterPath(s)}});
@@ -2496,23 +2516,49 @@ let gy=null;$('grab').addEventListener('pointerdown',e=>{gy=e.clientY;e.preventD
 window.addEventListener('pointerup',e=>{if(gy==null)return;const d=e.clientY-gy;gy=null;if(d>50){if(BC.contains('ifull'))BC.remove('ifull');else BC.remove('iopen')}else if(d<-40)BC.add('ifull');else BC.toggle('ifull')});
 Object.assign(CMD,{laycol:()=>BC.toggle('lcol'),inspcol:()=>BC.toggle('icol'),multi:()=>{BC.toggle('multi');if(BC.contains('multi'))toast(L('Tap layers to add or remove them. Tap Done when finished.','Нажимайте на слои, чтобы добавлять или убирать их. Затем нажмите «Готово».'));drawUI()},done:()=>{if(BC.contains('multi')&&!distort&&!pen&&!editPath){BC.remove('multi');return drawUI()}if(distort)endDistort();else if(pen)endPen();else if(editPath)exitPath()},edittext:()=>{const n=topSel()[0];if(n?.type==='text')editText(n)}});
 
-const PT=new Map();let MT=null;let ctxT=0,G=null,penSeen=false,lpT=0,lp0=null,tapT=0,tapP=null,synthT=0;
+const PT=new Map();let MT=null;let ctxT=0,G=null,penSeen=false,lpT=0,lp0=null,tapT=0,tapP=null,synthT=0,textTap=null,textOpened=0,textPress=null;
+const TEXT_TAP_MS=800,TEXT_TAP_SLOP=20;
+let nativeTextTarget=null,pendingTextOpen=null;
+function clearNativeTextTarget(){if(!nativeTextTarget)return;nativeTextTarget.el.removeEventListener('touchend',nativeTextEnd,true);nativeTextTarget.el.removeEventListener('touchcancel',nativeTextCancel,true);nativeTextTarget=null}
+function clearPendingTextOpen(){if(pendingTextOpen){clearTimeout(pendingTextOpen.timer);pendingTextOpen=null}}
+function activatePendingText(){const p=pendingTextOpen;if(!p)return false;clearPendingTextOpen();return openTappedText(p.id,p.event)}
+function sameTextTap(a,b){return !!(a&&b&&a.id===b.id&&b.t>=a.t&&b.t-a.t<=TEXT_TAP_MS)}
+function finishTextPress(e,native=false){const p=textPress;if(!p||p.pointerId!==e.pointerId)return false;textPress=null;clearTimeout(lpT);PT.delete(p.pointerId);lp0=null;tapT=0;
+ const now=Date.now(),n=IDX.get(p.id)?.n;if(e.type==='pointercancel'||now-p.t>=550||Math.hypot(e.clientX-p.x,e.clientY-p.y)>TEXT_TAP_SLOP||!validText(n)||!canTapText()){textTap=null;return true}
+ closeMenus();const next={id:p.id,t:now};if(sameTextTap(textTap,next)){textTap=null;synthT=now;clearPendingTextOpen();openTappedText(p.id,e)}else{if(editing){textOpened=0;TED.blur();if(editing)endText()}setSel([n]);textTap=next}return true}
 function abortDrag(){clearTimeout(lpT);const d=drag;if(!d)return;drag=null;spriteClean(d);V.classList.remove('dn');
  if(d.m==='penh'&&pen){pen.pts.pop();if(!pen.pts.length)pen=null}else if(!/pan|marq|pencil/.test(d.m)&&(d.moved||(d.m==='new'&&d.n)))restoreDoc(last);render()}
 V.addEventListener('pointerdown',e=>{if(e.pointerType==='pen')penSeen=true;if(e.pointerType!=='touch')return;if(e.isPrimary){PT.clear();G=null;MT=null;gxEnd()}
  PT.set(e.pointerId,{x:e.clientX,y:e.clientY});
- if(PT.size>=2){if(!MT){MT={t:Date.now(),n:0,mv:0,v:{...view},s:new Map()};for(const[id,p]of PT)MT.s.set(id,{...p})}else MT.s.set(e.pointerId,{x:e.clientX,y:e.clientY});MT.n=Math.max(MT.n,PT.size);e.stopImmediatePropagation();lp0=null;abortDrag();if(editing)TED.blur();if(PT.size===2){const[a,b]=[...PT.values()],r=V.getBoundingClientRect();gxStart();G={d:Math.hypot(a.x-b.x,a.y-b.y)||1,c:{x:(a.x+b.x)/2-r.left,y:(a.y+b.y)/2-r.top},v:{...view}}}return}
+ if(PT.size>=2){textTap=null;textPress=null;clearPendingTextOpen();clearTimeout(lpT);if(!MT){MT={t:Date.now(),n:0,mv:0,v:{...view},s:new Map()};for(const[id,p]of PT)MT.s.set(id,{...p})}else MT.s.set(e.pointerId,{x:e.clientX,y:e.clientY});MT.n=Math.max(MT.n,PT.size);e.stopImmediatePropagation();lp0=null;abortDrag();if(editing)TED.blur();if(PT.size===2){const[a,b]=[...PT.values()],r=V.getBoundingClientRect();gxStart();G={d:Math.hypot(a.x-b.x,a.y-b.y)||1,c:{x:(a.x+b.x)/2-r.left,y:(a.y+b.y)/2-r.top},v:{...view}}}return}
  if(penSeen&&tool!=='move'&&tool!=='hand'&&e.target!==TED){e.stopImmediatePropagation();closeMenus();cap(e);drag={m:'pan',sx:e.clientX,sy:e.clientY,vx:view.x,vy:view.y};return}
- lp0={x:e.clientX,y:e.clientY};clearTimeout(lpT);
- if(tool==='move'&&e.target!==TED&&!e.target.closest?.('[data-h]'))lpT=setTimeout(()=>{if(PT.size!==1||!lp0)return;abortDrag();ctxT=Date.now();openCtx(lp0.x,lp0.y,1);lp0=null},500)},{capture:true});
+ const now=Date.now();if(textTap&&now-textTap.t>TEXT_TAP_MS)textTap=null;const n=canTapText()&&e.target!==TED&&!e.target.closest?.('[data-h="fl"]')?textHit(e,textTap?.id,18):null;
+ clearTimeout(lpT);if(n){lp0=null;tapT=0;textPress={id:n.id,pointerId:e.pointerId,x:e.clientX,y:e.clientY,t:now,down:e};e.preventDefault();e.stopImmediatePropagation();cap(e);
+ lpT=setTimeout(()=>{if(!textPress||PT.size!==1)return;const p=textPress;textPress=null;textTap=null;const k=IDX.get(p.id)?.n;if(validText(k)){setSel([k]);ctxT=Date.now();openCtx(p.x,p.y,1,k)}},550);return}
+ textTap=null;lp0=e.target===TED?null:{x:e.clientX,y:e.clientY,t:now,pointerId:e.pointerId};if(!lp0){tapT=0;return}
+ if(tool==='move'&&e.target!==TED&&!e.target.closest?.('[data-h]'))lpT=setTimeout(()=>{if(PT.size!==1||!lp0)return;textTap=null;abortDrag();ctxT=Date.now();openCtx(lp0.x,lp0.y,1);lp0=null},500)},{capture:true});
 V.addEventListener('pointermove',e=>{if(e.pointerType!=='touch'||!PT.has(e.pointerId))return;PT.set(e.pointerId,{x:e.clientX,y:e.clientY});if(MT){const s0=MT.s.get(e.pointerId);if(s0)MT.mv=Math.max(MT.mv,Math.hypot(e.clientX-s0.x,e.clientY-s0.y))}
- if(lp0&&Math.hypot(e.clientX-lp0.x,e.clientY-lp0.y)>8){clearTimeout(lpT);lp0=null}
+ if(textPress?.pointerId===e.pointerId){const p=textPress;if(Math.hypot(e.clientX-p.x,e.clientY-p.y)<=TEXT_TAP_SLOP){e.stopImmediatePropagation();return}textPress=null;textTap=null;clearTimeout(lpT);canvasDown(p.down)}
+ if(lp0&&Math.hypot(e.clientX-lp0.x,e.clientY-lp0.y)>8){clearTimeout(lpT);lp0=null;textTap=null}
  if(G&&PT.size>=2){e.stopImmediatePropagation();const[a,b]=[...PT.values()],r=V.getBoundingClientRect(),d=Math.hypot(a.x-b.x,a.y-b.y),c={x:(a.x+b.x)/2-r.left,y:(a.y+b.y)/2-r.top},z=clamp(G.v.z*d/G.d,.02,256),wx=(G.c.x-G.v.x)/G.v.z,wy=(G.c.y-G.v.y)/G.v.z;view.z=z;view.x=c.x-wx*z;view.y=c.y-wy*z;gxApply()}},{capture:true});
 const ptEnd=e=>{if(e.pointerType!=='touch')return;clearTimeout(lpT);PT.delete(e.pointerId);
- if(G){e.stopImmediatePropagation();if(PT.size<2){G=null;if(!drag)gxEnd()}tapT=0;return}
+ if(G){e.stopImmediatePropagation();if(PT.size<2){G=null;if(!drag)gxEnd()}tapT=0;textTap=null;return}
  if(e.type==='pointerup'&&lp0&&BC.contains('iopen')&&phone()&&!document.elementFromPoint(e.clientX,e.clientY)?.closest?.('#scene [data-id],#ui [data-h]'))BC.remove('iopen','ifull');
- if(e.type==='pointerup'&&lp0){const now=Date.now();if(tapP&&now-tapT<320&&Math.hypot(e.clientX-tapP.x,e.clientY-tapP.y)<24){tapT=0;synthT=now;V.dispatchEvent(new MouseEvent('dblclick',{clientX:e.clientX,clientY:e.clientY,bubbles:true}))}else{tapT=now;tapP={x:e.clientX,y:e.clientY}}}lp0=null};
+ const start=lp0;lp0=null;if(e.type==='pointerup'&&start&&!MT&&!drag?.moved&&start.pointerId===e.pointerId){const now=Date.now();if(tapP&&now-tapT<400&&Math.hypot(e.clientX-tapP.x,e.clientY-tapP.y)<24){tapT=0;synthT=now;if(drag)endDrag(e);V.dispatchEvent(new MouseEvent('dblclick',{clientX:e.clientX,clientY:e.clientY,bubbles:true,cancelable:true}))}else{tapT=now;tapP={x:e.clientX,y:e.clientY}}}else tapT=0};
 V.addEventListener('pointerup',ptEnd,{capture:true});
+/* Reserved text contacts finish at window capture before resize, drag or selection cleanup can run. */
+for(const type of ['pointerup','pointercancel'])window.addEventListener(type,e=>{if(e.pointerType==='touch'&&finishTextPress(e)){e.stopImmediatePropagation()}},true);
+window.addEventListener('pointerdown',e=>{if(e.target!==TED){clearPendingTextOpen();textOpened=0;if(!V.contains(e.target)){textTap=null;if(editing&&document.activeElement!==TED)endText()}}},true);
+function nativeTextEnd(e){const t=e.changedTouches[0],p=textPress;if(e.touches.length||!t)return;const tracked=nativeTextTarget;if(tracked&&tracked.id!==t.identifier)return;clearNativeTextTarget();
+ if(p){if(e.cancelable)e.preventDefault();finishTextPress({type:'pointerup',pointerId:p.pointerId,pointerType:'touch',clientX:t.clientX,clientY:t.clientY,shiftKey:false},true)}
+ if(pendingTextOpen){if(e.cancelable)e.preventDefault();activatePendingText()}
+ if(editing&&Date.now()-textOpened<350){focusTextEditor();if(e.cancelable)e.preventDefault()}}
+function nativeTextCancel(){clearNativeTextTarget();clearPendingTextOpen();if(textPress){PT.delete(textPress.pointerId);textPress=null;clearTimeout(lpT)}textTap=null}
+window.addEventListener('touchstart',e=>{clearNativeTextTarget();if(e.touches.length!==1){clearPendingTextOpen();return}if(!V.contains(e.target)||e.target===TED||!canTapText())return;const t=e.changedTouches[0];if(!t||(!textPress&&!textHit(t,textTap?.id,18)))return;nativeTextTarget={el:e.target,id:t.identifier};e.target.addEventListener('touchend',nativeTextEnd,{capture:true,passive:false});e.target.addEventListener('touchcancel',nativeTextCancel,{capture:true,passive:true})},{capture:true,passive:true});
+window.addEventListener('touchend',nativeTextEnd,{capture:true,passive:false});
+window.addEventListener('touchcancel',nativeTextCancel,{capture:true,passive:true});
+/* Prevent the compatibility click from stealing focus immediately after a successful double tap. */
+for(const type of ['mousedown','click'])window.addEventListener(type,e=>{if(editing&&Date.now()-textOpened<350&&e.target!==TED&&V.contains(e.target)){e.preventDefault();e.stopImmediatePropagation()}},true);
 ['pointerup','pointercancel'].forEach(t=>window.addEventListener(t,e=>{if(e.pointerType!=='touch')return;if(PT.delete(e.pointerId)&&PT.size<2){G=null;if(!drag)gxEnd()}if(!PT.size&&MT){const m=MT;MT=null;if(t==='pointerup'&&Date.now()-m.t<400&&m.mv<16&&m.n>=2){view={...m.v};viewUpd();if(m.n===2){if(H.length){undo();toast(L('Undo','Отменено'))}}else if(F.length){redo();toast(L('Redo','Повторено'))}}}},true));
 V.addEventListener('lostpointercapture',e=>{if(e.pointerType==='touch'&&!PT.has(e.pointerId))return});V.addEventListener('pointercancel',ptEnd,{capture:true});
 V.addEventListener('dblclick',e=>{if(e.isTrusted&&Date.now()-synthT<700)e.stopImmediatePropagation()},{capture:true});
@@ -2759,6 +2805,11 @@ CMD.storage=openStorage;
 /* stop the browser's own page zoom from fighting canvas pinch */
 ['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
 document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault()},{passive:false});
+/* Keep single-finger scrolling inside actual scroll containers, never the page. */
+let pageTouch=null;
+document.addEventListener('touchstart',e=>{pageTouch=e.touches.length===1?{x:e.touches[0].clientX,y:e.touches[0].clientY}:null},{passive:true});
+document.addEventListener('touchmove',e=>{if(e.touches.length!==1||!pageTouch)return;const t=e.touches[0],dx=t.clientX-pageTouch.x,dy=t.clientY-pageTouch.y;pageTouch={x:t.clientX,y:t.clientY};if(e.target.closest?.('#view')){if(!e.target.closest?.('textarea,[contenteditable]')&&e.cancelable)e.preventDefault();return}if(e.target.closest?.('input,textarea,select,[contenteditable]'))return;const vertical=Math.abs(dy)>=Math.abs(dx);for(let n=e.target;n&&n!==document.body&&n!==document.documentElement;n=n.parentElement){if(n.nodeType!==1)continue;const c=getComputedStyle(n),o=vertical?c.overflowY:c.overflowX;if(!/auto|scroll/.test(o))continue;const p=vertical?n.scrollTop:n.scrollLeft,m=vertical?n.scrollHeight-n.clientHeight:n.scrollWidth-n.clientWidth,d=vertical?dy:dx;if(m>1&&((d>0&&p>0)||(d<0&&p<m-1)))return}if(e.cancelable)e.preventDefault()},{passive:false});
+document.addEventListener('touchend',()=>{pageTouch=null},{passive:true});document.addEventListener('touchcancel',()=>{pageTouch=null},{passive:true});
 const HITW=()=>matchMedia('(pointer:coarse)').matches?26:10;
 /* ---------- full screen ---------- */
 const fsOK=()=>!!(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen)&&!(isIOS&&Math.min(screen.width,screen.height)<700);/* iPad: works, but the system draws the status bar and its close button on top, so body.iosfs leaves a strip for them */
