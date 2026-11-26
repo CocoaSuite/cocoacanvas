@@ -5,7 +5,7 @@
  * cache and keeps working with no connection, instead of waiting on the network every
  * launch (which is what made a cold launch from the home screen look hung).
  */
-const C = 'cocoacanvas-v3';
+const C = 'cocoacanvas-v4';
 const SHELL = [
   './',
   'index.html',
