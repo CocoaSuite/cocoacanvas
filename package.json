@@ -1,0 +1,26 @@
+{
+  "name": "cocoacanvas-desktop",
+  "version": "1.6.0",
+  "description": "CocoaCanvas offline desktop design editor",
+  "author": "CocoaSuite",
+  "private": true,
+  "main": "desktop/main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "dist:win": "electron-builder --win --x64 --publish never",
+    "check": "node --check desktop/main.cjs"
+  },
+  "devDependencies": {
+    "electron": "45.5.0",
+    "electron-builder": "26.18.0"
+  },
+  "build": {
+    "appId": "com.cocoasuite.cocoacanvas",
+    "productName": "CocoaCanvas",
+    "directories": { "output": "dist" },
+    "files": ["desktop/main.cjs", "CocoaCanvas-standalone.html", "icon-512.png", "package.json"],
+    "fileAssociations": [{ "ext": "ccanvas", "name": "CocoaCanvas project" }],
+    "win": { "icon": "icon-512.png", "target": ["nsis", "portable"], "artifactName": "CocoaCanvas-${version}-${arch}-${target}.${ext}" },
+    "nsis": { "oneClick": false, "perMachine": true, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true }
+  }
+}
