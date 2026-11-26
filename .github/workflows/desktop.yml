@@ -31,9 +31,14 @@ jobs:
           name: CocoaCanvas-Windows-x64
           path: dist/*.exe
           if-no-files-found: error
-      - name: Publish tagged release
-        if: startsWith(github.ref, 'refs/tags/desktop-v')
+      - name: Publish desktop release
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/desktop-v')
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/*.exe --title "CocoaCanvas Desktop $GITHUB_REF_NAME" --generate-notes
+        run: |
+          tag="desktop-v$(node -p 'require("./package.json").version')"
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then tag="$GITHUB_REF_NAME"; fi
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            gh release create "$tag" dist/*.exe --title "CocoaCanvas Desktop $tag" --generate-notes --latest
+          fi

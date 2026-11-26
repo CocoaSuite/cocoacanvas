@@ -20,7 +20,8 @@
     "directories": { "output": "dist" },
     "files": ["desktop/main.cjs", "CocoaCanvas-standalone.html", "icon-512.png", "package.json"],
     "fileAssociations": [{ "ext": "ccanvas", "name": "CocoaCanvas project" }],
-    "win": { "icon": "icon-512.png", "target": ["nsis", "portable"], "artifactName": "CocoaCanvas-${version}-${arch}-${target}.${ext}" },
-    "nsis": { "oneClick": false, "perMachine": true, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true }
+    "win": { "icon": "icon-512.png", "target": ["nsis", "portable"] },
+    "nsis": { "artifactName": "CocoaCanvas-Windows-x64-Setup.exe", "oneClick": false, "perMachine": true, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true },
+    "portable": { "artifactName": "CocoaCanvas-Windows-x64-Portable.exe" }
   }
 }
