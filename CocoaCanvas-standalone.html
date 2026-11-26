@@ -2718,7 +2718,18 @@ function cpHex(c,push){const x=hex(c);if(!x)return;const k=hex2hsv(x);cpS.s=k.s;
 function cpOpen(el){cpEl=el;cpAl=cpAlphaFor(el);cpDirty=false;if(!CP.firstChild)cpBuild();cpS={h:0,s:0,v:0,a:cpAl?clamp(numv(cpAl.value,100)/100,0,1):1};cpHex(el.value||'#000000');CP.hidden=false;
  if(!matchMedia('(max-width:720px)').matches){const r=el.getBoundingClientRect(),w=CP.offsetWidth,h=CP.offsetHeight;let x=r.left-w-12;if(x<8)x=Math.min(innerWidth-w-8,r.right+12);CP.style.left=x+'px';CP.style.top=clamp(r.top-60,8,innerHeight-h-8)+'px'}else{CP.style.left='';CP.style.top=''}cpSync()}
 function cpClose(){if(CP.hidden)return;CP.hidden=true;const el=cpEl;cpEl=null;if(cpDirty){if(el?.isConnected)el.dispatchEvent(new Event('change',{bubbles:true}));else commit()}}
-document.addEventListener('click',e=>{const el=e.target.closest?.('input[type=color]');if(!el||pickMode()==='s')return;e.preventDefault();if(cpEl===el&&!CP.hidden)return cpClose();cpClose();cpOpen(el)},true);
+/* One tap, one picker. The picker opens on pointerdown and the touch, mouse and click events
+   that follow are cancelled, which is what keeps a phone from raising its own colour dialog on
+   top of it: cancelling the click alone is not enough there. Without pointer events the old
+   click route stays, so an older browser behaves exactly as before. */
+const cpPointer=!!window.PointerEvent;
+function cpSwatch(e){const el=e.target?.closest?.('input[type=color]');return el&&pickMode()!=='s'&&!(e.button>0)?el:null}
+function cpActivate(e){const el=cpSwatch(e);if(!el)return;e.preventDefault();
+ if(cpEl===el&&!CP.hidden)return cpClose();cpClose();cpOpen(el)}
+function cpQuietNative(e){const el=cpSwatch(e);if(el&&(cpPointer||e.type!=='touchstart'))e.preventDefault()}
+document.addEventListener('pointerdown',cpActivate,true);
+['touchstart','mousedown','click'].forEach(t=>document.addEventListener(t,cpQuietNative,true));
+if(!cpPointer)document.addEventListener('click',cpActivate,true);
 document.addEventListener('pointerdown',e=>{if(CP.hidden||CP.contains(e.target)||e.target===cpEl)return;if(pickK==='__cp')return;cpClose()},true);
 document.addEventListener('keydown',e=>{if(!CP.hidden&&e.key==='Escape'){e.stopPropagation();cpClose()}},true);
 let cpDrag=null;
